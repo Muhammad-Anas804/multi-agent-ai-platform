@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CEO Agent — Multi-Agent Business Advisor</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<style>
+  :root {
+    --bg:        #0a0a0f;
+    --bg2:       #111118;
+    --bg3:       #1a1a24;
+    --border:    #2a2a38;
+    --teal:      #00d4aa;
+    --teal-dim:  #00d4aa22;
+    --amber:     #f59e0b;
+    --red:       #ef4444;
+    --blue:      #3b82f6;
+    --purple:    #a855f7;
+    --text:      #e8e8f0;
+    --text-dim:  #7070a0;
+    --font-mono: 'Space Mono', monospace;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Grid background ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; z-index: 1; }
+
+  /* ── Header ── */
+  header { text-align: center; padding: 3rem 0 2.5rem; }
+  .logo {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 30%, var(--teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.75rem;
+  }
+  .subtitle { color: var(--text-dim); font-size: 1rem; font-weight: 300; }
+
+  /* ── Input card ── */
+  .input-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .input-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--teal), transparent);
+  }
+  .input-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    display: block;
+  }
+  textarea, input[type="text"] {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    padding: 0.9rem 1rem;
+    outline: none;
+    resize: none;
+    transition: border-color 0.2s;
+    margin-bottom: 1rem;
+  }
+  textarea { height: 100px; }
+  textarea:focus, input[type="text"]:focus { border-color: var(--teal); }
+  textarea::placeholder, input::placeholder { color: var(--text-dim); }
+
+  .run-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--teal);
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .run-btn:hover:not(:disabled) { background: #00ffcc; transform: translateY(-1px); }
+  .run-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* ── Progress pipeline ── */
+  .pipeline {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .pipeline-step {
+    flex: 1; min-width: 120px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.8rem;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pipeline-step.active {
+    border-color: var(--teal);
+    background: var(--teal-dim);
+  }
+  .pipeline-step.active::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: var(--teal);
+    animation: progress 2s ease-in-out infinite;
+  }
+  @keyframes progress {
+    0% { transform: scaleX(0); transform-origin: left; }
+    50% { transform: scaleX(1); transform-origin: left; }
+    51% { transform: scaleX(1); transform-origin: right; }
+    100% { transform: scaleX(0); transform-origin: right; }
+  }
+  .pipeline-step.done { border-color: var(--teal); background: var(--teal-dim); }
+  .pipeline-step.error { border-color: var(--red); background: #ef444411; }
+  .step-icon { font-size: 1.4rem; margin-bottom: 0.3rem; }
+  .step-name { font-size: 11px; color: var(--text-dim); font-family: var(--font-mono); }
+  .step-status { font-size: 10px; color: var(--teal); margin-top: 0.2rem; font-family: var(--font-mono); }
+
+  /* ── Result panels ── */
+  .results { display: flex; flex-direction: column; gap: 1rem; }
+
+  .result-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    animation: fadeUp 0.4s ease forwards;
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    user-select: none;
+    transition: background 0.2s;
+  }
+  .panel-header:hover { background: var(--bg3); }
+  .panel-title {
+    display: flex; align-items: center; gap: 0.6rem;
+    font-weight: 500; font-size: 0.95rem;
+  }
+  .panel-icon { font-size: 1.1rem; }
+  .panel-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--teal-dim);
+    color: var(--teal);
+  }
+  .panel-toggle { color: var(--text-dim); transition: transform 0.2s; font-size: 0.8rem; }
+  .panel-toggle.open { transform: rotate(180deg); }
+
+  .panel-body {
+    padding: 1.5rem;
+    display: none;
+    line-height: 1.75;
+    font-size: 0.93rem;
+  }
+  .panel-body.open { display: block; }
+
+  /* Markdown styling inside panels */
+  .panel-body h1, .panel-body h2 {
+    font-size: 1rem; font-weight: 600;
+    color: var(--teal); margin: 1.25rem 0 0.5rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .panel-body h3 { font-size: 0.95rem; color: var(--amber); margin: 1rem 0 0.4rem; }
+  .panel-body p { color: var(--text); margin-bottom: 0.75rem; }
+  .panel-body ul, .panel-body ol { padding-left: 1.5rem; margin-bottom: 0.75rem; }
+  .panel-body li { margin-bottom: 0.3rem; color: var(--text); }
+  .panel-body strong { color: #fff; font-weight: 600; }
+  .panel-body code {
+    background: var(--bg3); border: 1px solid var(--border);
+    padding: 0.15rem 0.4rem; border-radius: 4px;
+    font-family: var(--font-mono); font-size: 0.82rem; color: var(--teal);
+  }
+
+  /* CEO panel special styling */
+  .ceo-panel .panel-header { background: linear-gradient(90deg, #00d4aa11, transparent); }
+  .ceo-panel .panel-badge { background: var(--teal); color: #000; font-weight: 700; }
+
+  /* ── Download button ── */
+  .download-bar {
+    display: none;
+    margin-top: 1.5rem;
+    gap: 0.75rem;
+  }
+  .download-bar.show { display: flex; flex-wrap: wrap; }
+  .dl-btn {
+    padding: 0.65rem 1.25rem;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+  }
+  .dl-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .dl-btn.primary { background: var(--teal); color: #000; border-color: var(--teal); font-weight: 700; }
+  .dl-btn.primary:hover { background: #00ffcc; }
+
+  /* ── Status bar ── */
+  .status-bar {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--text-dim); margin-bottom: 1.5rem;
+    padding: 0.6rem 1rem;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--text-dim);
+  }
+  .status-dot.active { background: var(--teal); animation: pulse 1.5s infinite; }
+  .status-dot.done   { background: var(--teal); animation: none; }
+  .status-dot.error  { background: var(--red); animation: none; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">⬡ Multi-Agent System v1.0</div>
+    <h1>CEO Agent SaaS</h1>
+    <p class="subtitle">Research · Marketing · Finance · Risk · CEO — all in one run</p>
+  </header>
+
+  <!-- Input -->
+  <div class="input-card">
+    <label class="input-label">Business Idea</label>
+    <textarea id="idea" placeholder="e.g. Start an AI fitness startup in Pakistan targeting gym owners..."></textarea>
+    <label class="input-label">Company Context <span style="color:var(--text-dim)">(optional)</span></label>
+    <input type="text" id="context" placeholder="e.g. Bootstrap, 2-person team, $5K budget"/>
+    <button class="run-btn" id="runBtn" onclick="runAgents()">▶ RUN ALL AGENTS</button>
+  </div>
+
+  <!-- Status bar -->
+  <div class="status-bar" id="statusBar">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">Ready — enter your business idea above</span>
+  </div>
+
+  <!-- Pipeline progress -->
+  <div class="pipeline" id="pipeline">
+    <div class="pipeline-step" id="step-Research">
+      <div class="step-icon">📊</div>
+      <div class="step-name">Research</div>
+      <div class="step-status" id="st-Research">waiting</div>
+    </div>
+    <div class="pipeline-step" id="step-Marketing">
+      <div class="step-icon">📣</div>
+      <div class="step-name">Marketing</div>
+      <div class="step-status" id="st-Marketing">waiting</div>
+    </div>
+    <div class="pipeline-step" id="step-Finance">
+      <div class="step-icon">💰</div>
+      <div class="step-name">Finance</div>
+      <div class="step-status" id="st-Finance">waiting</div>
+    </div>
+    <div class="pipeline-step" id="step-Risk">
+      <div class="step-icon">⚠️</div>
+      <div class="step-name">Risk</div>
+      <div class="step-status" id="st-Risk">waiting</div>
+    </div>
+    <div class="pipeline-step" id="step-CEO Decision">
+      <div class="step-icon">👔</div>
+      <div class="step-name">CEO</div>
+      <div class="step-status" id="st-CEO Decision">waiting</div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results"></div>
+
+  <!-- Download bar -->
+  <div class="download-bar" id="downloadBar">
+    <button class="dl-btn primary" onclick="downloadJSON()">⬇ Download JSON Report</button>
+    <button class="dl-btn" onclick="copyAll()">⎘ Copy Full Report</button>
+    <button class="dl-btn" onclick="resetUI()">↺ New Idea</button>
+  </div>
+
+  <footer>CEO AGENT SAAS · POWERED BY GROQ + LANGCHAIN · MULTI-AGENT SYSTEM</footer>
+</div>
+
+<script>
+let fullState = null;
+
+const PANELS = [
+  { agent: "Research",     icon: "📊", color: "#3b82f6" },
+  { agent: "Marketing",    icon: "📣", color: "#a855f7" },
+  { agent: "Finance",      icon: "💰", color: "#f59e0b" },
+  { agent: "Risk",         icon: "⚠️",  color: "#ef4444" },
+  { agent: "CEO Decision", icon: "👔", color: "#00d4aa", ceo: true },
+];
+
+const KEY_MAP = {
+  "Research":     "research_output",
+  "Marketing":    "marketing_output",
+  "Finance":      "finance_output",
+  "Risk":         "risk_output",
+  "CEO Decision": "final_output",
+};
+
+function setStatus(text, state="active") {
+  document.getElementById("statusText").textContent = text;
+  const dot = document.getElementById("statusDot");
+  dot.className = "status-dot " + state;
+}
+
+function setStep(agent, state) {
+  const step = document.getElementById("step-" + agent);
+  const st   = document.getElementById("st-"   + agent);
+  if (!step) return;
+  step.className = "pipeline-step " + state;
+  st.textContent = state === "active" ? "running..." : state === "done" ? "✅ done" : state === "error" ? "❌ error" : "waiting";
+}
+
+function addPanel(agent, output) {
+  const conf    = PANELS.find(p => p.agent === agent);
+  const results = document.getElementById("results");
+  const div     = document.createElement("div");
+  div.className = "result-panel" + (conf.ceo ? " ceo-panel" : "");
+  div.id        = "panel-" + agent;
+  div.innerHTML = `
+    <div class="panel-header" onclick="togglePanel('${agent}')">
+      <div class="panel-title">
+        <span class="panel-icon">${conf.icon}</span>
+        <span>${agent}</span>
+        <span class="panel-badge">${(output.length/1000).toFixed(1)}k chars</span>
+      </div>
+      <span class="panel-toggle open" id="toggle-${agent}">▼</span>
+    </div>
+    <div class="panel-body open" id="body-${agent}">
+      ${marked.parse(output)}
+    </div>
+  `;
+  results.appendChild(div);
+  div.style.borderColor = conf.color + "55";
+}
+
+function togglePanel(agent) {
+  const body   = document.getElementById("body-"   + agent);
+  const toggle = document.getElementById("toggle-" + agent);
+  const isOpen = body.classList.contains("open");
+  body.classList.toggle("open", !isOpen);
+  toggle.classList.toggle("open", !isOpen);
+}
+
+async function runAgents() {
+  const idea    = document.getElementById("idea").value.trim();
+  const context = document.getElementById("context").value.trim();
+  if (!idea) { alert("Please enter a business idea!"); return; }
+
+  // Reset UI
+  document.getElementById("results").innerHTML = "";
+  document.getElementById("downloadBar").classList.remove("show");
+  document.getElementById("runBtn").disabled = true;
+  document.getElementById("runBtn").textContent = "⏳ RUNNING...";
+  PANELS.forEach(p => setStep(p.agent, ""));
+  fullState = null;
+
+  setStatus("Connecting to agents...", "active");
+
+  try {
+    const response = await fetch("/run", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ idea, context }),
+    });
+
+    const reader  = response.body.getReader();
+    const decoder = new TextDecoder();
+    let   buffer  = "";
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n\n");
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        try {
+          const msg = JSON.parse(line.slice(6));
+          handleEvent(msg);
+        } catch(e) {}
+      }
+    }
+  } catch(err) {
+    setStatus("Connection error: " + err.message, "error");
+  }
+
+  document.getElementById("runBtn").disabled = false;
+  document.getElementById("runBtn").textContent = "▶ RUN ALL AGENTS";
+}
+
+function handleEvent(msg) {
+  switch(msg.event) {
+    case "start":
+      setStatus(`Run ${msg.run_id} started...`, "active");
+      break;
+    case "agent_start":
+      setStep(msg.agent, "active");
+      setStatus(`${msg.icon} ${msg.agent} agent thinking...`, "active");
+      break;
+    case "agent_done":
+      setStep(msg.agent, "done");
+      addPanel(msg.agent, msg.output);
+      setStatus(`${msg.agent} complete ✅`, "active");
+      break;
+    case "agent_error":
+      setStep(msg.agent, "error");
+      setStatus(`${msg.agent} failed: ${msg.error}`, "error");
+      break;
+    case "complete":
+      fullState = msg.state;
+      setStatus(`All agents complete! Run ${msg.run_id}`, "done");
+      document.getElementById("downloadBar").classList.add("show");
+      break;
+  }
+}
+
+function downloadJSON() {
+  if (!fullState) return;
+  const blob = new Blob([JSON.stringify(fullState, null, 2)], { type: "application/json" });
+  const a    = document.createElement("a");
+  a.href     = URL.createObjectURL(blob);
+  a.download = `ceo_run_${fullState.run_id}.json`;
+  a.click();
+}
+
+function copyAll() {
+  if (!fullState) return;
+  const text = PANELS.map(p => {
+    const key = KEY_MAP[p.agent];
+    return `# ${p.agent}\n\n${fullState[key] || ""}`;
+  }).join("\n\n---\n\n");
+  navigator.clipboard.writeText(text).then(() => alert("Copied!"));
+}
+
+function resetUI() {
+  document.getElementById("idea").value    = "";
+  document.getElementById("context").value = "";
+  document.getElementById("results").innerHTML = "";
+  document.getElementById("downloadBar").classList.remove("show");
+  PANELS.forEach(p => setStep(p.agent, ""));
+  setStatus("Ready — enter your business idea above", "");
+  fullState = null;
+}
+</script>
+</body>
+</html>
