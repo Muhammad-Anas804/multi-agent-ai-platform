@@ -183,7 +183,7 @@ async def serve_ui():
         return f.read()
 
 @app.post("/run")
-async def run_agents(req: IdeaRequest, user=Depends(get_current_user)):
+async def run_agents(req: IdeaRequest):
     async def generate():
         run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
         state: AgentState = {
