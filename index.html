@@ -338,9 +338,49 @@
 
   <!-- Footer -->
   <footer>
-    <div class="footer-logo">CEO<span>Agent</span></div>
-    <div>Multi-Agent AI Platform — FastAPI · LangGraph · Groq</div>
+    <div style="max-width:1000px;margin:0 auto;width:100%;">
+      <!-- Top row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);">
+        <div>
+          <div class="footer-logo" style="font-size:1.3rem;margin-bottom:.3rem;">CEO<span>Agent</span></div>
+          <div style="font-size:.8rem;color:var(--muted);">Multi-Agent AI Platform</div>
+        </div>
+        <div style="display:flex;gap:2rem;flex-wrap:wrap;">
+          <a href="#" onclick="openPrivacy()" style="color:var(--muted);font-size:.82rem;text-decoration:none;transition:.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Privacy Policy</a>
+          <a href="#" onclick="openPrivacy()" style="color:var(--muted);font-size:.82rem;text-decoration:none;transition:.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Terms of Service</a>
+          <a href="mailto:contact@ceoagent.app" style="color:var(--muted);font-size:.82rem;text-decoration:none;transition:.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Contact</a>
+        </div>
+      </div>
+      <!-- Bottom row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;padding-top:1.25rem;">
+        <div style="font-size:.8rem;color:var(--muted);">© 2026 CEO Agent. All Rights Reserved.</div>
+        <div style="font-size:.8rem;color:var(--muted);">Designed & Developed by <span style="color:var(--gold);font-weight:500;">Muhammad Anas</span> · AI Engineer</div>
+      </div>
+    </div>
   </footer>
+
+  <!-- Privacy Policy Modal -->
+  <div class="modal-overlay" id="modal-privacy">
+    <div class="modal" style="max-width:560px;max-height:80vh;overflow-y:auto;">
+      <button class="modal-close" onclick="closeModal('privacy')">✕</button>
+      <h2 style="margin-bottom:1rem;">Privacy Policy</h2>
+      <div style="color:var(--muted);font-size:.88rem;line-height:1.8;">
+        <p style="margin-bottom:1rem;"><strong style="color:var(--text);">Last updated:</strong> May 2026</p>
+        <p style="margin-bottom:1rem;">CEO Agent ("we", "our", "us") is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your information.</p>
+        <h4 style="color:var(--text);margin-bottom:.5rem;">1. Information We Collect</h4>
+        <p style="margin-bottom:1rem;">We collect your name, email address, and password (encrypted) when you create an account. We also store the business ideas you submit for analysis.</p>
+        <h4 style="color:var(--text);margin-bottom:.5rem;">2. How We Use Your Data</h4>
+        <p style="margin-bottom:1rem;">Your data is used solely to provide the CEO Agent service — authenticating your account and running AI analysis on your submitted ideas.</p>
+        <h4 style="color:var(--text);margin-bottom:.5rem;">3. Data Security</h4>
+        <p style="margin-bottom:1rem;">Passwords are hashed using PBKDF2-SHA256. Authentication tokens expire after 7 days. We do not sell or share your data with third parties.</p>
+        <h4 style="color:var(--text);margin-bottom:.5rem;">4. Third-Party Services</h4>
+        <p style="margin-bottom:1rem;">We use Groq LLM API to process your business ideas. Your inputs may be processed by Groq's infrastructure subject to their privacy policy.</p>
+        <h4 style="color:var(--text);margin-bottom:.5rem;">5. Contact</h4>
+        <p>For any privacy concerns, contact us at <span style="color:var(--gold);">contact@ceoagent.app</span></p>
+      </div>
+      <button class="btn btn-gold btn-full" style="margin-top:1.5rem;" onclick="closeModal('privacy')">Got it</button>
+    </div>
+  </div>
 </div>
 
 <!-- Dashboard (after login) -->
@@ -363,6 +403,14 @@
     <div class="msg" id="run-msg"></div>
   </div>
 
+  <div id="result-actions" style="display:none;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+    <button class="btn btn-ghost" onclick="clearResults()" style="display:flex;align-items:center;gap:.4rem;">🗑️ Clear Results</button>
+    <button class="btn btn-ghost" onclick="downloadReport()" style="display:flex;align-items:center;gap:.4rem;">⬇️ Download Report</button>
+  </div>
+  <div id="result-actions" style="display:none;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+    <button class="btn btn-ghost" onclick="clearResults()" style="display:flex;align-items:center;gap:.4rem;">🗑️ Clear Results</button>
+    <button class="btn btn-ghost" onclick="downloadReport()" style="display:flex;align-items:center;gap:.4rem;">⬇️ Download Report</button>
+  </div>
   <div id="results"></div>
 </div>
 
@@ -578,6 +626,36 @@ function toggleBlock(header) {
   const body = header.nextElementSibling;
   body.classList.toggle("open");
   header.querySelector("span").textContent = body.classList.contains("open") ? "▾" : "▸";
+}
+
+
+function openPrivacy() { openModal('privacy'); }
+
+// ── Clear results ────────────────────────────────────
+function clearResults() {
+  document.getElementById("results").innerHTML = "";
+  document.getElementById("results").style.display = "none";
+  document.getElementById("result-actions").style.display = "none";
+  document.getElementById("idea-input").value = "";
+  document.getElementById("context-input").value = "";
+}
+
+// ── Download report ───────────────────────────────────
+function downloadReport() {
+  const blocks = document.querySelectorAll(".agent-block");
+  if (!blocks.length) return;
+  let report = "CEO AGENT REPORT\n" + "=".repeat(50) + "\n";
+  report += "Date: " + new Date().toLocaleString() + "\n";
+  report += "Idea: " + (document.getElementById("idea-input").value || "N/A") + "\n\n";
+  blocks.forEach(block => {
+    const title = block.querySelector("h4")?.textContent?.trim() || "";
+    const body = block.querySelector(".agent-block-body")?.textContent?.trim() || "";
+    if (title && body) report += "── " + title + "\n\n" + body + "\n\n" + "-".repeat(40) + "\n\n";
+  });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([report], {type:"text/plain"}));
+  a.download = "ceo-report-" + Date.now() + ".txt";
+  a.click();
 }
 
 // ── Auto-login if token exists ──────────────────────────────────────────────
