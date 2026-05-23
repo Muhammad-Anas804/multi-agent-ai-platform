@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>CEO Agent — Multi-Agent AI Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet"/>
 <style>
   :root {
     --bg: #08090c;
@@ -109,6 +109,83 @@
   }
   .agent-pill .icon { font-size:1rem; }
   .agent-arrow { color:var(--gold); margin:0 .5rem; font-size:.8rem; opacity:.6; }
+  .agent-pill {
+    animation: pillFloat 3s ease-in-out infinite;
+  }
+  .agent-pill:nth-child(1)  { animation-delay: 0s; }
+  .agent-pill:nth-child(3)  { animation-delay: 0.3s; }
+  .agent-pill:nth-child(5)  { animation-delay: 0.6s; }
+  .agent-pill:nth-child(7)  { animation-delay: 0.9s; }
+  .agent-pill:nth-child(9)  { animation-delay: 1.2s; }
+  .agent-pill:hover {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.12);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 24px rgba(201,168,76,0.2);
+    transition: all .25s;
+  }
+  .agent-arrow {
+    animation: arrowPulse 1.5s ease-in-out infinite;
+  }
+  .agent-arrow:nth-child(2) { animation-delay: 0.1s; }
+  .agent-arrow:nth-child(4) { animation-delay: 0.3s; }
+  .agent-arrow:nth-child(6) { animation-delay: 0.5s; }
+  .agent-arrow:nth-child(8) { animation-delay: 0.7s; }
+  @keyframes pillFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+  }
+  @keyframes arrowPulse {
+    0%, 100% { opacity: 0.3; transform: translateX(0); }
+    50% { opacity: 1; transform: translateX(3px); }
+  }
+  /* Feature cards animated on scroll */
+  .feature-card {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s, box-shadow 0.3s;
+  }
+  .feature-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .feature-card:nth-child(1) { transition-delay: 0.0s; }
+  .feature-card:nth-child(2) { transition-delay: 0.1s; }
+  .feature-card:nth-child(3) { transition-delay: 0.2s; }
+  .feature-card:nth-child(4) { transition-delay: 0.3s; }
+  .feature-card:nth-child(5) { transition-delay: 0.4s; }
+  .feature-card:nth-child(6) { transition-delay: 0.5s; }
+  /* Agent block animated entry */
+  .agent-block {
+    animation: blockSlideIn 0.5s ease forwards;
+    opacity: 0;
+  }
+  @keyframes blockSlideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  /* Running agent pulse glow */
+  .agent-block-header:has(.status.running) {
+    background: rgba(201,168,76,0.05);
+  }
+  /* Hero badge shimmer */
+  .hero-badge {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-badge::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+    animation: shimmer 2.5s infinite;
+  }
+  @keyframes shimmer {
+    0%   { left: -100%; }
+    100% { left: 200%; }
+  }
 
   /* ── Features ── */
   .section { padding:6rem 2rem; position:relative; z-index:1; }
@@ -259,10 +336,16 @@
     <div class="logo-text">CEO<span>Agent</span></div>
   </div>
   <div class="nav-actions" id="nav-actions">
-    <button class="btn btn-ghost" onclick="openModal('login')">Sign In</button>
+    <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" title="Toggle theme">🌙</button>
+    <button class="btn btn-ghost" onclick="toggleLang()" id="lang-btn" style="font-size:.8rem;min-width:70px;">اردو</button>
+    <button class="btn btn-ghost" onclick="openModal('guide')" style="font-size:.8rem;" id="nav-guide">📖 Guide</button>
+    <button class="btn btn-ghost" onclick="openModal('login')" id="nav-signin">Sign In</button>
     <button class="btn btn-gold" onclick="openModal('signup')">Get Started</button>
   </div>
   <div class="nav-actions" id="nav-user" style="display:none">
+    <button class="theme-btn" onclick="toggleTheme()" id="theme-btn2" title="Toggle theme">🌙</button>
+    <button class="btn btn-ghost" onclick="toggleLang()" id="lang-btn2" style="font-size:.8rem;min-width:70px;">اردو</button>
+    <button class="btn btn-ghost" onclick="openModal('guide')" style="font-size:.8rem;">📖 Guide</button>
     <span id="nav-name" style="font-size:.875rem;color:var(--muted)"></span>
     <button class="btn btn-ghost" onclick="logout()">Sign Out</button>
   </div>
@@ -348,18 +431,39 @@
         <div style="display:flex;gap:2rem;flex-wrap:wrap;">
           <a href="#" onclick="openPrivacy()" style="color:var(--muted);font-size:.82rem;text-decoration:none;transition:.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Privacy Policy</a>
           <a href="#" onclick="openPrivacy()" style="color:var(--muted);font-size:.82rem;text-decoration:none;transition:.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Terms of Service</a>
-          <a href="mailto:contact@ceoagent.app" style="color:var(--muted);font-size:.82rem;text-decoration:none;transition:.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Contact</a>
+          <a href="mailto:muhammadanas.ragdev@gmail.com" style="color:var(--muted);font-size:.82rem;text-decoration:none;transition:.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Contact</a>
         </div>
       </div>
       <!-- Bottom row -->
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;padding-top:1.25rem;">
         <div style="font-size:.8rem;color:var(--muted);">© 2026 CEO Agent. All Rights Reserved.</div>
         <div style="font-size:.8rem;color:var(--muted);">Designed & Developed by <span style="color:var(--gold);font-weight:500;">Muhammad Anas</span> · AI Engineer</div>
+        <div style="display:flex;gap:1.25rem;flex-wrap:wrap;">
+          <a href="mailto:muhammadanas.ragdev@gmail.com" style="color:var(--muted);font-size:.78rem;text-decoration:none;transition:.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">📧 muhammadanas.ragdev@gmail.com</a>
+          <a href="tel:+923079062502" style="color:var(--muted);font-size:.78rem;text-decoration:none;transition:.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">📞 +92 307 906 2502</a>
+        </div>
       </div>
     </div>
   </footer>
 
-  <!-- Privacy Policy Modal -->
+  
+<!-- Profile Modal -->
+<div class="modal-overlay" id="modal-profile">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeModal('profile')">✕</button>
+    <div class="profile-avatar" id="profile-avatar">A</div>
+    <h2 style="text-align:center;margin-bottom:.25rem;" id="profile-name-display">Muhammad Anas</h2>
+    <p style="text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:1.75rem;" id="profile-email-display">email@example.com</p>
+
+    <div class="form-group"><label>Full Name</label><input type="text" id="profile-name-input" placeholder="Your name"/></div>
+    <div class="form-group"><label>New Password</label><input type="password" id="profile-pass-input" placeholder="Leave blank to keep current"/></div>
+    <div class="msg" id="profile-msg"></div>
+    <button class="btn btn-gold btn-full" onclick="updateProfile()">Save Changes</button>
+    <button class="btn btn-ghost btn-full" style="margin-top:.5rem;border-color:var(--danger);color:var(--danger);" onclick="confirmDeleteAccount()">Delete Account</button>
+  </div>
+</div>
+
+<!-- Privacy Policy Modal -->
   <div class="modal-overlay" id="modal-privacy">
     <div class="modal" style="max-width:560px;max-height:80vh;overflow-y:auto;">
       <button class="modal-close" onclick="closeModal('privacy')">✕</button>
@@ -376,7 +480,9 @@
         <h4 style="color:var(--text);margin-bottom:.5rem;">4. Third-Party Services</h4>
         <p style="margin-bottom:1rem;">We use Groq LLM API to process your business ideas. Your inputs may be processed by Groq's infrastructure subject to their privacy policy.</p>
         <h4 style="color:var(--text);margin-bottom:.5rem;">5. Contact</h4>
-        <p>For any privacy concerns, contact us at <span style="color:var(--gold);">contact@ceoagent.app</span></p>
+        <p>For any privacy concerns, contact us at:<br><br>
+        📧 <span style="color:var(--gold);">muhammadanas.ragdev@gmail.com</span><br>
+        📞 <span style="color:var(--gold);">+92 307 906 2502</span></p>
       </div>
       <button class="btn btn-gold btn-full" style="margin-top:1.5rem;" onclick="closeModal('privacy')">Got it</button>
     </div>
@@ -386,14 +492,57 @@
 <!-- Dashboard (after login) -->
 <div id="dashboard">
   <div class="dash-header">
-    <h2>Welcome back, <span id="dash-name"></span></h2>
-    <p>Enter your business idea below to launch the full agent analysis.</p>
-    <button class="dash-logout" onclick="logout()">← Sign Out</button>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h2 id="dash-greeting">Welcome back, <span id="dash-name"></span> 👋</h2>
+        <p id="dash-subtext" style="margin-top:.3rem;">Ready to analyze your next big idea?</p>
+      </div>
+      <div style="display:flex;gap:.6rem;align-items:center;">
+        <button class="btn btn-ghost" onclick="openModal('profile')" style="font-size:.82rem;">👤 Profile</button>
+        <button class="dash-logout" onclick="logout()">← Sign Out</button>
+      </div>
+    </div>
   </div>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat-card">
+      <div class="stat-num" id="stat-total">0</div>
+      <div class="stat-label" id="stat-total-label">Total Analyses</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-saved">0</div>
+      <div class="stat-label" id="stat-saved-label">Saved Reports</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-last">—</div>
+      <div class="stat-label" id="stat-last-label">Last Analysis</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="dash-tabs">
+    <button class="dash-tab active" onclick="switchTab('analyze')" id="tab-analyze">⚡ Analyze</button>
+    <button class="dash-tab" onclick="switchTab('history')" id="tab-history">📋 History</button>
+    <button class="dash-tab" onclick="switchTab('saved')" id="tab-saved">🔖 Saved</button>
+  </div>
+
+  <!-- Tab: Analyze -->
+  <div id="panel-analyze">
 
   <div class="idea-card">
     <h3>Business Idea</h3>
-    <div class="form-group">
+    <div class="templates-section">
+      <div class="templates-label">💡 Quick Templates</div>
+      <div class="templates-grid">
+        <div class="template-chip" onclick="useTemplate(0)">🛒 AI E-Commerce</div>
+        <div class="template-chip" onclick="useTemplate(1)">🏥 HealthTech SaaS</div>
+        <div class="template-chip" onclick="useTemplate(2)">🎓 EdTech Platform</div>
+        <div class="template-chip" onclick="useTemplate(3)">🚗 EV Startup</div>
+        <div class="template-chip" onclick="useTemplate(4)">🤖 AI Productivity</div>
+      </div>
+    </div>
+        <div class="form-group">
       <textarea id="idea-input" placeholder="Describe your business idea… e.g. 'An AI-powered meal planning app for busy professionals'" rows="3"></textarea>
     </div>
     <div class="form-group">
@@ -412,6 +561,23 @@
     <button class="btn btn-ghost" onclick="downloadReport()" style="display:flex;align-items:center;gap:.4rem;">⬇️ Download Report</button>
   </div>
   <div id="results"></div>
+  </div><!-- end panel-analyze -->
+
+  <!-- Tab: History -->
+  <div id="panel-history" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+      <h3 style="font-size:1rem;font-weight:600;" id="history-title">Analysis History</h3>
+      <button class="btn btn-ghost" onclick="clearHistory()" style="font-size:.78rem;padding:.35rem .8rem;">🗑️ Clear All</button>
+    </div>
+    <div id="history-list"><p style="color:var(--muted);font-size:.88rem;">No history yet. Run your first analysis!</p></div>
+  </div>
+
+  <!-- Tab: Saved -->
+  <div id="panel-saved" style="display:none;">
+    <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem;" id="saved-title">Saved Reports</h3>
+    <div id="saved-list"><p style="color:var(--muted);font-size:.88rem;">No saved reports yet. Bookmark an analysis to save it here!</p></div>
+  </div>
+
 </div>
 
 <!-- Login Modal -->
@@ -473,6 +639,10 @@ function showDashboard(name) {
   document.getElementById("nav-actions").style.display = "none";
   document.getElementById("nav-user").style.display = "flex";
   document.getElementById("nav-name").textContent = name;
+  const avatar = document.getElementById('profile-avatar');
+  if(avatar) avatar.textContent = name.charAt(0).toUpperCase();
+  updateStats();
+  applyLang();
 }
 function showLanding() {
   document.getElementById("landing").style.display = "block";
@@ -541,6 +711,7 @@ async function runAgents() {
 
   if (!idea) { showMsg(msg, "error", "Please enter a business idea."); return; }
 
+  saveToHistory(idea);
   const btn = document.getElementById("run-btn");
   btn.disabled = true; btn.textContent = "⟳ Analyzing…";
 
@@ -562,6 +733,7 @@ async function runAgents() {
       </div>
       <div class="agent-block-body" id="body-${name.replace(" ","-")}"></div>`;
     results.appendChild(el);
+    el.style.animationDelay = (agents.indexOf(name) * 0.15) + 's';
     blocks[name] = el;
   });
 
@@ -607,12 +779,17 @@ function handleEvent(ev) {
   if(ev.event === "agent_start") {
     const s = document.getElementById("status-"+key(ev.agent));
     if(s) s.className = "status running";
+    const block = document.getElementById("block-"+key(ev.agent));
+    if(block) showSkeleton(block);
   }
   if(ev.event === "agent_done") {
     const s = document.getElementById("status-"+key(ev.agent));
     if(s) s.className = "status done";
+    const block = document.getElementById("block-"+key(ev.agent));
+    if(block) clearSkeleton(block);
     const body = document.getElementById("body-"+key(ev.agent));
     if(body) { body.textContent = ev.output; body.classList.add("open"); }
+    if(block) addCopyButton(block);
   }
   if(ev.event === "agent_error") {
     const s = document.getElementById("status-"+key(ev.agent));
@@ -628,6 +805,148 @@ function toggleBlock(header) {
   header.querySelector("span").textContent = body.classList.contains("open") ? "▾" : "▸";
 }
 
+
+
+// ── User Guide ────────────────────────────────────────────
+const guideSteps = [
+  {
+    icon: "🚀",
+    title: "Welcome to CEO Agent!",
+    desc: "Your personal AI boardroom. In just 3 steps, get a full business analysis powered by 5 specialized AI agents.",
+    demo: '<div style="text-align:center;"><span style="color:var(--gold);font-size:1.1rem;font-weight:600;">Research → Marketing → Finance → Risk → CEO</span><br><span style="font-size:.8rem;margin-top:.4rem;display:block;">5 agents work together in real-time</span></div>'
+  },
+  {
+    icon: "✍️",
+    title: "Step 1 — Create Your Account",
+    desc: "Click 'Get Started' and sign up with your name, email and password. It takes less than 30 seconds!",
+    demo: '<div style="width:100%;"><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .9rem;margin-bottom:.5rem;font-size:.82rem;">📧 your@email.com</div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .9rem;font-size:.82rem;">🔒 ••••••••</div><div style="background:var(--gold);color:#0a0802;border-radius:8px;padding:.6rem;text-align:center;margin-top:.5rem;font-size:.82rem;font-weight:600;">Create Account →</div></div>'
+  },
+  {
+    icon: "💡",
+    title: "Step 2 — Enter Your Idea",
+    desc: "Type your business idea in the text box. Be specific — mention your target market, region, and what problem you solve.",
+    demo: '<div id="typing-demo" style="background:var(--surface);border:1px solid var(--gold);border-radius:8px;padding:.75rem;font-size:.82rem;color:var(--text);min-height:50px;"></div>'
+  },
+  {
+    icon: "⚡",
+    title: "Step 3 — Run All Agents",
+    desc: "Click the 'Run Analysis' button and watch 5 AI agents analyze your idea in real-time — each one lighting up as it works!",
+    demo: '<div style="display:flex;flex-direction:column;gap:.4rem;width:100%;"><div class="agent-status-demo" style="display:flex;align-items:center;gap:.6rem;padding:.4rem .6rem;background:var(--surface);border-radius:6px;border:1px solid var(--border);font-size:.8rem;"><div style="width:7px;height:7px;border-radius:50%;background:var(--success);"></div>📊 Research — Done</div><div style="display:flex;align-items:center;gap:.6rem;padding:.4rem .6rem;background:var(--surface);border-radius:6px;border:1px solid var(--border);font-size:.8rem;"><div style="width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 1s infinite;"></div>📣 Marketing — Running...</div><div style="display:flex;align-items:center;gap:.6rem;padding:.4rem .6rem;background:var(--surface);border-radius:6px;border:1px solid var(--border);font-size:.8rem;color:var(--muted);"><div style="width:7px;height:7px;border-radius:50%;background:var(--border);"></div>💰 Finance — Waiting</div></div>'
+  },
+  {
+    icon: "📊",
+    title: "Step 4 — Read Your Report",
+    desc: "Each agent gives a detailed report. Click any section to expand it. You'll get market research, marketing plan, financial model, risk analysis and a final CEO decision!",
+    demo: '<div style="display:flex;flex-direction:column;gap:.4rem;width:100%;"><div style="padding:.5rem .75rem;background:var(--surface);border-radius:6px;border:1px solid var(--border);font-size:.8rem;cursor:pointer;">📊 Research Report ▾</div><div style="padding:.5rem .75rem;background:rgba(201,168,76,.08);border-radius:6px;border:1px solid rgba(201,168,76,.3);font-size:.78rem;color:var(--muted);">Market size: $2.3B globally. Top competitors: Uber Eats, FoodPanda...</div><div style="padding:.5rem .75rem;background:var(--surface);border-radius:6px;border:1px solid var(--border);font-size:.8rem;">💰 Finance Report ▸</div></div>'
+  },
+  {
+    icon: "⬇️",
+    title: "Step 5 — Download & Clear",
+    desc: "Download your full report as a .txt file to save or share. Use 'Clear Results' to start a fresh analysis anytime!",
+    demo: '<div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;"><div style="padding:.5rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:.82rem;display:flex;align-items:center;gap:.4rem;">🗑️ Clear Results</div><div style="padding:.5rem 1rem;background:var(--gold);color:#0a0802;border-radius:8px;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:.4rem;">⬇️ Download Report</div></div>'
+  }
+];
+
+let guideStep = 0;
+let typingInterval = null;
+
+function renderGuideStep(step) {
+  const s = guideSteps[step];
+  const iconEl = document.getElementById("guide-icon");
+  const titleEl = document.getElementById("guide-title");
+  const descEl = document.getElementById("guide-desc");
+  const demoEl = document.getElementById("guide-demo");
+  const counter = document.getElementById("guide-counter");
+  const prev = document.getElementById("guide-prev");
+  const next = document.getElementById("guide-next");
+  const progress = document.getElementById("guide-progress");
+
+  // Animate content
+  [iconEl, titleEl, descEl, demoEl].forEach(el => {
+    el.classList.remove("guide-animate");
+    void el.offsetWidth;
+    el.classList.add("guide-animate");
+  });
+
+  iconEl.innerHTML = `<span class="float-icon">${s.icon}</span>`;
+  titleEl.textContent = s.title;
+  descEl.textContent = s.desc;
+  demoEl.innerHTML = s.demo;
+
+  // Typing demo on step 2
+  if (step === 2) {
+    const target = document.getElementById("typing-demo");
+    if (target) {
+      const text = "An AI-powered food delivery app in Pakistan targeting small restaurants in Lahore with low commission fees...";
+      let i = 0;
+      if (typingInterval) clearInterval(typingInterval);
+      target.textContent = "";
+      typingInterval = setInterval(() => {
+        if (i < text.length) { target.textContent += text[i++]; }
+        else clearInterval(typingInterval);
+      }, 35);
+    }
+  }
+
+  // Dots
+  document.querySelectorAll(".guide-dot").forEach((d, i) => {
+    d.classList.toggle("active", i === step);
+  });
+
+  // Progress
+  progress.style.width = ((step + 1) / guideSteps.length * 100) + "%";
+
+  // Buttons
+  counter.textContent = (step + 1) + " / " + guideSteps.length;
+  prev.style.visibility = step === 0 ? "hidden" : "visible";
+  next.textContent = step === guideSteps.length - 1 ? "🎉 Let's Go!" : "Next →";
+}
+
+function guideNav(dir) {
+  if (typingInterval) { clearInterval(typingInterval); typingInterval = null; }
+  if (dir === 1 && guideStep === guideSteps.length - 1) {
+    closeModal('guide');
+    return;
+  }
+  guideStep = Math.max(0, Math.min(guideSteps.length - 1, guideStep + dir));
+  renderGuideStep(guideStep);
+}
+
+// Override openModal to reset guide on open
+const _origOpen = openModal;
+openModal = function(id) {
+  if (id === 'profile') { openProfileModal(); return; }
+  if (id === 'guide') {
+    guideStep = 0;
+    _origOpen(id);
+    setTimeout(() => renderGuideStep(0), 50);
+  } else {
+    _origOpen(id);
+  }
+};
+
+
+
+// ── Scroll animation for feature cards ─────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.feature-card').forEach(card => observer.observe(card));
+  // Restore theme
+  if(localStorage.getItem('ceo_theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.querySelectorAll('#theme-btn,#theme-btn2').forEach(b => b.textContent = '☀️');
+  }
+  // Restore lang
+  currentLang = localStorage.getItem('ceo_lang') || 'en';
+  applyLang();
+});
 
 function openPrivacy() { openModal('privacy'); }
 
@@ -658,6 +977,304 @@ function downloadReport() {
   a.click();
 }
 
+
+
+// ── Prompt Templates ──────────────────────────────────────────
+const promptTemplates = [
+  {
+    idea: "An AI-powered e-commerce platform that uses machine learning to personalize product recommendations, dynamic pricing, and automated inventory management for small to medium online retailers globally.",
+    context: "B2B SaaS model, subscription-based, targeting retailers with $10K-$500K monthly revenue, bootstrap stage with $50K budget"
+  },
+  {
+    idea: "A HealthTech SaaS platform that uses AI to help clinics and hospitals automate patient triage, appointment scheduling, and follow-up reminders while integrating with existing EHR systems.",
+    context: "B2B model targeting private clinics and small hospitals, HIPAA compliant, SaaS with per-seat pricing, Series A stage"
+  },
+  {
+    idea: "An AI-driven EdTech platform that offers personalized learning paths for university students, using adaptive testing, peer collaboration tools, and job-market alignment to improve career outcomes.",
+    context: "B2C and B2B2C model, freemium with premium subscriptions, targeting universities and individual learners globally"
+  },
+  {
+    idea: "An electric vehicle (EV) startup focused on affordable last-mile delivery vehicles for logistics companies, with a battery-swap network and fleet management software to reduce operational costs.",
+    context: "Hardware + software play, targeting logistics and e-commerce companies, Series A, partnerships with battery manufacturers"
+  },
+  {
+    idea: "An AI productivity platform that acts as a personal work assistant — automating email responses, meeting summaries, task prioritization, and cross-app workflows for remote and hybrid teams.",
+    context: "B2B SaaS, per-seat pricing, integrates with Slack, Gmail, Notion and Jira, targeting teams of 10-500 employees"
+  }
+];
+
+function useTemplate(index) {
+  const t = promptTemplates[index];
+  const ideaEl = document.getElementById('idea-input');
+  const ctxEl = document.getElementById('context-input');
+  if(ideaEl) {
+    ideaEl.value = t.idea;
+    ideaEl.style.borderColor = 'var(--gold)';
+    setTimeout(() => ideaEl.style.borderColor = '', 1000);
+  }
+  if(ctxEl) {
+    ctxEl.value = t.context;
+    ctxEl.style.borderColor = 'var(--gold)';
+    setTimeout(() => ctxEl.style.borderColor = '', 1000);
+  }
+  // Highlight selected chip
+  document.querySelectorAll('.template-chip').forEach((c,i) => {
+    c.classList.toggle('selected', i === index);
+  });
+  // Scroll to textarea
+  ideaEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ── Share Report ──────────────────────────────────────────────
+function shareReport() {
+  const idea = document.getElementById('idea-input').value.trim();
+  const text = 'CEO Agent Analysis: ' + idea;
+  if(navigator.share) {
+    navigator.share({ title: 'CEO Agent Report', text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      alert('Link copied to clipboard!');
+    });
+  }
+}
+
+// ── Bookmark Analysis ─────────────────────────────────────────
+function bookmarkAnalysis() {
+  const idea = document.getElementById('idea-input').value.trim();
+  if(!idea) return;
+  const blocks = document.querySelectorAll('.agent-block');
+  let content = '';
+  blocks.forEach(block => {
+    const title = block.querySelector('h4')?.textContent?.trim() || '';
+    const body = block.querySelector('.agent-block-body')?.textContent?.trim() || '';
+    if(title && body) content += title + '\n\n' + body + '\n\n---\n\n';
+  });
+  const saved = getSaved();
+  saved.unshift({ idea, content, date: new Date().toISOString(), id: Date.now() });
+  localStorage.setItem('ceo_saved', JSON.stringify(saved));
+  const btn = document.getElementById('bookmark-btn');
+  if(btn) { btn.textContent = '✅ Saved!'; setTimeout(() => btn.textContent = '🔖 Save', 2000); }
+  updateStats();
+}
+
+
+// ── Theme Toggle ─────────────────────────────────────────────
+function toggleTheme() {
+  document.body.classList.toggle('light-mode');
+  const isLight = document.body.classList.contains('light-mode');
+  localStorage.setItem('ceo_theme', isLight ? 'light' : 'dark');
+  document.querySelectorAll('#theme-btn,#theme-btn2').forEach(b => b.textContent = isLight ? '☀️' : '🌙');
+}
+
+// ── Language Toggle ───────────────────────────────────────────
+const translations = {
+  en: {
+    heroTitle: "Your Boardroom.<br/>Powered by AI.",
+    heroSub: "Deploy a team of specialized AI agents — Research, Marketing, Finance, Risk — to analyze any business idea in seconds.",
+    getStarted: "Start Free Analysis", signIn: "Sign In",
+    totalAnalyses: "Total Analyses", savedReports: "Saved Reports", lastAnalysis: "Last Analysis",
+    analyze: "⚡ Analyze", history: "📋 History", saved: "🔖 Saved",
+    runBtn: "▶ Run Analysis",
+    ideaPlaceholder: "Describe your business idea…",
+    contextPlaceholder: "Additional context (optional)",
+  },
+  ur: {
+    heroTitle: "آپ کا بورڈ روم۔<br/>AI سے چلتا ہے۔",
+    heroSub: "پانچ AI ماہرین کی ٹیم — ریسرچ، مارکیٹنگ، فنانس، رسک — چند سیکنڈ میں آپ کے بزنس آئیڈیا کا تجزیہ کریں۔",
+    getStarted: "مفت تجزیہ شروع کریں", signIn: "سائن ان",
+    totalAnalyses: "کل تجزیے", savedReports: "محفوظ رپورٹس", lastAnalysis: "آخری تجزیہ",
+    analyze: "⚡ تجزیہ", history: "📋 تاریخ", saved: "🔖 محفوظ",
+    runBtn: "▶ تجزیہ چلائیں",
+    ideaPlaceholder: "اپنا بزنس آئیڈیا لکھیں…",
+    contextPlaceholder: "اضافی معلومات (اختیاری)",
+  }
+};
+let currentLang = localStorage.getItem('ceo_lang') || 'en';
+
+function toggleLang() {
+  currentLang = currentLang === 'en' ? 'ur' : 'en';
+  localStorage.setItem('ceo_lang', currentLang);
+  applyLang();
+}
+
+function applyLang() {
+  const t = translations[currentLang];
+  const isUr = currentLang === 'ur';
+  document.querySelectorAll('#lang-btn,#lang-btn2').forEach(b => b.textContent = isUr ? 'English' : 'اردو');
+  const h1 = document.querySelector('h1');
+  if(h1) h1.innerHTML = t.heroTitle;
+  const heroSub = document.querySelector('.hero-sub');
+  if(heroSub) heroSub.textContent = t.heroSub;
+  const el = id => document.getElementById(id);
+  if(el('stat-total-label')) el('stat-total-label').textContent = t.totalAnalyses;
+  if(el('stat-saved-label')) el('stat-saved-label').textContent = t.savedReports;
+  if(el('stat-last-label')) el('stat-last-label').textContent = t.lastAnalysis;
+  if(el('tab-analyze')) el('tab-analyze').textContent = t.analyze;
+  if(el('tab-history')) el('tab-history').textContent = t.history;
+  if(el('tab-saved')) el('tab-saved').textContent = t.saved;
+  if(el('run-btn') && !el('run-btn').disabled) el('run-btn').textContent = t.runBtn;
+  if(el('idea-input')) el('idea-input').placeholder = t.ideaPlaceholder;
+  if(el('context-input')) el('context-input').placeholder = t.contextPlaceholder;
+  document.body.style.direction = isUr ? 'rtl' : 'ltr';
+}
+
+// ── Tab Switcher ──────────────────────────────────────────────
+function switchTab(tab) {
+  ['analyze','history','saved'].forEach(t => {
+    const panel = document.getElementById('panel-'+t);
+    const tabBtn = document.getElementById('tab-'+t);
+    if(panel) panel.style.display = t === tab ? 'block' : 'none';
+    if(tabBtn) tabBtn.classList.toggle('active', t === tab);
+  });
+  if(tab === 'history') renderHistory();
+  if(tab === 'saved') renderSaved();
+}
+
+// ── Stats ─────────────────────────────────────────────────────
+function updateStats() {
+  const history = getHistory();
+  const saved = getSaved();
+  const el = id => document.getElementById(id);
+  if(el('stat-total')) el('stat-total').textContent = history.length;
+  if(el('stat-saved')) el('stat-saved').textContent = saved.length;
+  if(el('stat-last')) {
+    el('stat-last').textContent = history.length > 0
+      ? new Date(history[0].date).toLocaleDateString('en-PK', {month:'short', day:'numeric'})
+      : '—';
+  }
+}
+
+// ── History ───────────────────────────────────────────────────
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('ceo_history') || '[]'); } catch { return []; }
+}
+function saveToHistory(idea) {
+  const h = getHistory();
+  h.unshift({ idea, date: new Date().toISOString(), id: Date.now() });
+  if(h.length > 20) h.pop();
+  localStorage.setItem('ceo_history', JSON.stringify(h));
+  updateStats();
+}
+function clearHistory() {
+  if(confirm('Clear all history?')) {
+    localStorage.removeItem('ceo_history');
+    renderHistory(); updateStats();
+  }
+}
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  const h = getHistory();
+  if(!list) return;
+  if(!h.length) { list.innerHTML = '<p style="color:var(--muted);font-size:.88rem;">No history yet. Run your first analysis!</p>'; return; }
+  window._historyMap = {};
+  h.forEach(item => { window._historyMap[item.id] = item.idea; });
+  list.innerHTML = h.map(item => {
+    const shortIdea = item.idea.length > 60 ? item.idea.substring(0,60)+'...' : item.idea;
+    const date = new Date(item.date).toLocaleDateString();
+    return '<div class="history-item" onclick="rerunIdea(' + item.id + ')">' +
+      '<span class="h-idea">💡 ' + shortIdea + '</span>' +
+      '<span class="h-date">' + date + '</span>' +
+      '<span class="h-del" onclick="event.stopPropagation();deleteHistory(' + item.id + ')">✕</span>' +
+      '</div>';
+  }).join('');
+}
+function deleteHistory(id) {
+  localStorage.setItem('ceo_history', JSON.stringify(getHistory().filter(h => h.id !== id)));
+  renderHistory(); updateStats();
+}
+function rerunIdea(id) {
+  const idea = (window._historyMap && window._historyMap[id]) || '';
+  switchTab('analyze');
+  const el = document.getElementById('idea-input');
+  if(el) { el.value = idea; el.focus(); }
+}
+
+// ── Saved Reports ─────────────────────────────────────────────
+function getSaved() {
+  try { return JSON.parse(localStorage.getItem('ceo_saved') || '[]'); } catch { return []; }
+}
+function renderSaved() {
+  const list = document.getElementById('saved-list');
+  const saved = getSaved();
+  if(!list) return;
+  if(!saved.length) { list.innerHTML = '<p style="color:var(--muted);font-size:.88rem;">No saved reports yet.</p>'; return; }
+  list.innerHTML = saved.map(s => `
+    <div class="history-item">
+      <span class="h-idea">🔖 ${s.idea.substring(0,60)}${s.idea.length>60?'...':''}</span>
+      <span class="h-date">${new Date(s.date).toLocaleDateString()}</span>
+      <span class="h-del" onclick="deleteSaved(${s.id})">✕</span>
+    </div>`).join('');
+}
+function deleteSaved(id) {
+  localStorage.setItem('ceo_saved', JSON.stringify(getSaved().filter(s => s.id !== id)));
+  renderSaved(); updateStats();
+}
+
+// ── Profile ───────────────────────────────────────────────────
+function openProfileModal() {
+  const name = localStorage.getItem('ceo_name') || '';
+  const email = localStorage.getItem('ceo_email') || '';
+  const el = id => document.getElementById(id);
+  if(el('profile-name-display')) el('profile-name-display').textContent = name;
+  if(el('profile-email-display')) el('profile-email-display').textContent = email;
+  if(el('profile-name-input')) el('profile-name-input').value = name;
+  if(el('profile-avatar')) el('profile-avatar').textContent = name.charAt(0).toUpperCase();
+  openModal('profile');
+}
+async function updateProfile() {
+  const name = document.getElementById('profile-name-input').value.trim();
+  const msg = document.getElementById('profile-msg');
+  msg.className = 'msg'; msg.textContent = '';
+  if(!name) { showMsg(msg, 'error', 'Name cannot be empty'); return; }
+  localStorage.setItem('ceo_name', name);
+  const dn = document.getElementById('dash-name');
+  const nn = document.getElementById('nav-name');
+  const av = document.getElementById('profile-avatar');
+  if(dn) dn.textContent = name;
+  if(nn) nn.textContent = name;
+  if(av) av.textContent = name.charAt(0).toUpperCase();
+  showMsg(msg, 'success', 'Profile updated!');
+  setTimeout(() => closeModal('profile'), 1500);
+}
+function confirmDeleteAccount() {
+  if(confirm('Delete your account? This cannot be undone.')) {
+    clearSession();
+    localStorage.removeItem('ceo_history');
+    localStorage.removeItem('ceo_saved');
+    closeModal('profile');
+    showLanding();
+  }
+}
+
+// ── Skeleton loader ───────────────────────────────────────────
+function showSkeleton(blockEl) {
+  const body = blockEl.querySelector('.agent-block-body');
+  if(!body) return;
+  body.innerHTML = '<div class="skeleton" style="width:90%"></div><div class="skeleton" style="width:75%"></div><div class="skeleton" style="width:85%"></div><div class="skeleton" style="width:60%"></div>';
+  body.classList.add('open');
+}
+function clearSkeleton(blockEl) {
+  const body = blockEl.querySelector('.agent-block-body');
+  if(!body) return;
+  body.innerHTML = '';
+  body.classList.remove('open');
+}
+
+// ── Copy button ───────────────────────────────────────────────
+function addCopyButton(blockEl) {
+  const body = blockEl.querySelector('.agent-block-body');
+  if(!body || body.querySelector('.copy-btn')) return;
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.onclick = () => {
+    navigator.clipboard.writeText(body.innerText.replace('Copy','').trim());
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  };
+  body.appendChild(btn);
+}
+
 // ── Auto-login if token exists ──────────────────────────────────────────────
 window.addEventListener("DOMContentLoaded", () => {
   const token = getToken();
@@ -665,5 +1282,69 @@ window.addEventListener("DOMContentLoaded", () => {
   if(token && name) showDashboard(name);
 });
 </script>
+
+<!-- Guide Modal -->
+<div class="modal-overlay" id="modal-guide">
+  <div class="modal" style="max-width:520px;padding:0;overflow:hidden;border-radius:16px;">
+    <!-- Progress bar -->
+    <div style="height:3px;background:var(--border);position:relative;">
+      <div id="guide-progress" style="height:100%;background:var(--gold);transition:width .4s ease;width:16.6%"></div>
+    </div>
+
+    <!-- Step content -->
+    <div style="padding:2.5rem 2rem 1.5rem;">
+      <button class="modal-close" onclick="closeModal('guide')" style="top:1rem;right:1rem;">✕</button>
+
+      <!-- Step indicator -->
+      <div style="display:flex;gap:.4rem;margin-bottom:1.75rem;justify-content:center;">
+        <div class="guide-dot active" id="dot-0"></div>
+        <div class="guide-dot" id="dot-1"></div>
+        <div class="guide-dot" id="dot-2"></div>
+        <div class="guide-dot" id="dot-3"></div>
+        <div class="guide-dot" id="dot-4"></div>
+        <div class="guide-dot" id="dot-5"></div>
+      </div>
+
+      <!-- Animated icon area -->
+      <div id="guide-icon" style="font-size:3.5rem;text-align:center;margin-bottom:1.25rem;transition:all .3s;"></div>
+
+      <!-- Text -->
+      <h3 id="guide-title" style="font-family:'Playfair Display',serif;font-size:1.4rem;text-align:center;margin-bottom:.75rem;"></h3>
+      <p id="guide-desc" style="color:var(--muted);font-size:.9rem;text-align:center;line-height:1.7;min-height:60px;"></p>
+
+      <!-- Demo animation area -->
+      <div id="guide-demo" style="margin-top:1.25rem;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;min-height:70px;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--muted);"></div>
+    </div>
+
+    <!-- Navigation -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem 1.5rem;">
+      <button id="guide-prev" class="btn btn-ghost" onclick="guideNav(-1)" style="visibility:hidden;">← Back</button>
+      <span id="guide-counter" style="font-size:.8rem;color:var(--muted);"></span>
+      <button id="guide-next" class="btn btn-gold" onclick="guideNav(1)">Next →</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.guide-dot {
+  width:8px; height:8px; border-radius:50%;
+  background:var(--border); transition:all .3s;
+}
+.guide-dot.active {
+  background:var(--gold); transform:scale(1.3);
+}
+@keyframes float {
+  0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)}
+}
+@keyframes typing {
+  from{width:0} to{width:100%}
+}
+@keyframes fadeSlide {
+  from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}
+}
+.guide-animate { animation: fadeSlide .4s ease forwards; }
+.float-icon { animation: float 2s ease-in-out infinite; display:inline-block; }
+</style>
+
 </body>
 </html>
