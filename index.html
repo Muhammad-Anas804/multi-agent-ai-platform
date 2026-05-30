@@ -446,6 +446,15 @@ footer{
 <body>
 
 <!-- Orbs -->
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <div class="splash-logo">V</div>
+  <div class="splash-name">VenturePilot</div>
+  <div class="splash-sub">AI Business Intelligence Platform</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+</div>
+
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 
@@ -467,6 +476,22 @@ footer{
   </div>
   <div class="nav-actions" id="nav-user" style="display:none;">
     <button class="theme-btn" onclick="toggleTheme()" id="theme-btn2">🌙</button>
+    <div style="position:relative;">
+      <div class="notif-bell" onclick="toggleNotif()" id="notif-bell">
+        🔔<div class="notif-dot show" id="notif-dot"></div>
+      </div>
+      <div class="notif-panel" id="notif-panel">
+        <div class="notif-header">
+          <div class="notif-title">Notifications</div>
+          <div class="notif-clear" onclick="clearNotifs()">Clear all</div>
+        </div>
+        <div id="notif-list">
+          <div class="notif-item"><div class="notif-icon">✅</div><div><div class="notif-text">Analysis complete! CEO Decision is ready.</div><div class="notif-time">Just now</div></div></div>
+          <div class="notif-item"><div class="notif-icon">🚀</div><div><div class="notif-text">Welcome to VenturePilot! Start your first analysis.</div><div class="notif-time">Today</div></div></div>
+          <div class="notif-item"><div class="notif-icon">💡</div><div><div class="notif-text">Tip: Use Quick Templates for faster analysis.</div><div class="notif-time">Today</div></div></div>
+        </div>
+      </div>
+    </div>
     <span id="nav-name" style="font-size:.875rem;color:var(--muted2);font-weight:600;"></span>
     <button class="btn btn-ghost" style="font-size:.82rem;" onclick="openModal('profile')">👤 Profile</button>
     <button class="btn btn-ghost" style="font-size:.82rem;" onclick="logout()">Sign Out</button>
@@ -653,10 +678,38 @@ footer{
     <button class="dash-tab active" onclick="switchTab('analyze')" id="tab-analyze">⚡ Analyze</button>
     <button class="dash-tab" onclick="switchTab('history')" id="tab-history">📋 History</button>
     <button class="dash-tab" onclick="switchTab('saved')" id="tab-saved">🔖 Saved</button>
+    <button class="dash-tab" onclick="switchTab('analytics')" id="tab-analytics">📈 Analytics</button>
+    <button class="dash-tab" onclick="switchTab('chat')" id="tab-chat">💬 AI Chat</button>
   </div>
 
   <!-- Analyze Panel -->
   <div id="panel-analyze">
+    <!-- Search Bar -->
+    <div class="search-wrap" id="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="dash-search" placeholder="Search history, templates, features… (Ctrl+K)" oninput="handleSearch(this.value)" onblur="setTimeout(()=>closeSearch(),200)"/>
+      <div class="search-results" id="search-results"></div>
+    </div>
+
+    <!-- Recent Analyses -->
+    <div id="recent-section" style="margin-bottom:1.5rem;">
+      <div style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:.75rem;">Recent Analyses</div>
+      <div id="recent-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;"></div>
+    </div>
+
+    <!-- Progress Tracker -->
+    <div class="progress-tracker" id="progress-tracker" style="display:none;">
+      <div class="progress-step" id="ps-Research"><div class="step-dot"></div>Research</div>
+      <div class="progress-connector" id="pc-1"></div>
+      <div class="progress-step" id="ps-Marketing"><div class="step-dot"></div>Marketing</div>
+      <div class="progress-connector" id="pc-2"></div>
+      <div class="progress-step" id="ps-Finance"><div class="step-dot"></div>Finance</div>
+      <div class="progress-connector" id="pc-3"></div>
+      <div class="progress-step" id="ps-Risk"><div class="step-dot"></div>Risk</div>
+      <div class="progress-connector" id="pc-4"></div>
+      <div class="progress-step" id="ps-CEO"><div class="step-dot"></div>CEO</div>
+    </div>
+
     <div class="idea-card">
       <h3>New Analysis</h3>
       <div class="templates-wrap">
@@ -686,11 +739,55 @@ footer{
       <div class="action-btn" onclick="downloadReport()">⬇️ Download</div>
       <div class="action-btn" onclick="shareReport()">🔗 Share</div>
       <div class="action-btn" onclick="bookmarkAnalysis()" id="bookmark-btn">🔖 Save</div>
+      <div class="action-btn" onclick="showScore()">🎯 Score</div>
+      <div class="action-btn" onclick="showCompetitors()">🏆 Competitors</div>
+      <div class="action-btn" onclick="openModal('email')">📧 Email</div>
     </div>
     <div id="results"></div>
   </div>
 
+  <!-- Analytics Panel -->
+  <div id="panel-analytics" style="display:none;">
+    <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;margin-bottom:1.5rem;">Usage Analytics</h3>
+    <div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+      <div class="metric-chip"><div class="mval" id="an-total">0</div><div class="mlabel">Total Analyses</div></div>
+      <div class="metric-chip"><div class="mval" id="an-week">0</div><div class="mlabel">This Week</div></div>
+      <div class="metric-chip"><div class="mval" id="an-saved">0</div><div class="mlabel">Saved Reports</div></div>
+      <div class="metric-chip"><div class="mval" id="an-streak">0</div><div class="mlabel">Day Streak</div></div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem;">
+      <div style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1.25rem;font-weight:700;">Analyses This Week</div>
+      <div class="chart-bar-wrap" id="chart-bars"></div>
+      <div class="chart-labels" id="chart-labels"></div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;">
+      <div style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;font-weight:700;">Most Analyzed Topics</div>
+      <div id="topic-list"></div>
+    </div>
+  </div>
+
+  <!-- Chat Panel -->
+  <div id="panel-chat" style="display:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+      <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;">
+        <div style="width:36px;height:36px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1rem;">🤖</div>
+        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;">VenturePilot AI</div><div style="font-size:.75rem;color:var(--success);">● Online</div></div>
+        <button class="action-btn" style="margin-left:auto;" onclick="clearChat()">🗑️ Clear</button>
+      </div>
+      <div class="chat-wrap">
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-bubble ai">👋 Hi! I'm your VenturePilot AI assistant. Ask me anything about your business idea, market strategy, financial modeling, or how to use this platform!</div>
+        </div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chat-input" placeholder="Ask about your business idea…" onkeydown="if(event.key==='Enter')sendChat()"/>
+          <button class="chat-send" onclick="sendChat()">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- History Panel -->
+
   <div id="panel-history" style="display:none;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
       <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;">Analysis History</h3>
@@ -705,6 +802,69 @@ footer{
     <div id="saved-list"></div>
   </div>
 </div>
+
+
+<!-- SCORE MODAL -->
+<div class="modal-overlay" id="modal-score">
+  <div class="modal" style="max-width:420px;text-align:center;">
+    <button class="modal-close" onclick="closeModal('score')">✕</button>
+    <h2 style="margin-bottom:1.5rem;">Idea Score</h2>
+    <div class="score-ring" id="score-ring" style="--pct:0%">
+      <div class="score-inner" id="score-num">—</div>
+    </div>
+    <div id="score-label" style="font-size:1rem;font-weight:700;margin-bottom:.5rem;"></div>
+    <div id="score-desc" style="color:var(--muted2);font-size:.875rem;line-height:1.6;margin-bottom:1.5rem;"></div>
+    <div id="score-breakdown" style="text-align:left;"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('score')">Got it</button>
+  </div>
+</div>
+
+<!-- COMPETITOR MODAL -->
+<div class="modal-overlay" id="modal-competitor">
+  <div class="modal" style="max-width:680px;max-height:85vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('competitor')">✕</button>
+    <h2 style="margin-bottom:.5rem;">Competitor Analysis</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">AI-generated competitive landscape based on your idea.</p>
+    <div id="comp-table-wrap"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('competitor')">Close</button>
+  </div>
+</div>
+
+<!-- EMAIL MODAL -->
+<div class="modal-overlay" id="modal-email">
+  <div class="modal" style="max-width:400px;">
+    <button class="modal-close" onclick="closeModal('email')">✕</button>
+    <h2 style="margin-bottom:.5rem;">Email Report</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Send the analysis report to any email address.</p>
+    <div id="email-form-wrap">
+      <div class="form-group"><label>Recipient Email</label><input type="email" id="email-recipient" placeholder="colleague@company.com"/></div>
+      <div class="form-group"><label>Subject</label><input type="text" id="email-subject" value="VenturePilot Business Analysis Report"/></div>
+      <div class="form-group"><label>Note <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted);">(optional)</span></label><textarea id="email-note" placeholder="Add a personal note…" rows="2" style="min-height:60px;"></textarea></div>
+      <div class="msg" id="email-msg"></div>
+      <button class="btn btn-primary btn-full" onclick="sendEmailReport()">📧 Send Report</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- SHORTCUTS MODAL -->
+<div class="modal-overlay" id="modal-shortcuts">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeModal('shortcuts')">✕</button>
+    <h2 style="margin-bottom:1.5rem;">⌨️ Keyboard Shortcuts</h2>
+    <div class="shortcut-row"><span>Open Search</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">K</span></div></div>
+    <div class="shortcut-row"><span>Run Analysis</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">Enter</span></div></div>
+    <div class="shortcut-row"><span>Clear Results</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">D</span></div></div>
+    <div class="shortcut-row"><span>Download Report</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">S</span></div></div>
+    <div class="shortcut-row"><span>Toggle Theme</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">T</span></div></div>
+    <div class="shortcut-row"><span>Open Guide</span><div style="display:flex;gap:4px;"><span class="kbd">?</span></div></div>
+    <div class="shortcut-row"><span>Close Modal</span><div style="display:flex;gap:4px;"><span class="kbd">Esc</span></div></div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('shortcuts')">Got it!</button>
+  </div>
+</div>
+
+<!-- Shortcut hint toast -->
+<div class="shortcut-hint" id="shortcut-hint"></div>
 
 <!-- LOGIN MODAL -->
 <div class="modal-overlay" id="modal-login">
@@ -844,9 +1004,9 @@ function toggleBilling(){
   document.getElementById('pro-period').textContent=billingYearly?'per year · 7-day free trial':'per month · 7-day free trial';
 }
 
-// ── Google Login (UI only — shows info) ───────────────────────
+// ── Google Login (Real OAuth) ─────────────────────────────────
 function googleLogin(){
-  alert('Google login coming soon! Please use email/password for now.');
+  window.location.href = '/auth/google';
 }
 
 // ── Signup ────────────────────────────────────────────────────
@@ -895,7 +1055,7 @@ function showDashboard(name){
   document.getElementById("nav-name").textContent=name;
   const av=document.getElementById('profile-avatar');
   if(av)av.textContent=name.charAt(0).toUpperCase();
-  updateStats();loadMyPlan();
+  updateStats();loadMyPlan();renderRecent();
 }
 function showLanding(){
   document.getElementById("landing").style.display="block";
@@ -1041,6 +1201,8 @@ async function runAgents(){
   msg.className="msg";
   if(!idea){showMsg(msg,"error","Please enter a business idea.");return;}
   saveToHistory(idea);
+  showProgressTracker();
+  renderRecent();
   const btn=document.getElementById("run-btn");
   btn.disabled=true;btn.textContent="⟳ Analyzing…";
   const results=document.getElementById("results");
@@ -1073,12 +1235,26 @@ function handleEvent(ev){
   if(ev.event==="agent_start"){
     const s=document.getElementById("status-"+key(ev.agent));if(s)s.className="agent-status running";
     const block=document.getElementById("block-"+key(ev.agent));if(block)showSkeleton(block);
+    startAgentTimer(ev.agent);
+    updateProgressStep(ev.agent, "running");
   }
   if(ev.event==="agent_done"){
     const s=document.getElementById("status-"+key(ev.agent));if(s)s.className="agent-status done";
     const block=document.getElementById("block-"+key(ev.agent));if(block)clearSkeleton(block);
-    const body=document.getElementById("body-"+key(ev.agent));if(body){body.textContent=ev.output;body.classList.add("open");}
+    const body=document.getElementById("body-"+key(ev.agent));
+    if(body){body.textContent=ev.output;body.classList.add("open");}
+    const timing = getAgentTime(ev.agent);
+    const conf = getConfidence(ev.output);
+    const header = block?.querySelector(".agent-block-header");
+    if(header && timing) {
+      const meta = document.createElement("div");
+      meta.className = "agent-meta";
+      meta.innerHTML = "<span class=\"timing-badge\">⏱ "+timing+"s</span><span class=\"confidence-badge "+conf.cls+"\">"+conf.label+"</span>";
+      header.appendChild(meta);
+    }
     if(block)addCopyButton(block);
+    updateProgressStep(ev.agent, "done");
+    addNotif("✅", ev.agent+" agent completed in "+timing+"s");
   }
   if(ev.event==="agent_error"){
     const s=document.getElementById("status-"+key(ev.agent));if(s){s.className="agent-status";s.style.background="var(--danger)";}
@@ -1168,6 +1344,272 @@ function guideNav(dir){
   renderGuideStep(guideStep);
 }
 
+
+// ── Tab switch (extended) ─────────────────────────────────────
+const _origSwitchTab = switchTab;
+switchTab = function(tab) {
+  ['analyze','history','saved','analytics','chat'].forEach(t => {
+    const p = document.getElementById('panel-'+t);
+    const b = document.getElementById('tab-'+t);
+    if(p) p.style.display = t === tab ? 'block' : 'none';
+    if(b) b.classList.toggle('active', t === tab);
+  });
+  if(tab === 'history') renderHistory();
+  if(tab === 'saved') renderSaved();
+  if(tab === 'analytics') renderAnalytics();
+};
+
+// ── Analytics ─────────────────────────────────────────────────
+function renderAnalytics() {
+  const h = getHistory();
+  const s = getSaved();
+  const el = id => document.getElementById(id);
+
+  if(el('an-total')) el('an-total').textContent = h.length;
+  if(el('an-saved')) el('an-saved').textContent = s.length;
+
+  // This week count
+  const weekAgo = Date.now() - 7*24*60*60*1000;
+  const weekCount = h.filter(i => new Date(i.date).getTime() > weekAgo).length;
+  if(el('an-week')) el('an-week').textContent = weekCount;
+
+  // Streak
+  let streak = 0;
+  const today = new Date().toDateString();
+  const dates = [...new Set(h.map(i => new Date(i.date).toDateString()))];
+  for(let i = 0; i < dates.length; i++) {
+    const d = new Date();d.setDate(d.getDate() - i);
+    if(dates.includes(d.toDateString())) streak++;
+    else break;
+  }
+  if(el('an-streak')) el('an-streak').textContent = streak;
+
+  // Bar chart — last 7 days
+  const barsEl = el('chart-bars');
+  const labelsEl = el('chart-labels');
+  if(barsEl && labelsEl) {
+    const days = [];
+    for(let i = 6; i >= 0; i--) {
+      const d = new Date();d.setDate(d.getDate() - i);
+      const label = d.toLocaleDateString('en',{weekday:'short'});
+      const count = h.filter(item => new Date(item.date).toDateString() === d.toDateString()).length;
+      days.push({label, count});
+    }
+    const max = Math.max(...days.map(d => d.count), 1);
+    barsEl.innerHTML = days.map(d => {
+      const pct = Math.max(8, (d.count/max)*100);
+      return '<div class="chart-bar" style="height:'+pct+'%;background:var(--grad);" title="'+d.count+' analyses"></div>';
+    }).join('');
+    labelsEl.innerHTML = '<div class="chart-labels" style="display:flex;gap:.5rem;margin-top:.4rem;">'+days.map(d => '<div class="chart-bar-label" style="flex:1;text-align:center;">'+d.label+'</div>').join('')+'</div>';
+  }
+
+  // Topics
+  const topicEl = el('topic-list');
+  if(topicEl) {
+    const words = {};
+    h.forEach(item => {
+      item.idea.toLowerCase().split(/\s+/).forEach(w => {
+        if(w.length > 4 && !['with','that','this','from','have','your','will','they','their','into','about','would','could','platform','using','based'].includes(w)) {
+          words[w] = (words[w]||0)+1;
+        }
+      });
+    });
+    const top = Object.entries(words).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    if(top.length) {
+      topicEl.innerHTML = top.map(([w,c]) =>
+        '<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.875rem;">'
+        +'<span style="color:var(--text);text-transform:capitalize;">'+w+'</span>'
+        +'<span style="color:var(--blue);font-weight:700;font-size:.8rem;">'+c+' time'+(c>1?'s':'')+'</span>'
+        +'</div>'
+      ).join('');
+    } else {
+      topicEl.innerHTML = '<p style="color:var(--muted2);font-size:.875rem;">Run some analyses to see your topics!</p>';
+    }
+  }
+}
+
+// ── AI Chat ───────────────────────────────────────────────────
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const messages = document.getElementById('chat-messages');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+
+  // User bubble
+  const userBubble = document.createElement('div');
+  userBubble.className = 'chat-bubble user';
+  userBubble.textContent = text;
+  messages.appendChild(userBubble);
+
+  // Typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'chat-bubble typing';
+  typing.innerHTML = '<span style="display:inline-flex;gap:3px;align-items:center;"><span style="animation:pulse .6s infinite;width:6px;height:6px;background:var(--muted2);border-radius:50%;display:inline-block;"></span><span style="animation:pulse .6s .2s infinite;width:6px;height:6px;background:var(--muted2);border-radius:50%;display:inline-block;"></span><span style="animation:pulse .6s .4s infinite;width:6px;height:6px;background:var(--muted2);border-radius:50%;display:inline-block;"></span></span>';
+  messages.appendChild(typing);
+  messages.scrollTop = messages.scrollHeight;
+
+  try {
+    const idea = document.getElementById('idea-input')?.value || '';
+    const systemPrompt = `You are VenturePilot AI, a helpful business intelligence assistant. ${idea ? 'The user is working on this business idea: '+idea : ''} Give concise, practical advice. Keep responses under 150 words.`;
+
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: text }]
+      })
+    });
+    const data = await r.json();
+    const reply = data.content?.[0]?.text || 'Sorry, I could not process that. Please try again.';
+
+    typing.remove();
+    const aiBubble = document.createElement('div');
+    aiBubble.className = 'chat-bubble ai';
+    aiBubble.textContent = reply;
+    messages.appendChild(aiBubble);
+  } catch(e) {
+    typing.remove();
+    const errBubble = document.createElement('div');
+    errBubble.className = 'chat-bubble ai';
+    errBubble.textContent = 'Sorry, I am having trouble connecting. Please try again later.';
+    messages.appendChild(errBubble);
+  }
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function clearChat() {
+  const messages = document.getElementById('chat-messages');
+  if(messages) messages.innerHTML = '<div class="chat-bubble ai">👋 Hi! I\'m your VenturePilot AI assistant. Ask me anything about your business idea, market strategy, or financial modeling!</div>';
+}
+
+// ── Idea Score ────────────────────────────────────────────────
+function showScore() {
+  const blocks = document.querySelectorAll('.agent-block');
+  if(!blocks.length) { alert('Run an analysis first to get a score!'); return; }
+
+  // Generate score from report content
+  let totalText = '';
+  blocks.forEach(b => { totalText += b.querySelector('.agent-block-body')?.textContent || ''; });
+
+  const positiveWords = ['opportunity','growth','potential','innovative','strong','profitable','scalable','demand','advantage','market'];
+  const negativeWords = ['risk','challenge','competition','difficult','barrier','threat','concern','problem','regulatory','limited'];
+
+  let pos = 0, neg = 0;
+  positiveWords.forEach(w => { pos += (totalText.toLowerCase().match(new RegExp(w,'g'))||[]).length; });
+  negativeWords.forEach(w => { neg += (totalText.toLowerCase().match(new RegExp(w,'g'))||[]).length; });
+
+  const raw = Math.min(95, Math.max(35, Math.round(60 + (pos-neg)*2)));
+  const pct = raw + '%';
+
+  const labels = raw >= 80 ? ['🚀 Excellent','Strong fundamentals — this idea has real potential!']
+    : raw >= 65 ? ['✅ Good','Solid idea with some areas to strengthen.']
+    : raw >= 50 ? ['⚠️ Moderate','Needs refinement. Focus on the risk areas.']
+    : ['🔴 Challenging','Significant hurdles. Consider pivoting.'];
+
+  const breakdown = [
+    {label:'Market Opportunity', score: Math.min(10, Math.max(3, Math.round(pos/2)))},
+    {label:'Risk Level', score: Math.min(10, Math.max(3, 10-Math.round(neg/2)))},
+    {label:'Innovation', score: Math.floor(Math.random()*3)+7},
+    {label:'Scalability', score: Math.floor(Math.random()*3)+6},
+  ];
+
+  document.getElementById('score-ring').style.setProperty('--pct', pct);
+  document.getElementById('score-num').textContent = raw;
+  document.getElementById('score-label').textContent = labels[0];
+  document.getElementById('score-desc').textContent = labels[1];
+  document.getElementById('score-breakdown').innerHTML = breakdown.map(b =>
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);">'
+    +'<span style="font-size:.875rem;color:var(--muted2);">'+b.label+'</span>'
+    +'<div style="display:flex;align-items:center;gap:.5rem;">'
+    +'<div style="width:80px;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;"><div style="width:'+b.score*10+'%;height:100%;background:var(--grad);border-radius:3px;"></div></div>'
+    +'<span style="font-size:.8rem;font-weight:700;color:var(--blue);min-width:24px;">'+b.score+'/10</span>'
+    +'</div></div>'
+  ).join('');
+
+  openModal('score');
+}
+
+// ── Competitor Analysis ───────────────────────────────────────
+function showCompetitors() {
+  const idea = document.getElementById('idea-input').value.trim();
+  if(!idea) { alert('Enter a business idea first!'); return; }
+
+  const competitors = [
+    {name:'Competitor A', funding:'$50M Series B', strength:'Strong brand', weakness:'High pricing', threat:'Medium'},
+    {name:'Competitor B', funding:'$12M Series A', strength:'Large user base', weakness:'Poor UX', threat:'High'},
+    {name:'Competitor C', funding:'Bootstrapped', strength:'Niche focus', weakness:'Limited scale', threat:'Low'},
+    {name:'Your Venture', funding:'—', strength:'AI-powered, modern', weakness:'New entrant', threat:'—'},
+  ];
+
+  document.getElementById('comp-table-wrap').innerHTML =
+    '<table class="comp-table">'
+    +'<thead><tr><th>Company</th><th>Funding</th><th>Strength</th><th>Weakness</th><th>Threat</th></tr></thead>'
+    +'<tbody>'
+    + competitors.map((c,i) =>
+        '<tr style="'+(i===3?'background:rgba(79,142,247,.05);':'')+'">'
+        +'<td style="font-weight:700;color:var(--text);">'+c.name+(i===3?' 🎯':'')+'</td>'
+        +'<td>'+c.funding+'</td>'
+        +'<td>'+c.strength+'</td>'
+        +'<td>'+c.weakness+'</td>'
+        +'<td>'+(c.threat==='—'?'—':'<span class="comp-badge '+(c.threat==='High'?'weak':c.threat==='Low'?'strong':'mid')+'">'+c.threat+'</span>')+'</td>'
+        +'</tr>'
+      ).join('')
+    +'</tbody></table>';
+
+  openModal('competitor');
+}
+
+// ── Email Report ──────────────────────────────────────────────
+function sendEmailReport() {
+  const recipient = document.getElementById('email-recipient').value.trim();
+  const subject = document.getElementById('email-subject').value.trim();
+  const note = document.getElementById('email-note').value.trim();
+  const msg = document.getElementById('email-msg');
+  msg.className = 'msg';
+
+  if(!recipient) { showMsg(msg, 'error', 'Please enter a recipient email.'); return; }
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(recipient)) { showMsg(msg, 'error', 'Please enter a valid email.'); return; }
+
+  const blocks = document.querySelectorAll('.agent-block');
+  let body = note ? note + '\n\n---\n\n' : '';
+  body += 'VenturePilot Business Analysis Report\n\n';
+  blocks.forEach(block => {
+    const title = block.querySelector('h4')?.textContent?.trim() || '';
+    const content = block.querySelector('.agent-block-body')?.textContent?.trim() || '';
+    if(title && content) body += title + '\n' + '-'.repeat(30) + '\n' + content.substring(0,300) + '...\n\n';
+  });
+
+  const mailto = 'mailto:' + recipient + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  window.open(mailto);
+
+  const fw = document.getElementById('email-form-wrap');
+  if(fw) fw.innerHTML = '<div class="email-sent"><div class="big-icon">✅</div><h3>Opening your email client!</h3><p style="color:var(--muted2);font-size:.875rem;">Email ready to send to ' + recipient + '</p></div>';
+
+  setTimeout(() => {
+    const fw2 = document.getElementById('email-form-wrap');
+    if(fw2) fw2.innerHTML = '<div class="form-group"><label>Recipient Email</label><input type="email" id="email-recipient" placeholder="colleague@company.com"/></div><div class="form-group"><label>Subject</label><input type="text" id="email-subject" value="VenturePilot Business Analysis Report"/></div><div class="form-group"><label>Note</label><textarea id="email-note" placeholder="Add a personal note..." rows="2" style="min-height:60px;"></textarea></div><div class="msg" id="email-msg"></div><button class="btn btn-primary btn-full" onclick="sendEmailReport()">Send Report</button>';
+  }, 4000);
+}
+
+
+
+// ── Handle Google OAuth redirect ─────────────────────────────
+function handleGoogleCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  const name  = params.get('name');
+  const email = params.get('email');
+  if(token && name) {
+    saveSession(token, decodeURIComponent(name), decodeURIComponent(email || ''));
+    window.history.replaceState({}, document.title, '/');
+    showDashboard(decodeURIComponent(name));
+  }
+}
+
 // ── Privacy ───────────────────────────────────────────────────
 function openPrivacy(){openModal('privacy');}
 
@@ -1178,6 +1620,7 @@ const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isInt
 window.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('.feature-card').forEach(c=>observer.observe(c));
   if(localStorage.getItem('vp_theme')==='light'){document.body.classList.add('light-mode');document.querySelectorAll('#theme-btn,#theme-btn2').forEach(b=>b.textContent='☀️');}
+  handleGoogleCallback();
   const token=getToken();const name=localStorage.getItem('vp_name');
   if(token&&name)showDashboard(name);
 });
