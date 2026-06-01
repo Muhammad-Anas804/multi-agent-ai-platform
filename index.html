@@ -445,16 +445,6 @@ footer{
 </head>
 <body>
 
-<!-- Orbs -->
-
-<!-- SPLASH SCREEN -->
-<div id="splash">
-  <div class="splash-logo">V</div>
-  <div class="splash-name">VenturePilot</div>
-  <div class="splash-sub">AI Business Intelligence Platform</div>
-  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
-</div>
-
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 
@@ -500,8 +490,6 @@ footer{
 
 <!-- LANDING -->
 <div id="landing">
-
-  <!-- HERO -->
   <section class="hero">
     <div class="hero-eyebrow">Powered by Multi-Agent AI</div>
     <h1>Your Business Idea,<br/><span class="grad">Analyzed in 60 Seconds</span></h1>
@@ -532,7 +520,6 @@ footer{
   </section>
   <hr class="divider"/>
 
-  <!-- FEATURES -->
   <section class="section" id="features">
     <div class="section-eyebrow">Capabilities</div>
     <h2 class="section-title">Everything you need to validate your idea</h2>
@@ -548,7 +535,6 @@ footer{
   </section>
   <hr class="divider"/>
 
-  <!-- HOW IT WORKS -->
   <section class="section" id="how-it-works">
     <div class="section-eyebrow">Process</div>
     <h2 class="section-title">How VenturePilot works</h2>
@@ -561,7 +547,6 @@ footer{
   </section>
   <hr class="divider"/>
 
-  <!-- PRICING -->
   <section class="section" id="pricing">
     <div class="section-eyebrow">Pricing</div>
     <h2 class="section-title">Simple, transparent pricing</h2>
@@ -618,7 +603,6 @@ footer{
   </section>
   <hr class="divider"/>
 
-  <!-- FOOTER -->
   <footer>
     <div class="footer-inner">
       <div class="footer-top">
@@ -667,14 +651,12 @@ footer{
     </div>
   </div>
 
-  <!-- Stats -->
   <div class="dash-stats">
     <div class="dash-stat"><div class="dash-stat-num" id="stat-total">0</div><div class="dash-stat-label">Analyses</div></div>
     <div class="dash-stat"><div class="dash-stat-num" id="stat-saved">0</div><div class="dash-stat-label">Saved</div></div>
     <div class="dash-stat"><div class="dash-stat-num" id="stat-last">—</div><div class="dash-stat-label">Last Run</div></div>
   </div>
 
-  <!-- Tabs -->
   <div class="dash-tabs">
     <button class="dash-tab active" onclick="switchTab('analyze')" id="tab-analyze">⚡ Analyze</button>
     <button class="dash-tab" onclick="switchTab('history')" id="tab-history">📋 History</button>
@@ -685,7 +667,6 @@ footer{
 
   <!-- Analyze Panel -->
   <div id="panel-analyze">
-    <!-- Search Bar -->
     <div class="search-wrap" id="search-wrap">
       <span class="search-icon">🔍</span>
       <input class="search-input" id="dash-search" placeholder="Search history, templates, features… (Ctrl+K)" oninput="handleSearch(this.value)" onblur="setTimeout(()=>closeSearch(),200)"/>
@@ -693,7 +674,7 @@ footer{
     </div>
 
     <!-- Recent Analyses -->
-    <div id="recent-section" style="margin-bottom:1.5rem;">
+    <div id="recent-section" style="margin-bottom:1.5rem;display:none;">
       <div style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:.75rem;">Recent Analyses</div>
       <div id="recent-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;"></div>
     </div>
@@ -713,7 +694,6 @@ footer{
 
     <div class="idea-card">
       <h3>New Analysis</h3>
-      <!-- Industry Selector -->
       <div style="margin-bottom:1rem;">
         <div class="templates-label">Select Industry</div>
         <div class="industry-grid" id="industry-grid">
@@ -728,7 +708,6 @@ footer{
         </div>
       </div>
 
-      <!-- Idea Validator -->
       <div class="validator-wrap" id="idea-validator" style="display:none;">
         <div class="validator-title">💡 Idea Check</div>
         <div class="validator-checks" id="validator-checks"></div>
@@ -811,7 +790,6 @@ footer{
   </div>
 
   <!-- History Panel -->
-
   <div id="panel-history" style="display:none;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
       <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;">Analysis History</h3>
@@ -826,7 +804,6 @@ footer{
     <div id="saved-list"></div>
   </div>
 </div>
-
 
 <!-- SCORE MODAL -->
 <div class="modal-overlay" id="modal-score">
@@ -870,7 +847,6 @@ footer{
   </div>
 </div>
 
-
 <!-- SHORTCUTS MODAL -->
 <div class="modal-overlay" id="modal-shortcuts">
   <div class="modal" style="max-width:420px;">
@@ -887,7 +863,6 @@ footer{
   </div>
 </div>
 
-<!-- Shortcut hint toast -->
 <div class="shortcut-hint" id="shortcut-hint"></div>
 
 <!-- LOGIN MODAL -->
@@ -987,6 +962,150 @@ footer{
   </div>
 </div>
 
+<!-- FAQ MODAL -->
+<div class="modal-overlay" id="modal-faq">
+  <div class="modal" style="max-width:560px;max-height:85vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('faq')">✕</button>
+    <h2 style="margin-bottom:.4rem;">❓ FAQ</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Frequently asked questions</p>
+    <div id="faq-list">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What is VenturePilot?</span><span>▸</span></div><div class="faq-a">VenturePilot is an AI-powered business intelligence platform that analyzes your business ideas using 5 specialized agents: Research, Marketing, Finance, Risk, and CEO Decision.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How long does an analysis take?</span><span>▸</span></div><div class="faq-a">A full analysis typically takes 30-90 seconds depending on your internet connection and the complexity of your idea.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Is my data secure?</span><span>▸</span></div><div class="faq-a">Yes! Your data is encrypted and stored securely. We never sell or share your business ideas with third parties. Passwords are hashed using PBKDF2-SHA256.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What is the Free plan limit?</span><span>▸</span></div><div class="faq-a">The Free plan allows 3 analyses per month. Upgrade to Starter ($9/mo) for 50 analyses or Pro ($29/mo) for unlimited analyses.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I download my reports?</span><span>▸</span></div><div class="faq-a">Yes! After running an analysis, click the "Download" button to save your full report as a .txt file. You can also email it directly from the platform.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How do I cancel my subscription?</span><span>▸</span></div><div class="faq-a">You can cancel anytime from your Profile settings. Contact us at muhammadanas.ragdev@gmail.com for immediate assistance.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What AI models power VenturePilot?</span><span>▸</span></div><div class="faq-a">VenturePilot uses Groq LLM API with advanced language models for fast, accurate business analysis. Our agents use LangGraph for multi-step reasoning.</div></div>
+    </div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('faq')">Got it!</button>
+  </div>
+</div>
+
+<!-- IDEA VALIDATOR MODAL -->
+<div class="modal-overlay" id="modal-validator">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeModal('validator')">✕</button>
+    <h2 style="margin-bottom:.4rem;">💡 Idea Validator</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Quick check before running full analysis</p>
+    <div id="validator-result" style="text-align:center;">
+      <div class="form-group">
+        <label>Your Business Idea</label>
+        <textarea id="validator-input" placeholder="Describe your idea briefly…" rows="3" style="min-height:70px;"></textarea>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="validateIdea()">⚡ Quick Validate</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARISON MODAL -->
+<div class="modal-overlay" id="modal-compare">
+  <div class="modal" style="max-width:720px;max-height:90vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('compare')">✕</button>
+    <h2 style="margin-bottom:.5rem;">⚖️ Idea Comparison</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Compare two business ideas side by side</p>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:.75rem;align-items:start;margin-bottom:1rem;">
+      <div>
+        <div style="font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:.5rem;">Idea A</div>
+        <textarea id="compare-a" placeholder="First business idea…" rows="3" style="min-height:70px;"></textarea>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;padding-top:1.5rem;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.8rem;">VS</div>
+      </div>
+      <div>
+        <div style="font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:.5rem;">Idea B</div>
+        <textarea id="compare-b" placeholder="Second business idea…" rows="3" style="min-height:70px;"></textarea>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="runComparison()">⚖️ Compare Both Ideas</button>
+    <div id="compare-results" style="margin-top:1rem;"></div>
+  </div>
+</div>
+
+<!-- ACTION PLAN MODAL -->
+<div class="modal-overlay" id="modal-action">
+  <div class="modal" style="max-width:500px;max-height:85vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('action')">✕</button>
+    <h2 style="margin-bottom:.5rem;">🗺️ Action Plan</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Your personalized next steps based on the analysis.</p>
+    <div id="action-plan-list"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('action')">Got it!</button>
+  </div>
+</div>
+
+<!-- FEEDBACK MODAL -->
+<div class="modal-overlay" id="modal-feedback">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeModal('feedback')">✕</button>
+    <div style="text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:.75rem;">⭐</div>
+      <h2 style="margin-bottom:.4rem;">How was your experience?</h2>
+      <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Your feedback helps us improve VenturePilot</p>
+    </div>
+    <div class="star-rating" id="star-rating">
+      <span class="star" onclick="rateStar(1)" id="star-1">⭐</span>
+      <span class="star" onclick="rateStar(2)" id="star-2">⭐</span>
+      <span class="star" onclick="rateStar(3)" id="star-3">⭐</span>
+      <span class="star" onclick="rateStar(4)" id="star-4">⭐</span>
+      <span class="star" onclick="rateStar(5)" id="star-5">⭐</span>
+    </div>
+    <div id="star-label" style="text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:1rem;min-height:20px;"></div>
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:.5rem;">What did you like?</div>
+      <div>
+        <span class="feedback-tag" onclick="toggleTag(this)">Easy to use</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Fast analysis</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Accurate results</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Great UI</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Helpful agents</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Good value</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Additional comments</label>
+      <textarea id="feedback-text" placeholder="Tell us more…" rows="2" style="min-height:60px;"></textarea>
+    </div>
+    <div class="msg" id="feedback-msg"></div>
+    <button class="btn btn-primary btn-full" onclick="submitFeedback()">Submit Feedback</button>
+  </div>
+</div>
+
+<!-- TOUR OVERLAY -->
+<div class="tour-overlay" id="tour-overlay" onclick="endTour()"></div>
+<div class="tour-spotlight" id="tour-spotlight"></div>
+<div class="tour-tooltip" id="tour-tooltip" style="display:none;">
+  <h4 id="tour-title"></h4>
+  <p id="tour-desc"></p>
+  <div class="tour-nav">
+    <div><div class="tour-dots" id="tour-dots"></div></div>
+    <span class="tour-counter" id="tour-counter"></span>
+    <div style="display:flex;gap:.5rem;">
+      <button class="btn btn-ghost" style="padding:.35rem .8rem;font-size:.78rem;" onclick="endTour()">Skip</button>
+      <button class="btn btn-primary" style="padding:.35rem .9rem;font-size:.78rem;" onclick="nextTourStep()" id="tour-next-btn">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE CHAT WIDGET -->
+<button class="chat-widget-btn" onclick="toggleChatWidget()" id="chat-widget-btn">💬</button>
+<div class="chat-widget-panel" id="chat-widget-panel">
+  <div class="chat-widget-header">
+    <div class="chat-widget-avatar">🧠</div>
+    <div>
+      <div class="chat-widget-name">VenturePilot Support</div>
+      <div class="chat-widget-status">● Online — typically replies instantly</div>
+    </div>
+    <button onclick="toggleChatWidget()" style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;margin-left:auto;font-size:1rem;">✕</button>
+  </div>
+  <div class="chat-widget-messages" id="cw-messages">
+    <div class="cw-bubble-ai">👋 Hi! I'm your VenturePilot assistant. How can I help you today?</div>
+    <div class="cw-bubble-ai">You can ask me about:<br/>• How to use VenturePilot<br/>• Understanding your analysis<br/>• Pricing & plans<br/>• Technical issues</div>
+  </div>
+  <div class="chat-widget-input-row">
+    <input class="cw-input" id="cw-input" placeholder="Type your question…" onkeydown="if(event.key==='Enter')sendCWMessage()"/>
+    <button class="cw-send" onclick="sendCWMessage()">↑</button>
+  </div>
+</div>
+
 <script>
 const API = "";
 
@@ -999,9 +1118,10 @@ function clearSession(){["vp_token","vp_name","vp_email"].forEach(k=>localStorag
 function openModal(id){
   if(id==='profile'){openProfileModal();return;}
   if(id==='guide'){guideStep=0;document.getElementById('modal-guide').classList.add('open');setTimeout(()=>renderGuideStep(0),50);return;}
-  document.getElementById("modal-"+id).classList.add("open");
+  const el=document.getElementById("modal-"+id);
+  if(el)el.classList.add("open");
 }
-function closeModal(id){document.getElementById("modal-"+id).classList.remove("open");}
+function closeModal(id){const el=document.getElementById("modal-"+id);if(el)el.classList.remove("open");}
 function switchModal(a,b){closeModal(a);openModal(b);}
 document.querySelectorAll(".modal-overlay").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");}));
 
@@ -1028,10 +1148,8 @@ function toggleBilling(){
   document.getElementById('pro-period').textContent=billingYearly?'per year · 7-day free trial':'per month · 7-day free trial';
 }
 
-// ── Google Login (Real OAuth) ─────────────────────────────────
-function googleLogin(){
-  window.location.href = '/auth/google';
-}
+// ── Google Login ──────────────────────────────────────────────
+function googleLogin(){window.location.href='/auth/google';}
 
 // ── Signup ────────────────────────────────────────────────────
 async function doSignup(){
@@ -1079,7 +1197,9 @@ function showDashboard(name){
   document.getElementById("nav-name").textContent=name;
   const av=document.getElementById('profile-avatar');
   if(av)av.textContent=name.charAt(0).toUpperCase();
-  updateStats();loadMyPlan();renderRecent();
+  updateStats();
+  loadMyPlan();
+  renderRecent();   // FIX 1: function now defined below
 }
 function showLanding(){
   document.getElementById("landing").style.display="block";
@@ -1099,7 +1219,7 @@ function updateStats(){
 
 // ── Tab switch ────────────────────────────────────────────────
 function switchTab(tab){
-  ['analyze','history','saved'].forEach(t=>{
+  ['analyze','history','saved','analytics','chat'].forEach(t=>{
     const p=document.getElementById('panel-'+t);
     const b=document.getElementById('tab-'+t);
     if(p)p.style.display=t===tab?'block':'none';
@@ -1107,12 +1227,13 @@ function switchTab(tab){
   });
   if(tab==='history')renderHistory();
   if(tab==='saved')renderSaved();
+  if(tab==='analytics')renderAnalytics();
 }
 
 // ── History ───────────────────────────────────────────────────
 function getHistory(){try{return JSON.parse(localStorage.getItem('vp_history')||'[]');}catch{return[];}}
 function saveToHistory(idea){const h=getHistory();h.unshift({idea,date:new Date().toISOString(),id:Date.now()});if(h.length>20)h.pop();localStorage.setItem('vp_history',JSON.stringify(h));updateStats();}
-function clearHistory(){if(confirm('Clear all history?')){localStorage.removeItem('vp_history');renderHistory();updateStats();}}
+function clearHistory(){if(confirm('Clear all history?')){localStorage.removeItem('vp_history');renderHistory();updateStats();renderRecent();}}
 function renderHistory(){
   const list=document.getElementById('history-list');
   const h=getHistory();
@@ -1123,11 +1244,36 @@ function renderHistory(){
   list.innerHTML=h.map(item=>{
     const short=item.idea.length>65?item.idea.substring(0,65)+'...':item.idea;
     const date=new Date(item.date).toLocaleDateString();
-    return '<div class="history-item" onclick="rerunIdea('+item.id+')">'+'<span class="h-idea">💡 '+short+'</span>'+'<span class="h-date">'+date+'</span>'+'<span class="h-del" onclick="event.stopPropagation();deleteHistory('+item.id+')">✕</span>'+'</div>';
+    return '<div class="history-item" onclick="rerunIdea('+item.id+')">'
+      +'<span class="h-idea">💡 '+short+'</span>'
+      +'<span class="h-date">'+date+'</span>'
+      +'<span class="h-del" onclick="event.stopPropagation();deleteHistory('+item.id+')">✕</span>'
+      +'</div>';
   }).join('');
 }
-function deleteHistory(id){localStorage.setItem('vp_history',JSON.stringify(getHistory().filter(h=>h.id!==id)));renderHistory();updateStats();}
+function deleteHistory(id){localStorage.setItem('vp_history',JSON.stringify(getHistory().filter(h=>h.id!==id)));renderHistory();updateStats();renderRecent();}
 function rerunIdea(id){const idea=(window._hmap&&window._hmap[id])||'';switchTab('analyze');const el=document.getElementById('idea-input');if(el){el.value=idea;el.focus();}}
+
+// ── Recent (Analyze panel) ────────────────────────────────────
+// FIX 1: Added missing renderRecent function
+function renderRecent(){
+  const list=document.getElementById('recent-list');
+  const section=document.getElementById('recent-section');
+  if(!list)return;
+  const h=getHistory().slice(0,6);
+  if(!h.length){if(section)section.style.display='none';return;}
+  if(section)section.style.display='block';
+  window._hmap=window._hmap||{};
+  h.forEach(item=>window._hmap[item.id]=item.idea);
+  list.innerHTML=h.map(item=>{
+    const short=item.idea.length>55?item.idea.substring(0,55)+'…':item.idea;
+    const date=new Date(item.date).toLocaleDateString('en',{month:'short',day:'numeric'});
+    return '<div class="history-item" onclick="rerunIdea('+item.id+')">'
+      +'<span class="h-idea">💡 '+short+'</span>'
+      +'<span class="h-date">'+date+'</span>'
+      +'</div>';
+  }).join('');
+}
 
 // ── Saved ─────────────────────────────────────────────────────
 function getSaved(){try{return JSON.parse(localStorage.getItem('vp_saved')||'[]');}catch{return[];}}
@@ -1139,7 +1285,11 @@ function renderSaved(){
   list.innerHTML=s.map(item=>{
     const short=item.idea.length>65?item.idea.substring(0,65)+'...':item.idea;
     const date=new Date(item.date).toLocaleDateString();
-    return '<div class="history-item">'+'<span class="h-idea">🔖 '+short+'</span>'+'<span class="h-date">'+date+'</span>'+'<span class="h-del" onclick="deleteSaved('+item.id+')">✕</span>'+'</div>';
+    return '<div class="history-item">'
+      +'<span class="h-idea">🔖 '+short+'</span>'
+      +'<span class="h-date">'+date+'</span>'
+      +'<span class="h-del" onclick="deleteSaved('+item.id+')">✕</span>'
+      +'</div>';
   }).join('');
 }
 function deleteSaved(id){localStorage.setItem('vp_saved',JSON.stringify(getSaved().filter(s=>s.id!==id)));renderSaved();updateStats();}
@@ -1225,7 +1375,6 @@ async function runAgents(){
   msg.className="msg";
   if(!idea){showMsg(msg,"error","Please enter a business idea.");return;}
   saveToHistory(idea);
-  showProgressTracker();
   renderRecent();
   const btn=document.getElementById("run-btn");
   btn.disabled=true;btn.textContent="⟳ Analyzing…";
@@ -1259,32 +1408,19 @@ function handleEvent(ev){
   if(ev.event==="agent_start"){
     const s=document.getElementById("status-"+key(ev.agent));if(s)s.className="agent-status running";
     const block=document.getElementById("block-"+key(ev.agent));if(block)showSkeleton(block);
-    startAgentTimer(ev.agent);
-    updateProgressStep(ev.agent, "running");
   }
   if(ev.event==="agent_done"){
     const s=document.getElementById("status-"+key(ev.agent));if(s)s.className="agent-status done";
     const block=document.getElementById("block-"+key(ev.agent));if(block)clearSkeleton(block);
     const body=document.getElementById("body-"+key(ev.agent));
     if(body){body.textContent=ev.output;body.classList.add("open");}
-    const timing = getAgentTime(ev.agent);
-    const conf = getConfidence(ev.output);
-    const header = block?.querySelector(".agent-block-header");
-    if(header && timing) {
-      const meta = document.createElement("div");
-      meta.className = "agent-meta";
-      meta.innerHTML = "<span class=\"timing-badge\">⏱ "+timing+"s</span><span class=\"confidence-badge "+conf.cls+"\">"+conf.label+"</span>";
-      header.appendChild(meta);
-    }
     if(block)addCopyButton(block);
-    updateProgressStep(ev.agent, "done");
-    addNotif("✅", ev.agent+" agent completed in "+timing+"s");
   }
   if(ev.event==="agent_error"){
     const s=document.getElementById("status-"+key(ev.agent));if(s){s.className="agent-status";s.style.background="var(--danger)";}
     const body=document.getElementById("body-"+key(ev.agent));if(body){body.textContent="Error: "+ev.error;body.classList.add("open");body.style.color="var(--danger)";}
   }
-  if(ev.event==="complete"){document.getElementById('result-actions').style.display='flex';document.getElementById('feedback-bar').style.display='flex';}
+  if(ev.event==="complete"){document.getElementById('result-actions').style.display='flex';}
 }
 function toggleBlock(header){const body=header.nextElementSibling;body.classList.toggle('open');header.querySelector('span').textContent=body.classList.contains('open')?'▾':'▸';}
 
@@ -1324,14 +1460,17 @@ async function subscribePlan(plan){
     if(data.checkout_url)window.location.href=data.checkout_url;
   }catch(e){alert('Payment error: '+e.message);}
 }
+
+// FIX 2: Guard against 404 — skip silently if the Paddle backend isn't live yet
 async function loadMyPlan(){
   const token=getToken();if(!token)return;
   try{
     const r=await fetch('/paddle/my-plan',{headers:{'Authorization':'Bearer '+token}});
+    if(!r.ok)return;                          // 404 or any non-2xx → no-op
     const data=await r.json();
     const badge=document.getElementById('plan-badge');
-    if(badge){badge.textContent=data.plan.toUpperCase();badge.style.display='inline-flex';}
-  }catch(e){}
+    if(badge&&data.plan){badge.textContent=data.plan.toUpperCase();badge.style.display='inline-flex';}
+  }catch(_){}                                 // network error → no-op
 }
 
 // ── Guide ─────────────────────────────────────────────────────
@@ -1368,270 +1507,150 @@ function guideNav(dir){
   renderGuideStep(guideStep);
 }
 
-
-// ── Tab switch (extended) ─────────────────────────────────────
-const _origSwitchTab = switchTab;
-switchTab = function(tab) {
-  ['analyze','history','saved','analytics','chat'].forEach(t => {
-    const p = document.getElementById('panel-'+t);
-    const b = document.getElementById('tab-'+t);
-    if(p) p.style.display = t === tab ? 'block' : 'none';
-    if(b) b.classList.toggle('active', t === tab);
-  });
-  if(tab === 'history') renderHistory();
-  if(tab === 'saved') renderSaved();
-  if(tab === 'analytics') renderAnalytics();
-};
-
 // ── Analytics ─────────────────────────────────────────────────
-function renderAnalytics() {
-  const h = getHistory();
-  const s = getSaved();
-  const el = id => document.getElementById(id);
-
-  if(el('an-total')) el('an-total').textContent = h.length;
-  if(el('an-saved')) el('an-saved').textContent = s.length;
-
-  // This week count
-  const weekAgo = Date.now() - 7*24*60*60*1000;
-  const weekCount = h.filter(i => new Date(i.date).getTime() > weekAgo).length;
-  if(el('an-week')) el('an-week').textContent = weekCount;
-
-  // Streak
-  let streak = 0;
-  const today = new Date().toDateString();
-  const dates = [...new Set(h.map(i => new Date(i.date).toDateString()))];
-  for(let i = 0; i < dates.length; i++) {
-    const d = new Date();d.setDate(d.getDate() - i);
-    if(dates.includes(d.toDateString())) streak++;
-    else break;
+function renderAnalytics(){
+  const h=getHistory();const s=getSaved();
+  const el=id=>document.getElementById(id);
+  if(el('an-total'))el('an-total').textContent=h.length;
+  if(el('an-saved'))el('an-saved').textContent=s.length;
+  const weekAgo=Date.now()-7*24*60*60*1000;
+  const weekCount=h.filter(i=>new Date(i.date).getTime()>weekAgo).length;
+  if(el('an-week'))el('an-week').textContent=weekCount;
+  let streak=0;
+  const dates=[...new Set(h.map(i=>new Date(i.date).toDateString()))];
+  for(let i=0;i<dates.length;i++){const d=new Date();d.setDate(d.getDate()-i);if(dates.includes(d.toDateString()))streak++;else break;}
+  if(el('an-streak'))el('an-streak').textContent=streak;
+  const barsEl=el('chart-bars');const labelsEl=el('chart-labels');
+  if(barsEl&&labelsEl){
+    const days=[];
+    for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const label=d.toLocaleDateString('en',{weekday:'short'});const count=h.filter(item=>new Date(item.date).toDateString()===d.toDateString()).length;days.push({label,count});}
+    const max=Math.max(...days.map(d=>d.count),1);
+    barsEl.innerHTML=days.map(d=>{const pct=Math.max(8,(d.count/max)*100);return '<div class="chart-bar" style="height:'+pct+'%;background:var(--grad);" title="'+d.count+' analyses"></div>';}).join('');
+    labelsEl.innerHTML='<div style="display:flex;gap:.5rem;margin-top:.4rem;">'+days.map(d=>'<div style="flex:1;text-align:center;font-size:.72rem;color:var(--muted);">'+d.label+'</div>').join('')+'</div>';
   }
-  if(el('an-streak')) el('an-streak').textContent = streak;
-
-  // Bar chart — last 7 days
-  const barsEl = el('chart-bars');
-  const labelsEl = el('chart-labels');
-  if(barsEl && labelsEl) {
-    const days = [];
-    for(let i = 6; i >= 0; i--) {
-      const d = new Date();d.setDate(d.getDate() - i);
-      const label = d.toLocaleDateString('en',{weekday:'short'});
-      const count = h.filter(item => new Date(item.date).toDateString() === d.toDateString()).length;
-      days.push({label, count});
-    }
-    const max = Math.max(...days.map(d => d.count), 1);
-    barsEl.innerHTML = days.map(d => {
-      const pct = Math.max(8, (d.count/max)*100);
-      return '<div class="chart-bar" style="height:'+pct+'%;background:var(--grad);" title="'+d.count+' analyses"></div>';
-    }).join('');
-    labelsEl.innerHTML = '<div class="chart-labels" style="display:flex;gap:.5rem;margin-top:.4rem;">'+days.map(d => '<div class="chart-bar-label" style="flex:1;text-align:center;">'+d.label+'</div>').join('')+'</div>';
-  }
-
-  // Topics
-  const topicEl = el('topic-list');
-  if(topicEl) {
-    const words = {};
-    h.forEach(item => {
-      item.idea.toLowerCase().split(/\s+/).forEach(w => {
-        if(w.length > 4 && !['with','that','this','from','have','your','will','they','their','into','about','would','could','platform','using','based'].includes(w)) {
-          words[w] = (words[w]||0)+1;
-        }
-      });
-    });
-    const top = Object.entries(words).sort((a,b)=>b[1]-a[1]).slice(0,6);
-    if(top.length) {
-      topicEl.innerHTML = top.map(([w,c]) =>
-        '<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.875rem;">'
-        +'<span style="color:var(--text);text-transform:capitalize;">'+w+'</span>'
-        +'<span style="color:var(--blue);font-weight:700;font-size:.8rem;">'+c+' time'+(c>1?'s':'')+'</span>'
-        +'</div>'
-      ).join('');
-    } else {
-      topicEl.innerHTML = '<p style="color:var(--muted2);font-size:.875rem;">Run some analyses to see your topics!</p>';
-    }
+  const topicEl=el('topic-list');
+  if(topicEl){
+    const words={};
+    h.forEach(item=>{item.idea.toLowerCase().split(/\s+/).forEach(w=>{if(w.length>4&&!['with','that','this','from','have','your','will','they','their','into','about','would','could','platform','using','based'].includes(w))words[w]=(words[w]||0)+1;});});
+    const top=Object.entries(words).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    if(top.length){topicEl.innerHTML=top.map(([w,c])=>'<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.875rem;"><span style="color:var(--text);text-transform:capitalize;">'+w+'</span><span style="color:var(--blue);font-weight:700;font-size:.8rem;">'+c+' time'+(c>1?'s':'')+'</span></div>').join('');}
+    else{topicEl.innerHTML='<p style="color:var(--muted2);font-size:.875rem;">Run some analyses to see your topics!</p>';}
   }
 }
 
 // ── AI Chat ───────────────────────────────────────────────────
-async function sendChat() {
-  const input = document.getElementById('chat-input');
-  const messages = document.getElementById('chat-messages');
-  const text = input.value.trim();
-  if(!text) return;
-  input.value = '';
-
-  // User bubble
-  const userBubble = document.createElement('div');
-  userBubble.className = 'chat-bubble user';
-  userBubble.textContent = text;
-  messages.appendChild(userBubble);
-
-  // Typing indicator
-  const typing = document.createElement('div');
-  typing.className = 'chat-bubble typing';
-  typing.innerHTML = '<span style="display:inline-flex;gap:3px;align-items:center;"><span style="animation:pulse .6s infinite;width:6px;height:6px;background:var(--muted2);border-radius:50%;display:inline-block;"></span><span style="animation:pulse .6s .2s infinite;width:6px;height:6px;background:var(--muted2);border-radius:50%;display:inline-block;"></span><span style="animation:pulse .6s .4s infinite;width:6px;height:6px;background:var(--muted2);border-radius:50%;display:inline-block;"></span></span>';
-  messages.appendChild(typing);
-  messages.scrollTop = messages.scrollHeight;
-
-  try {
-    const idea = document.getElementById('idea-input')?.value || '';
-    const systemPrompt = `You are VenturePilot AI, a helpful business intelligence assistant. ${idea ? 'The user is working on this business idea: '+idea : ''} Give concise, practical advice. Keep responses under 150 words.`;
-
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 300,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: text }]
-      })
-    });
-    const data = await r.json();
-    const reply = data.content?.[0]?.text || 'Sorry, I could not process that. Please try again.';
-
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  const messages=document.getElementById('chat-messages');
+  const text=input.value.trim();
+  if(!text)return;
+  input.value='';
+  const userBubble=document.createElement('div');userBubble.className='chat-bubble user';userBubble.textContent=text;messages.appendChild(userBubble);
+  const typing=document.createElement('div');typing.className='chat-bubble typing';
+  typing.innerHTML='<span style="display:inline-flex;gap:3px;align-items:center;"><span style="animation:pulse .6s infinite;width:6px;height:6px;background:var(--muted2);border-radius:50%;display:inline-block;"></span><span style="animation:pulse .6s .2s infinite;width:6px;height:6px;background:var(--muted2);border-radius:50%;display:inline-block;"></span><span style="animation:pulse .6s .4s infinite;width:6px;height:6px;background:var(--muted2);border-radius:50%;display:inline-block;"></span></span>';
+  messages.appendChild(typing);messages.scrollTop=messages.scrollHeight;
+  try{
+    const idea=document.getElementById('idea-input')?.value||'';
+    const systemPrompt=`You are VenturePilot AI, a helpful business intelligence assistant. ${idea?'The user is working on this business idea: '+idea:''} Give concise, practical advice. Keep responses under 150 words.`;
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:systemPrompt,messages:[{role:'user',content:text}]})});
+    const data=await r.json();
+    const reply=data.content?.[0]?.text||'Sorry, I could not process that. Please try again.';
     typing.remove();
-    const aiBubble = document.createElement('div');
-    aiBubble.className = 'chat-bubble ai';
-    aiBubble.textContent = reply;
-    messages.appendChild(aiBubble);
-  } catch(e) {
+    const aiBubble=document.createElement('div');aiBubble.className='chat-bubble ai';aiBubble.textContent=reply;messages.appendChild(aiBubble);
+  }catch(e){
     typing.remove();
-    const errBubble = document.createElement('div');
-    errBubble.className = 'chat-bubble ai';
-    errBubble.textContent = 'Sorry, I am having trouble connecting. Please try again later.';
-    messages.appendChild(errBubble);
+    const errBubble=document.createElement('div');errBubble.className='chat-bubble ai';errBubble.textContent='Sorry, I am having trouble connecting. Please try again later.';messages.appendChild(errBubble);
   }
-  messages.scrollTop = messages.scrollHeight;
+  messages.scrollTop=messages.scrollHeight;
 }
-
-function clearChat() {
-  const messages = document.getElementById('chat-messages');
-  if(messages) messages.innerHTML = '<div class="chat-bubble ai">👋 Hi! I\'m your VenturePilot AI assistant. Ask me anything about your business idea, market strategy, or financial modeling!</div>';
-}
+function clearChat(){const messages=document.getElementById('chat-messages');if(messages)messages.innerHTML='<div class="chat-bubble ai">👋 Hi! I\'m your VenturePilot AI assistant. Ask me anything about your business idea, market strategy, or financial modeling!</div>';}
 
 // ── Idea Score ────────────────────────────────────────────────
-function showScore() {
-  const blocks = document.querySelectorAll('.agent-block');
-  if(!blocks.length) { alert('Run an analysis first to get a score!'); return; }
-
-  // Generate score from report content
-  let totalText = '';
-  blocks.forEach(b => { totalText += b.querySelector('.agent-block-body')?.textContent || ''; });
-
-  const positiveWords = ['opportunity','growth','potential','innovative','strong','profitable','scalable','demand','advantage','market'];
-  const negativeWords = ['risk','challenge','competition','difficult','barrier','threat','concern','problem','regulatory','limited'];
-
-  let pos = 0, neg = 0;
-  positiveWords.forEach(w => { pos += (totalText.toLowerCase().match(new RegExp(w,'g'))||[]).length; });
-  negativeWords.forEach(w => { neg += (totalText.toLowerCase().match(new RegExp(w,'g'))||[]).length; });
-
-  const raw = Math.min(95, Math.max(35, Math.round(60 + (pos-neg)*2)));
-  const pct = raw + '%';
-
-  const labels = raw >= 80 ? ['🚀 Excellent','Strong fundamentals — this idea has real potential!']
-    : raw >= 65 ? ['✅ Good','Solid idea with some areas to strengthen.']
-    : raw >= 50 ? ['⚠️ Moderate','Needs refinement. Focus on the risk areas.']
-    : ['🔴 Challenging','Significant hurdles. Consider pivoting.'];
-
-  const breakdown = [
-    {label:'Market Opportunity', score: Math.min(10, Math.max(3, Math.round(pos/2)))},
-    {label:'Risk Level', score: Math.min(10, Math.max(3, 10-Math.round(neg/2)))},
-    {label:'Innovation', score: Math.floor(Math.random()*3)+7},
-    {label:'Scalability', score: Math.floor(Math.random()*3)+6},
+function showScore(){
+  const blocks=document.querySelectorAll('.agent-block');
+  if(!blocks.length){alert('Run an analysis first to get a score!');return;}
+  let totalText='';
+  blocks.forEach(b=>{totalText+=b.querySelector('.agent-block-body')?.textContent||'';});
+  const positiveWords=['opportunity','growth','potential','innovative','strong','profitable','scalable','demand','advantage','market'];
+  const negativeWords=['risk','challenge','competition','difficult','barrier','threat','concern','problem','regulatory','limited'];
+  let pos=0,neg=0;
+  positiveWords.forEach(w=>{pos+=(totalText.toLowerCase().match(new RegExp(w,'g'))||[]).length;});
+  negativeWords.forEach(w=>{neg+=(totalText.toLowerCase().match(new RegExp(w,'g'))||[]).length;});
+  const raw=Math.min(95,Math.max(35,Math.round(60+(pos-neg)*2)));
+  const pct=raw+'%';
+  const labels=raw>=80?['🚀 Excellent','Strong fundamentals — this idea has real potential!']:raw>=65?['✅ Good','Solid idea with some areas to strengthen.']:raw>=50?['⚠️ Moderate','Needs refinement. Focus on the risk areas.']:['🔴 Challenging','Significant hurdles. Consider pivoting.'];
+  const breakdown=[
+    {label:'Market Opportunity',score:Math.min(10,Math.max(3,Math.round(pos/2)))},
+    {label:'Risk Level',score:Math.min(10,Math.max(3,10-Math.round(neg/2)))},
+    {label:'Innovation',score:Math.floor(Math.random()*3)+7},
+    {label:'Scalability',score:Math.floor(Math.random()*3)+6},
   ];
-
-  document.getElementById('score-ring').style.setProperty('--pct', pct);
-  document.getElementById('score-num').textContent = raw;
-  document.getElementById('score-label').textContent = labels[0];
-  document.getElementById('score-desc').textContent = labels[1];
-  document.getElementById('score-breakdown').innerHTML = breakdown.map(b =>
-    '<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);">'
-    +'<span style="font-size:.875rem;color:var(--muted2);">'+b.label+'</span>'
-    +'<div style="display:flex;align-items:center;gap:.5rem;">'
-    +'<div style="width:80px;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;"><div style="width:'+b.score*10+'%;height:100%;background:var(--grad);border-radius:3px;"></div></div>'
-    +'<span style="font-size:.8rem;font-weight:700;color:var(--blue);min-width:24px;">'+b.score+'/10</span>'
-    +'</div></div>'
-  ).join('');
-
+  document.getElementById('score-ring').style.setProperty('--pct',pct);
+  document.getElementById('score-num').textContent=raw;
+  document.getElementById('score-label').textContent=labels[0];
+  document.getElementById('score-desc').textContent=labels[1];
+  document.getElementById('score-breakdown').innerHTML=breakdown.map(b=>'<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);"><span style="font-size:.875rem;color:var(--muted2);">'+b.label+'</span><div style="display:flex;align-items:center;gap:.5rem;"><div style="width:80px;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;"><div style="width:'+b.score*10+'%;height:100%;background:var(--grad);border-radius:3px;"></div></div><span style="font-size:.8rem;font-weight:700;color:var(--blue);min-width:24px;">'+b.score+'/10</span></div></div>').join('');
   openModal('score');
 }
 
 // ── Competitor Analysis ───────────────────────────────────────
-function showCompetitors() {
-  const idea = document.getElementById('idea-input').value.trim();
-  if(!idea) { alert('Enter a business idea first!'); return; }
-
-  const competitors = [
-    {name:'Competitor A', funding:'$50M Series B', strength:'Strong brand', weakness:'High pricing', threat:'Medium'},
-    {name:'Competitor B', funding:'$12M Series A', strength:'Large user base', weakness:'Poor UX', threat:'High'},
-    {name:'Competitor C', funding:'Bootstrapped', strength:'Niche focus', weakness:'Limited scale', threat:'Low'},
-    {name:'Your Venture', funding:'—', strength:'AI-powered, modern', weakness:'New entrant', threat:'—'},
+function showCompetitors(){
+  const idea=document.getElementById('idea-input').value.trim();
+  if(!idea){alert('Enter a business idea first!');return;}
+  const competitors=[
+    {name:'Competitor A',funding:'$50M Series B',strength:'Strong brand',weakness:'High pricing',threat:'Medium'},
+    {name:'Competitor B',funding:'$12M Series A',strength:'Large user base',weakness:'Poor UX',threat:'High'},
+    {name:'Competitor C',funding:'Bootstrapped',strength:'Niche focus',weakness:'Limited scale',threat:'Low'},
+    {name:'Your Venture',funding:'—',strength:'AI-powered, modern',weakness:'New entrant',threat:'—'},
   ];
-
-  document.getElementById('comp-table-wrap').innerHTML =
-    '<table class="comp-table">'
-    +'<thead><tr><th>Company</th><th>Funding</th><th>Strength</th><th>Weakness</th><th>Threat</th></tr></thead>'
-    +'<tbody>'
-    + competitors.map((c,i) =>
-        '<tr style="'+(i===3?'background:rgba(79,142,247,.05);':'')+'">'
-        +'<td style="font-weight:700;color:var(--text);">'+c.name+(i===3?' 🎯':'')+'</td>'
-        +'<td>'+c.funding+'</td>'
-        +'<td>'+c.strength+'</td>'
-        +'<td>'+c.weakness+'</td>'
-        +'<td>'+(c.threat==='—'?'—':'<span class="comp-badge '+(c.threat==='High'?'weak':c.threat==='Low'?'strong':'mid')+'">'+c.threat+'</span>')+'</td>'
-        +'</tr>'
-      ).join('')
-    +'</tbody></table>';
-
+  document.getElementById('comp-table-wrap').innerHTML='<table class="comp-table"><thead><tr><th>Company</th><th>Funding</th><th>Strength</th><th>Weakness</th><th>Threat</th></tr></thead><tbody>'+competitors.map((c,i)=>'<tr style="'+(i===3?'background:rgba(79,142,247,.05);':'')+'"><td style="font-weight:700;color:var(--text);">'+c.name+(i===3?' 🎯':'')+'</td><td>'+c.funding+'</td><td>'+c.strength+'</td><td>'+c.weakness+'</td><td>'+(c.threat==='—'?'—':'<span class="comp-badge '+(c.threat==='High'?'weak':c.threat==='Low'?'strong':'mid')+'">'+c.threat+'</span>')+'</td></tr>').join('')+'</tbody></table>';
   openModal('competitor');
 }
 
 // ── Email Report ──────────────────────────────────────────────
-function sendEmailReport() {
-  const recipient = document.getElementById('email-recipient').value.trim();
-  const subject = document.getElementById('email-subject').value.trim();
-  const note = document.getElementById('email-note').value.trim();
-  const msg = document.getElementById('email-msg');
-  msg.className = 'msg';
-
-  if(!recipient) { showMsg(msg, 'error', 'Please enter a recipient email.'); return; }
-  if(!/^[^@]+@[^@]+\.[^@]+$/.test(recipient)) { showMsg(msg, 'error', 'Please enter a valid email.'); return; }
-
-  const blocks = document.querySelectorAll('.agent-block');
-  let body = note ? note + '\n\n---\n\n' : '';
-  body += 'VenturePilot Business Analysis Report\n\n';
-  blocks.forEach(block => {
-    const title = block.querySelector('h4')?.textContent?.trim() || '';
-    const content = block.querySelector('.agent-block-body')?.textContent?.trim() || '';
-    if(title && content) body += title + '\n' + '-'.repeat(30) + '\n' + content.substring(0,300) + '...\n\n';
-  });
-
-  const mailto = 'mailto:' + recipient + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-  window.open(mailto);
-
-  const fw = document.getElementById('email-form-wrap');
-  if(fw) fw.innerHTML = '<div class="email-sent"><div class="big-icon">✅</div><h3>Opening your email client!</h3><p style="color:var(--muted2);font-size:.875rem;">Email ready to send to ' + recipient + '</p></div>';
-
-  setTimeout(() => {
-    const fw2 = document.getElementById('email-form-wrap');
-    if(fw2) fw2.innerHTML = '<div class="form-group"><label>Recipient Email</label><input type="email" id="email-recipient" placeholder="colleague@company.com"/></div><div class="form-group"><label>Subject</label><input type="text" id="email-subject" value="VenturePilot Business Analysis Report"/></div><div class="form-group"><label>Note</label><textarea id="email-note" placeholder="Add a personal note..." rows="2" style="min-height:60px;"></textarea></div><div class="msg" id="email-msg"></div><button class="btn btn-primary btn-full" onclick="sendEmailReport()">Send Report</button>';
-  }, 4000);
+function sendEmailReport(){
+  const recipient=document.getElementById('email-recipient').value.trim();
+  const subject=document.getElementById('email-subject').value.trim();
+  const note=document.getElementById('email-note').value.trim();
+  const msg=document.getElementById('email-msg');
+  msg.className='msg';
+  if(!recipient){showMsg(msg,'error','Please enter a recipient email.');return;}
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(recipient)){showMsg(msg,'error','Please enter a valid email.');return;}
+  const blocks=document.querySelectorAll('.agent-block');
+  let body=note?note+'\n\n---\n\n':'';
+  body+='VenturePilot Business Analysis Report\n\n';
+  blocks.forEach(block=>{const title=block.querySelector('h4')?.textContent?.trim()||'';const content=block.querySelector('.agent-block-body')?.textContent?.trim()||'';if(title&&content)body+=title+'\n'+'-'.repeat(30)+'\n'+content.substring(0,300)+'...\n\n';});
+  window.open('mailto:'+recipient+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body));
+  const fw=document.getElementById('email-form-wrap');
+  if(fw)fw.innerHTML='<div style="text-align:center;padding:1rem;"><div style="font-size:2rem;margin-bottom:.5rem;">✅</div><h3>Opening your email client!</h3><p style="color:var(--muted2);font-size:.875rem;">Email ready to send to '+recipient+'</p></div>';
+  setTimeout(()=>{const fw2=document.getElementById('email-form-wrap');if(fw2)fw2.innerHTML='<div class="form-group"><label>Recipient Email</label><input type="email" id="email-recipient" placeholder="colleague@company.com"/></div><div class="form-group"><label>Subject</label><input type="text" id="email-subject" value="VenturePilot Business Analysis Report"/></div><div class="form-group"><label>Note</label><textarea id="email-note" placeholder="Add a personal note..." rows="2" style="min-height:60px;"></textarea></div><div class="msg" id="email-msg"></div><button class="btn btn-primary btn-full" onclick="sendEmailReport()">Send Report</button>';},4000);
 }
 
+// ── Stubs for functions referenced in HTML but not fully implemented ──
+function handleSearch(v){}
+function closeSearch(){}
+function selectIndustry(el,name){}
+function validateIdea(){}
+function generateActionPlan(){}
+function runComparison(){}
+function toggleFaq(el){const a=el.nextElementSibling;const open=a.style.display==='block';a.style.display=open?'none':'block';el.querySelector('span:last-child').textContent=open?'▸':'▾';}
+function toggleChatWidget(){const p=document.getElementById('chat-widget-panel');if(p)p.style.display=p.style.display==='flex'?'none':'flex';}
+function sendCWMessage(){}
+function startTour(){}
+function endTour(){}
+function nextTourStep(){}
+function toggleNotif(){const p=document.getElementById('notif-panel');if(p)p.style.display=p.style.display==='block'?'none':'block';}
+function clearNotifs(){const l=document.getElementById('notif-list');if(l)l.innerHTML='<p style="color:var(--muted2);font-size:.82rem;padding:.5rem 0;">No notifications.</p>';const d=document.getElementById('notif-dot');if(d)d.classList.remove('show');}
+function submitFeedback(){const msg=document.getElementById('feedback-msg');if(msg){msg.className='msg success';msg.textContent='Thank you for your feedback!';setTimeout(()=>closeModal('feedback'),1500);}}
+function rateStar(n){document.getElementById('star-label').textContent=['','😞 Poor','😐 Fair','🙂 Good','😊 Great','🤩 Excellent'][n]||'';}
+function toggleTag(el){el.classList.toggle('active');}
+function addNotif(icon,text){}
 
-
-// ── Handle Google OAuth redirect ─────────────────────────────
-function handleGoogleCallback() {
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get('token');
-  const name  = params.get('name');
-  const email = params.get('email');
-  if(token && name) {
-    saveSession(token, decodeURIComponent(name), decodeURIComponent(email || ''));
-    window.history.replaceState({}, document.title, '/');
-    showDashboard(decodeURIComponent(name));
-  }
+// ── Handle Google OAuth redirect ──────────────────────────────
+function handleGoogleCallback(){
+  const params=new URLSearchParams(window.location.search);
+  const token=params.get('token');const name=params.get('name');const email=params.get('email');
+  if(token&&name){saveSession(token,decodeURIComponent(name),decodeURIComponent(email||''));window.history.replaceState({},document.title,'/');showDashboard(decodeURIComponent(name));}
 }
 
 // ── Privacy ───────────────────────────────────────────────────
@@ -1649,226 +1668,5 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(token&&name){showDashboard(name);if(!localStorage.getItem('vp_toured'))setTimeout(startTour,1500);}
 });
 </script>
-
-<!-- LIVE CHAT WIDGET -->
-<div class="chat-widget" id="chat-widget">
-  <div class="chat-widget-panel" id="cwp">
-    <div class="cwp-header">
-      <div class="cwp-avatar">🤖</div>
-      <div>
-        <div class="cwp-name">VenturePilot Support</div>
-        <div class="cwp-status">● Online · Typically replies instantly</div>
-      </div>
-      <button class="cwp-close" onclick="toggleLiveChat()">✕</button>
-    </div>
-    <div class="cwp-messages" id="cwp-messages">
-      <div class="cwp-bubble-ai">👋 Hi! I'm here to help you get the most out of VenturePilot. What can I help you with today?</div>
-      <div class="cwp-bubble-ai" style="margin-top:.25rem;">
-        <div style="font-size:.75rem;color:var(--muted);margin-bottom:.4rem;">Quick questions:</div>
-        <div onclick="cwpQuick('How do I run an analysis?')" style="cursor:pointer;color:var(--blue2);font-size:.78rem;padding:.2rem 0;">→ How do I run an analysis?</div>
-        <div onclick="cwpQuick('What does each agent do?')" style="cursor:pointer;color:var(--blue2);font-size:.78rem;padding:.2rem 0;">→ What does each agent do?</div>
-        <div onclick="cwpQuick('How do I upgrade my plan?')" style="cursor:pointer;color:var(--blue2);font-size:.78rem;padding:.2rem 0;">→ How do I upgrade my plan?</div>
-      </div>
-    </div>
-    <div class="cwp-input-row">
-      <input class="cwp-input" id="cwp-input" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendLiveChat()"/>
-      <button class="cwp-send" onclick="sendLiveChat()">↑</button>
-    </div>
-  </div>
-  <button class="chat-widget-btn" onclick="toggleLiveChat()">
-    💬
-    <div class="cwp-unread show" id="cwp-unread">1</div>
-  </button>
-</div>
-
-<!-- FEEDBACK MODAL -->
-<div class="modal-overlay" id="modal-feedback">
-  <div class="modal" style="max-width:420px;">
-    <button class="modal-close" onclick="closeModal('feedback')">✕</button>
-    <div style="text-align:center;">
-      <div style="font-size:2.5rem;margin-bottom:.75rem;">⭐</div>
-      <h2 style="margin-bottom:.4rem;">How was your experience?</h2>
-      <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Your feedback helps us improve VenturePilot</p>
-    </div>
-    <div class="star-rating" id="star-rating">
-      <span class="star" onclick="rateStar(1)" id="star-1">⭐</span>
-      <span class="star" onclick="rateStar(2)" id="star-2">⭐</span>
-      <span class="star" onclick="rateStar(3)" id="star-3">⭐</span>
-      <span class="star" onclick="rateStar(4)" id="star-4">⭐</span>
-      <span class="star" onclick="rateStar(5)" id="star-5">⭐</span>
-    </div>
-    <div id="star-label" style="text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:1rem;min-height:20px;"></div>
-    <div style="margin-bottom:1rem;">
-      <div style="font-size:.78rem;color:var(--muted);margin-bottom:.5rem;">What did you like?</div>
-      <div>
-        <span class="feedback-tag" onclick="toggleTag(this)">Easy to use</span>
-        <span class="feedback-tag" onclick="toggleTag(this)">Fast analysis</span>
-        <span class="feedback-tag" onclick="toggleTag(this)">Accurate results</span>
-        <span class="feedback-tag" onclick="toggleTag(this)">Great UI</span>
-        <span class="feedback-tag" onclick="toggleTag(this)">Helpful agents</span>
-        <span class="feedback-tag" onclick="toggleTag(this)">Good value</span>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Additional comments</label>
-      <textarea id="feedback-text" placeholder="Tell us more…" rows="2" style="min-height:60px;"></textarea>
-    </div>
-    <div class="msg" id="feedback-msg"></div>
-    <button class="btn btn-primary btn-full" onclick="submitFeedback()">Submit Feedback</button>
-  </div>
-</div>
-
-<!-- FAQ MODAL -->
-<div class="modal-overlay" id="modal-faq">
-  <div class="modal" style="max-width:560px;max-height:85vh;overflow-y:auto;">
-    <button class="modal-close" onclick="closeModal('faq')">✕</button>
-    <h2 style="margin-bottom:.4rem;">❓ FAQ</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Frequently asked questions</p>
-    <div id="faq-list">
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What is VenturePilot?</span><span>▸</span></div><div class="faq-a">VenturePilot is an AI-powered business intelligence platform that analyzes your business ideas using 5 specialized agents: Research, Marketing, Finance, Risk, and CEO Decision.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How long does an analysis take?</span><span>▸</span></div><div class="faq-a">A full analysis typically takes 30-90 seconds depending on your internet connection and the complexity of your idea.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Is my data secure?</span><span>▸</span></div><div class="faq-a">Yes! Your data is encrypted and stored securely. We never sell or share your business ideas with third parties. Passwords are hashed using PBKDF2-SHA256.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What is the Free plan limit?</span><span>▸</span></div><div class="faq-a">The Free plan allows 3 analyses per month. Upgrade to Starter ($9/mo) for 50 analyses or Pro ($29/mo) for unlimited analyses.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I download my reports?</span><span>▸</span></div><div class="faq-a">Yes! After running an analysis, click the "Download" button to save your full report as a .txt file. You can also email it directly from the platform.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How do I cancel my subscription?</span><span>▸</span></div><div class="faq-a">You can cancel anytime from your Profile settings. Contact us at muhammadanas.ragdev@gmail.com for immediate assistance.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What AI models power VenturePilot?</span><span>▸</span></div><div class="faq-a">VenturePilot uses Groq LLM API with advanced language models for fast, accurate business analysis. Our agents use LangGraph for multi-step reasoning.</div></div>
-    </div>
-    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('faq')">Got it!</button>
-  </div>
-</div>
-
-<!-- IDEA VALIDATOR MODAL -->
-<div class="modal-overlay" id="modal-validator">
-  <div class="modal" style="max-width:420px;">
-    <button class="modal-close" onclick="closeModal('validator')">✕</button>
-    <h2 style="margin-bottom:.4rem;">💡 Idea Validator</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Quick check before running full analysis</p>
-    <div id="validator-result" style="text-align:center;">
-      <div class="form-group">
-        <label>Your Business Idea</label>
-        <textarea id="validator-input" placeholder="Describe your idea briefly…" rows="3" style="min-height:70px;"></textarea>
-      </div>
-      <button class="btn btn-primary btn-full" onclick="validateIdea()">⚡ Quick Validate</button>
-    </div>
-  </div>
-</div>
-
-<!-- COMPARISON MODAL -->
-<div class="modal-overlay" id="modal-compare">
-  <div class="modal" style="max-width:680px;">
-    <button class="modal-close" onclick="closeModal('compare')">✕</button>
-    <h2 style="margin-bottom:.4rem;">⚖️ Compare Two Ideas</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Run two analyses side by side</p>
-    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:.75rem;align-items:start;">
-      <div>
-        <div style="font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:.5rem;">Idea A</div>
-        <textarea id="compare-a" placeholder="First business idea…" rows="3" style="min-height:70px;"></textarea>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:center;padding-top:1.5rem;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.8rem;">VS</div>
-      </div>
-      <div>
-        <div style="font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:.5rem;">Idea B</div>
-        <textarea id="compare-b" placeholder="Second business idea…" rows="3" style="min-height:70px;"></textarea>
-      </div>
-    </div>
-    <button class="btn btn-primary btn-full" style="margin-top:1rem;" onclick="runComparison()">⚖️ Compare Both Ideas</button>
-    <div id="compare-results" style="margin-top:1rem;"></div>
-  </div>
-</div>
-
-<!-- ACTION PLAN MODAL -->
-<div class="modal-overlay" id="modal-actionplan">
-  <div class="modal" style="max-width:500px;max-height:85vh;overflow-y:auto;">
-    <button class="modal-close" onclick="closeModal('actionplan')">✕</button>
-    <h2 style="margin-bottom:.4rem;">🗺️ Action Plan</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Your next steps based on the analysis</p>
-    <div id="action-plan-content"></div>
-  </div>
-</div>
-
-
-<!-- ── LIVE CHAT WIDGET ── -->
-<button class="chat-widget-btn" onclick="toggleChatWidget()" id="chat-widget-btn">💬</button>
-<div class="chat-widget-panel" id="chat-widget-panel">
-  <div class="chat-widget-header">
-    <div class="chat-widget-avatar">🧠</div>
-    <div>
-      <div class="chat-widget-name">VenturePilot Support</div>
-      <div class="chat-widget-status">● Online — typically replies instantly</div>
-    </div>
-    <button onclick="toggleChatWidget()" style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;margin-left:auto;font-size:1rem;">✕</button>
-  </div>
-  <div class="chat-widget-messages" id="cw-messages">
-    <div class="cw-bubble-ai">👋 Hi! I'm your VenturePilot assistant. How can I help you today?</div>
-    <div class="cw-bubble-ai">You can ask me about:<br/>• How to use VenturePilot<br/>• Understanding your analysis<br/>• Pricing & plans<br/>• Technical issues</div>
-  </div>
-  <div class="chat-widget-input-row">
-    <input class="cw-input" id="cw-input" placeholder="Type your question…" onkeydown="if(event.key==='Enter')sendCWMessage()"/>
-    <button class="cw-send" onclick="sendCWMessage()">↑</button>
-  </div>
-</div>
-
-<!-- ── TOUR OVERLAY ── -->
-<div class="tour-overlay" id="tour-overlay" onclick="endTour()"></div>
-<div class="tour-spotlight" id="tour-spotlight"></div>
-<div class="tour-tooltip" id="tour-tooltip" style="display:none;">
-  <h4 id="tour-title"></h4>
-  <p id="tour-desc"></p>
-  <div class="tour-nav">
-    <div>
-      <div class="tour-dots" id="tour-dots"></div>
-    </div>
-    <span class="tour-counter" id="tour-counter"></span>
-    <div style="display:flex;gap:.5rem;">
-      <button class="btn btn-ghost" style="padding:.35rem .8rem;font-size:.78rem;" onclick="endTour()">Skip</button>
-      <button class="btn btn-primary" style="padding:.35rem .9rem;font-size:.78rem;" onclick="nextTourStep()" id="tour-next-btn">Next →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── FAQ MODAL ── -->
-<div class="modal-overlay" id="modal-faq">
-  <div class="modal" style="max-width:560px;max-height:85vh;overflow-y:auto;">
-    <button class="modal-close" onclick="closeModal('faq')">✕</button>
-    <h2 style="margin-bottom:.5rem;">❓ FAQ</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Frequently asked questions about VenturePilot</p>
-    <div id="faq-list"></div>
-    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('faq')">Close</button>
-  </div>
-</div>
-
-<!-- ── COMPARISON MODAL ── -->
-<div class="modal-overlay" id="modal-compare">
-  <div class="modal" style="max-width:720px;max-height:90vh;overflow-y:auto;">
-    <button class="modal-close" onclick="closeModal('compare')">✕</button>
-    <h2 style="margin-bottom:.5rem;">⚖️ Idea Comparison</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Compare two business ideas side by side</p>
-    <div class="compare-grid" style="margin-bottom:1rem;">
-      <div class="compare-card">
-        <div class="compare-label">Idea A</div>
-        <textarea id="compare-idea-a" placeholder="Enter first business idea…" style="min-height:80px;"></textarea>
-      </div>
-      <div class="compare-card">
-        <div class="compare-label">Idea B</div>
-        <textarea id="compare-idea-b" placeholder="Enter second business idea…" style="min-height:80px;"></textarea>
-      </div>
-    </div>
-    <button class="btn btn-primary btn-full" onclick="runComparison()">⚖️ Compare Ideas</button>
-    <div id="compare-results" style="margin-top:1.25rem;"></div>
-  </div>
-</div>
-
-<!-- ── ACTION PLAN MODAL ── -->
-<div class="modal-overlay" id="modal-action">
-  <div class="modal" style="max-width:500px;max-height:85vh;overflow-y:auto;">
-    <button class="modal-close" onclick="closeModal('action')">✕</button>
-    <h2 style="margin-bottom:.5rem;">🗺️ Action Plan</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Your personalized next steps based on the analysis.</p>
-    <div id="action-plan-list"></div>
-    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('action')">Got it!</button>
-  </div>
-</div>
-
 </body>
 </html>
