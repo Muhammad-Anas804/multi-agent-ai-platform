@@ -662,6 +662,7 @@ footer{
     </div>
     <div class="dash-actions">
       <button class="action-btn" onclick="openModal('guide')">📖 Guide</button>
+      <button class="action-btn" onclick="openModal('faq')">❓ FAQ</button>
       <button class="action-btn" onclick="logout()">← Sign Out</button>
     </div>
   </div>
@@ -712,6 +713,27 @@ footer{
 
     <div class="idea-card">
       <h3>New Analysis</h3>
+      <!-- Industry Selector -->
+      <div style="margin-bottom:1rem;">
+        <div class="templates-label">Select Industry</div>
+        <div class="industry-grid" id="industry-grid">
+          <div class="industry-chip" onclick="selectIndustry(this,'Food & Beverage')"><span class="industry-icon">🍔</span>Food</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'Technology & SaaS')"><span class="industry-icon">💻</span>Tech</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'Healthcare')"><span class="industry-icon">🏥</span>Health</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'Education')"><span class="industry-icon">🎓</span>Edu</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'Finance & FinTech')"><span class="industry-icon">💰</span>Finance</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'E-Commerce & Retail')"><span class="industry-icon">🛒</span>Retail</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'Real Estate')"><span class="industry-icon">🏠</span>Real Estate</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'Transportation')"><span class="industry-icon">🚗</span>Transport</div>
+        </div>
+      </div>
+
+      <!-- Idea Validator -->
+      <div class="validator-wrap" id="idea-validator" style="display:none;">
+        <div class="validator-title">💡 Idea Check</div>
+        <div class="validator-checks" id="validator-checks"></div>
+      </div>
+
       <div class="templates-wrap">
         <div class="templates-label">Quick Templates</div>
         <div class="templates-row">
@@ -724,7 +746,7 @@ footer{
       </div>
       <div class="form-group" style="margin-bottom:.75rem;">
         <label>Business Idea</label>
-        <textarea id="idea-input" placeholder="Describe your business idea in detail…" rows="3"></textarea>
+        <textarea id="idea-input" placeholder="Describe your business idea in detail…" rows="3" oninput="validateIdea()"></textarea>
       </div>
       <div class="form-group" style="margin-bottom:1rem;">
         <label>Context <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted);">(optional)</span></label>
@@ -742,6 +764,8 @@ footer{
       <div class="action-btn" onclick="showScore()">🎯 Score</div>
       <div class="action-btn" onclick="showCompetitors()">🏆 Competitors</div>
       <div class="action-btn" onclick="openModal('email')">📧 Email</div>
+      <div class="action-btn" onclick="openModal('compare')">⚖️ Compare</div>
+      <div class="action-btn" onclick="generateActionPlan()">🗺️ Action Plan</div>
     </div>
     <div id="results"></div>
   </div>
@@ -1260,7 +1284,7 @@ function handleEvent(ev){
     const s=document.getElementById("status-"+key(ev.agent));if(s){s.className="agent-status";s.style.background="var(--danger)";}
     const body=document.getElementById("body-"+key(ev.agent));if(body){body.textContent="Error: "+ev.error;body.classList.add("open");body.style.color="var(--danger)";}
   }
-  if(ev.event==="complete"){document.getElementById('result-actions').style.display='flex';}
+  if(ev.event==="complete"){document.getElementById('result-actions').style.display='flex';document.getElementById('feedback-bar').style.display='flex';}
 }
 function toggleBlock(header){const body=header.nextElementSibling;body.classList.toggle('open');header.querySelector('span').textContent=body.classList.contains('open')?'▾':'▸';}
 
@@ -1622,8 +1646,229 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(localStorage.getItem('vp_theme')==='light'){document.body.classList.add('light-mode');document.querySelectorAll('#theme-btn,#theme-btn2').forEach(b=>b.textContent='☀️');}
   handleGoogleCallback();
   const token=getToken();const name=localStorage.getItem('vp_name');
-  if(token&&name)showDashboard(name);
+  if(token&&name){showDashboard(name);if(!localStorage.getItem('vp_toured'))setTimeout(startTour,1500);}
 });
 </script>
+
+<!-- LIVE CHAT WIDGET -->
+<div class="chat-widget" id="chat-widget">
+  <div class="chat-widget-panel" id="cwp">
+    <div class="cwp-header">
+      <div class="cwp-avatar">🤖</div>
+      <div>
+        <div class="cwp-name">VenturePilot Support</div>
+        <div class="cwp-status">● Online · Typically replies instantly</div>
+      </div>
+      <button class="cwp-close" onclick="toggleLiveChat()">✕</button>
+    </div>
+    <div class="cwp-messages" id="cwp-messages">
+      <div class="cwp-bubble-ai">👋 Hi! I'm here to help you get the most out of VenturePilot. What can I help you with today?</div>
+      <div class="cwp-bubble-ai" style="margin-top:.25rem;">
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:.4rem;">Quick questions:</div>
+        <div onclick="cwpQuick('How do I run an analysis?')" style="cursor:pointer;color:var(--blue2);font-size:.78rem;padding:.2rem 0;">→ How do I run an analysis?</div>
+        <div onclick="cwpQuick('What does each agent do?')" style="cursor:pointer;color:var(--blue2);font-size:.78rem;padding:.2rem 0;">→ What does each agent do?</div>
+        <div onclick="cwpQuick('How do I upgrade my plan?')" style="cursor:pointer;color:var(--blue2);font-size:.78rem;padding:.2rem 0;">→ How do I upgrade my plan?</div>
+      </div>
+    </div>
+    <div class="cwp-input-row">
+      <input class="cwp-input" id="cwp-input" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendLiveChat()"/>
+      <button class="cwp-send" onclick="sendLiveChat()">↑</button>
+    </div>
+  </div>
+  <button class="chat-widget-btn" onclick="toggleLiveChat()">
+    💬
+    <div class="cwp-unread show" id="cwp-unread">1</div>
+  </button>
+</div>
+
+<!-- FEEDBACK MODAL -->
+<div class="modal-overlay" id="modal-feedback">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeModal('feedback')">✕</button>
+    <div style="text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:.75rem;">⭐</div>
+      <h2 style="margin-bottom:.4rem;">How was your experience?</h2>
+      <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Your feedback helps us improve VenturePilot</p>
+    </div>
+    <div class="star-rating" id="star-rating">
+      <span class="star" onclick="rateStar(1)" id="star-1">⭐</span>
+      <span class="star" onclick="rateStar(2)" id="star-2">⭐</span>
+      <span class="star" onclick="rateStar(3)" id="star-3">⭐</span>
+      <span class="star" onclick="rateStar(4)" id="star-4">⭐</span>
+      <span class="star" onclick="rateStar(5)" id="star-5">⭐</span>
+    </div>
+    <div id="star-label" style="text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:1rem;min-height:20px;"></div>
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:.5rem;">What did you like?</div>
+      <div>
+        <span class="feedback-tag" onclick="toggleTag(this)">Easy to use</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Fast analysis</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Accurate results</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Great UI</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Helpful agents</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Good value</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Additional comments</label>
+      <textarea id="feedback-text" placeholder="Tell us more…" rows="2" style="min-height:60px;"></textarea>
+    </div>
+    <div class="msg" id="feedback-msg"></div>
+    <button class="btn btn-primary btn-full" onclick="submitFeedback()">Submit Feedback</button>
+  </div>
+</div>
+
+<!-- FAQ MODAL -->
+<div class="modal-overlay" id="modal-faq">
+  <div class="modal" style="max-width:560px;max-height:85vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('faq')">✕</button>
+    <h2 style="margin-bottom:.4rem;">❓ FAQ</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Frequently asked questions</p>
+    <div id="faq-list">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What is VenturePilot?</span><span>▸</span></div><div class="faq-a">VenturePilot is an AI-powered business intelligence platform that analyzes your business ideas using 5 specialized agents: Research, Marketing, Finance, Risk, and CEO Decision.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How long does an analysis take?</span><span>▸</span></div><div class="faq-a">A full analysis typically takes 30-90 seconds depending on your internet connection and the complexity of your idea.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Is my data secure?</span><span>▸</span></div><div class="faq-a">Yes! Your data is encrypted and stored securely. We never sell or share your business ideas with third parties. Passwords are hashed using PBKDF2-SHA256.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What is the Free plan limit?</span><span>▸</span></div><div class="faq-a">The Free plan allows 3 analyses per month. Upgrade to Starter ($9/mo) for 50 analyses or Pro ($29/mo) for unlimited analyses.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I download my reports?</span><span>▸</span></div><div class="faq-a">Yes! After running an analysis, click the "Download" button to save your full report as a .txt file. You can also email it directly from the platform.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How do I cancel my subscription?</span><span>▸</span></div><div class="faq-a">You can cancel anytime from your Profile settings. Contact us at muhammadanas.ragdev@gmail.com for immediate assistance.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What AI models power VenturePilot?</span><span>▸</span></div><div class="faq-a">VenturePilot uses Groq LLM API with advanced language models for fast, accurate business analysis. Our agents use LangGraph for multi-step reasoning.</div></div>
+    </div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('faq')">Got it!</button>
+  </div>
+</div>
+
+<!-- IDEA VALIDATOR MODAL -->
+<div class="modal-overlay" id="modal-validator">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeModal('validator')">✕</button>
+    <h2 style="margin-bottom:.4rem;">💡 Idea Validator</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Quick check before running full analysis</p>
+    <div id="validator-result" style="text-align:center;">
+      <div class="form-group">
+        <label>Your Business Idea</label>
+        <textarea id="validator-input" placeholder="Describe your idea briefly…" rows="3" style="min-height:70px;"></textarea>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="validateIdea()">⚡ Quick Validate</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARISON MODAL -->
+<div class="modal-overlay" id="modal-compare">
+  <div class="modal" style="max-width:680px;">
+    <button class="modal-close" onclick="closeModal('compare')">✕</button>
+    <h2 style="margin-bottom:.4rem;">⚖️ Compare Two Ideas</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Run two analyses side by side</p>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:.75rem;align-items:start;">
+      <div>
+        <div style="font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:.5rem;">Idea A</div>
+        <textarea id="compare-a" placeholder="First business idea…" rows="3" style="min-height:70px;"></textarea>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;padding-top:1.5rem;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.8rem;">VS</div>
+      </div>
+      <div>
+        <div style="font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:.5rem;">Idea B</div>
+        <textarea id="compare-b" placeholder="Second business idea…" rows="3" style="min-height:70px;"></textarea>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" style="margin-top:1rem;" onclick="runComparison()">⚖️ Compare Both Ideas</button>
+    <div id="compare-results" style="margin-top:1rem;"></div>
+  </div>
+</div>
+
+<!-- ACTION PLAN MODAL -->
+<div class="modal-overlay" id="modal-actionplan">
+  <div class="modal" style="max-width:500px;max-height:85vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('actionplan')">✕</button>
+    <h2 style="margin-bottom:.4rem;">🗺️ Action Plan</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Your next steps based on the analysis</p>
+    <div id="action-plan-content"></div>
+  </div>
+</div>
+
+
+<!-- ── LIVE CHAT WIDGET ── -->
+<button class="chat-widget-btn" onclick="toggleChatWidget()" id="chat-widget-btn">💬</button>
+<div class="chat-widget-panel" id="chat-widget-panel">
+  <div class="chat-widget-header">
+    <div class="chat-widget-avatar">🧠</div>
+    <div>
+      <div class="chat-widget-name">VenturePilot Support</div>
+      <div class="chat-widget-status">● Online — typically replies instantly</div>
+    </div>
+    <button onclick="toggleChatWidget()" style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;margin-left:auto;font-size:1rem;">✕</button>
+  </div>
+  <div class="chat-widget-messages" id="cw-messages">
+    <div class="cw-bubble-ai">👋 Hi! I'm your VenturePilot assistant. How can I help you today?</div>
+    <div class="cw-bubble-ai">You can ask me about:<br/>• How to use VenturePilot<br/>• Understanding your analysis<br/>• Pricing & plans<br/>• Technical issues</div>
+  </div>
+  <div class="chat-widget-input-row">
+    <input class="cw-input" id="cw-input" placeholder="Type your question…" onkeydown="if(event.key==='Enter')sendCWMessage()"/>
+    <button class="cw-send" onclick="sendCWMessage()">↑</button>
+  </div>
+</div>
+
+<!-- ── TOUR OVERLAY ── -->
+<div class="tour-overlay" id="tour-overlay" onclick="endTour()"></div>
+<div class="tour-spotlight" id="tour-spotlight"></div>
+<div class="tour-tooltip" id="tour-tooltip" style="display:none;">
+  <h4 id="tour-title"></h4>
+  <p id="tour-desc"></p>
+  <div class="tour-nav">
+    <div>
+      <div class="tour-dots" id="tour-dots"></div>
+    </div>
+    <span class="tour-counter" id="tour-counter"></span>
+    <div style="display:flex;gap:.5rem;">
+      <button class="btn btn-ghost" style="padding:.35rem .8rem;font-size:.78rem;" onclick="endTour()">Skip</button>
+      <button class="btn btn-primary" style="padding:.35rem .9rem;font-size:.78rem;" onclick="nextTourStep()" id="tour-next-btn">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── FAQ MODAL ── -->
+<div class="modal-overlay" id="modal-faq">
+  <div class="modal" style="max-width:560px;max-height:85vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('faq')">✕</button>
+    <h2 style="margin-bottom:.5rem;">❓ FAQ</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Frequently asked questions about VenturePilot</p>
+    <div id="faq-list"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('faq')">Close</button>
+  </div>
+</div>
+
+<!-- ── COMPARISON MODAL ── -->
+<div class="modal-overlay" id="modal-compare">
+  <div class="modal" style="max-width:720px;max-height:90vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('compare')">✕</button>
+    <h2 style="margin-bottom:.5rem;">⚖️ Idea Comparison</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Compare two business ideas side by side</p>
+    <div class="compare-grid" style="margin-bottom:1rem;">
+      <div class="compare-card">
+        <div class="compare-label">Idea A</div>
+        <textarea id="compare-idea-a" placeholder="Enter first business idea…" style="min-height:80px;"></textarea>
+      </div>
+      <div class="compare-card">
+        <div class="compare-label">Idea B</div>
+        <textarea id="compare-idea-b" placeholder="Enter second business idea…" style="min-height:80px;"></textarea>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="runComparison()">⚖️ Compare Ideas</button>
+    <div id="compare-results" style="margin-top:1.25rem;"></div>
+  </div>
+</div>
+
+<!-- ── ACTION PLAN MODAL ── -->
+<div class="modal-overlay" id="modal-action">
+  <div class="modal" style="max-width:500px;max-height:85vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('action')">✕</button>
+    <h2 style="margin-bottom:.5rem;">🗺️ Action Plan</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Your personalized next steps based on the analysis.</p>
+    <div id="action-plan-list"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('action')">Got it!</button>
+  </div>
+</div>
+
 </body>
 </html>
