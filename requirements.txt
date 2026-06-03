@@ -1,0 +1,14 @@
+langchain>=0.2
+langchain-groq
+langchain-community
+langgraph
+chromadb
+sentence-transformers
+python-dotenv
+rich
+fastapi
+uvicorn
+pytest
+boto3
+psycopg2-binary
+httpx

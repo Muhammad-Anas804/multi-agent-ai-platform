@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>VenturePilot — AI Business Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<style>
+:root {
+  --bg:#04050a;
+  --surface:#0a0c14;
+  --surface2:#0f1220;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.12);
+  --blue:#4f8ef7;
+  --blue2:#7aaeff;
+  --cyan:#00d4ff;
+  --text:#f0eee8;
+  --muted:#666a7a;
+  --muted2:#8891a8;
+  --success:#22c55e;
+  --danger:#ef4444;
+  --gold:#f0b429;
+  --grad:linear-gradient(135deg,#4f8ef7,#00d4ff);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Cabinet Grotesk',sans-serif;overflow-x:hidden;}
+
+/* Grid background */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(79,142,247,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,0.03) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+
+/* Glow orbs */
+.orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
+.orb-1{width:600px;height:600px;background:rgba(79,142,247,0.06);top:-200px;right:-100px;}
+.orb-2{width:400px;height:400px;background:rgba(0,212,255,0.04);bottom:100px;left:-100px;}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 3rem;
+  background:rgba(4,5,10,0.8);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+}
+.logo{display:flex;align-items:center;gap:.75rem;text-decoration:none;}
+.logo-mark{
+  width:38px;height:38px;border-radius:10px;
+  background:var(--grad);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;font-weight:800;color:#fff;
+  font-family:'Syne',sans-serif;
+  box-shadow:0 0 20px rgba(79,142,247,0.4);
+}
+.logo-name{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);}
+.logo-name span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-center{display:flex;gap:2rem;align-items:center;}
+.nav-link{color:var(--muted2);font-size:.875rem;text-decoration:none;transition:.2s;font-weight:500;}
+.nav-link:hover{color:var(--text);}
+.nav-actions{display:flex;gap:.75rem;align-items:center;}
+
+/* ── BUTTONS ── */
+.btn{padding:.55rem 1.4rem;border-radius:8px;font-family:'Cabinet Grotesk',sans-serif;font-size:.875rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;letter-spacing:.01em;}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue);}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 4px 20px rgba(79,142,247,0.3);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(79,142,247,0.4);}
+.btn-full{width:100%;padding:.8rem;font-size:.95rem;border-radius:10px;margin-top:.5rem;}
+.btn-google{
+  width:100%;padding:.75rem;border-radius:10px;margin-top:.5rem;
+  background:var(--surface2);border:1px solid var(--border2);
+  color:var(--text);font-family:'Cabinet Grotesk',sans-serif;font-size:.9rem;font-weight:600;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.6rem;
+}
+.btn-google:hover{border-color:var(--blue);background:rgba(79,142,247,0.08);}
+.btn-danger{background:transparent;border:1px solid var(--danger);color:var(--danger);}
+.btn-danger:hover{background:rgba(239,68,68,0.1);}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:8rem 2rem 5rem;text-align:center;position:relative;z-index:1;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(79,142,247,0.08);border:1px solid rgba(79,142,247,0.2);
+  padding:.35rem 1rem;border-radius:100px;font-size:.78rem;
+  color:var(--blue2);margin-bottom:2rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;
+}
+.hero-eyebrow::before{content:'';width:6px;height:6px;background:var(--cyan);border-radius:50%;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+h1{
+  font-family:'Syne',sans-serif;font-size:clamp(3rem,7vw,6rem);
+  line-height:1.05;font-weight:800;max-width:900px;
+  margin-bottom:1.5rem;
+}
+h1 .grad{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:1.15rem;color:var(--muted2);max-width:560px;line-height:1.75;font-weight:400;margin-bottom:3rem;}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-bottom:4rem;}
+.hero-cta .btn{padding:.8rem 2rem;font-size:1rem;}
+
+/* Stats strip */
+.stats-strip{
+  display:flex;gap:3rem;flex-wrap:wrap;justify-content:center;
+  padding:2rem 3rem;background:var(--surface);
+  border:1px solid var(--border);border-radius:16px;
+  max-width:700px;
+}
+.stat-item{text-align:center;}
+.stat-num{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-label{font-size:.78rem;color:var(--muted);margin-top:.2rem;text-transform:uppercase;letter-spacing:.06em;}
+
+/* Agent flow */
+.agent-flow-wrap{margin-top:4rem;width:100%;max-width:800px;}
+.agent-flow-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
+.agent-flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center;gap:.5rem;}
+.agent-pill{
+  display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;
+  background:var(--surface2);border-radius:8px;font-size:.82rem;font-weight:600;
+  border:1px solid var(--border);transition:all .3s;
+  animation:pillFloat 3s ease-in-out infinite;
+}
+.agent-pill:nth-child(1){animation-delay:0s;}
+.agent-pill:nth-child(2){animation-delay:.2s;}
+.agent-pill:nth-child(3){animation-delay:.4s;}
+.agent-pill:nth-child(4){animation-delay:.6s;}
+.agent-pill:nth-child(5){animation-delay:.8s;}
+.agent-pill:hover{border-color:var(--blue);background:rgba(79,142,247,0.1);transform:translateY(-3px);}
+@keyframes pillFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+.agent-connector{color:var(--muted);font-size:.75rem;margin:0 .25rem;animation:arrowPulse 1.5s infinite;}
+@keyframes arrowPulse{0%,100%{opacity:.2;transform:translateX(0);}50%{opacity:.8;transform:translateX(3px);}}
+
+/* ── SECTIONS ── */
+.section{padding:6rem 2rem;position:relative;z-index:1;}
+.section-eyebrow{text-align:center;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:.75rem;font-weight:700;}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,2.8rem);text-align:center;margin-bottom:1rem;font-weight:800;max-width:600px;margin-left:auto;margin-right:auto;}
+.section-sub{text-align:center;color:var(--muted2);font-size:.95rem;margin-bottom:4rem;max-width:500px;margin-left:auto;margin-right:auto;}
+.divider{border:none;border-top:1px solid var(--border);}
+
+/* ── FEATURES ── */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;max-width:1000px;margin:0 auto;}
+.feature-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:1.75rem;transition:all .3s;position:relative;overflow:hidden;
+  opacity:0;transform:translateY(30px);
+}
+.feature-card.visible{opacity:1;transform:translateY(0);}
+.feature-card::after{
+  content:'';position:absolute;inset:0;border-radius:14px;
+  background:var(--grad);opacity:0;transition:.3s;z-index:0;
+}
+.feature-card:hover{border-color:rgba(79,142,247,0.3);transform:translateY(-4px);}
+.feature-card:hover::after{opacity:0.03;}
+.feature-card>*{position:relative;z-index:1;}
+.feature-icon{
+  width:44px;height:44px;border-radius:10px;
+  background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;margin-bottom:1rem;
+}
+.feature-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:.5rem;}
+.feature-desc{color:var(--muted2);font-size:.875rem;line-height:1.65;}
+
+/* ── HOW IT WORKS ── */
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;max-width:900px;margin:0 auto;position:relative;}
+.steps-grid::before{
+  content:'';position:absolute;top:30px;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--blue),transparent);
+  opacity:.3;
+}
+.step-card{text-align:center;padding:1.5rem;}
+.step-num{
+  width:52px;height:52px;border-radius:50%;margin:0 auto 1.25rem;
+  background:var(--grad);display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;
+  box-shadow:0 0 24px rgba(79,142,247,0.35);
+}
+.step-title{font-family:'Syne',sans-serif;font-weight:700;margin-bottom:.5rem;}
+.step-desc{color:var(--muted2);font-size:.875rem;line-height:1.6;}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;max-width:900px;margin:0 auto;}
+.pricing-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:2rem;transition:all .3s;position:relative;
+}
+.pricing-card.popular{border-color:rgba(79,142,247,0.4);background:rgba(79,142,247,0.04);}
+.popular-badge{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  background:var(--grad);color:#fff;font-size:.72rem;font-weight:800;
+  padding:.25rem 1rem;border-radius:100px;letter-spacing:.06em;white-space:nowrap;
+}
+.plan-name{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;margin-bottom:.75rem;}
+.plan-name.blue{color:var(--blue);}
+.plan-price{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;margin-bottom:.25rem;line-height:1;}
+.plan-period{color:var(--muted);font-size:.85rem;margin-bottom:1.75rem;}
+.plan-features{list-style:none;margin-bottom:2rem;}
+.plan-features li{font-size:.875rem;padding:.45rem 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem;}
+.plan-features li:last-child{border-bottom:none;}
+.plan-features li .check{color:var(--success);font-size:.9rem;}
+.plan-features li .cross{color:var(--muted);font-size:.9rem;}
+.billing-toggle-wrap{display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:3rem;}
+.billing-label{font-size:.9rem;font-weight:600;transition:.2s;}
+.billing-label.active{color:var(--blue);}
+.billing-label.inactive{color:var(--muted);}
+.toggle-switch{
+  width:52px;height:28px;background:var(--surface2);border:1px solid var(--border2);
+  border-radius:100px;cursor:pointer;position:relative;transition:.2s;
+}
+.toggle-switch:hover{border-color:var(--blue);}
+.toggle-knob{
+  position:absolute;top:4px;left:4px;width:18px;height:18px;
+  background:var(--grad);border-radius:50%;transition:.3s;
+  box-shadow:0 0 8px rgba(79,142,247,0.5);
+}
+.save-badge{
+  background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.25);
+  color:var(--success);font-size:.7rem;padding:.15rem .5rem;border-radius:100px;font-weight:700;
+}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,0.8);backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--surface);border:1px solid var(--border2);border-radius:20px;
+  padding:2.5rem;width:100%;max-width:420px;
+  transform:translateY(20px) scale(.97);transition:transform .25s;
+  position:relative;max-height:90vh;overflow-y:auto;
+}
+.modal-overlay.open .modal{transform:translateY(0) scale(1);}
+.modal-close{
+  position:absolute;top:1.25rem;right:1.25rem;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--muted2);width:30px;height:30px;border-radius:50%;
+  cursor:pointer;font-size:.85rem;transition:.2s;display:flex;align-items:center;justify-content:center;
+}
+.modal-close:hover{color:var(--text);border-color:var(--border2);}
+.modal-logo{display:flex;justify-content:center;margin-bottom:1.5rem;}
+.modal-logo-mark{
+  width:48px;height:48px;border-radius:12px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;font-weight:800;color:#fff;font-family:'Syne',sans-serif;
+  box-shadow:0 0 24px rgba(79,142,247,0.4);
+}
+.modal h2{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;text-align:center;margin-bottom:.4rem;}
+.modal-sub{color:var(--muted2);font-size:.875rem;text-align:center;margin-bottom:2rem;}
+.form-divider{display:flex;align-items:center;gap:.75rem;margin:.75rem 0;color:var(--muted);font-size:.8rem;}
+.form-divider::before,.form-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.form-group{margin-bottom:1rem;}
+.form-group label{display:block;font-size:.78rem;color:var(--muted2);margin-bottom:.4rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase;}
+.form-group input{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:.75rem 1rem;color:var(--text);
+  font-family:'Cabinet Grotesk',sans-serif;font-size:.95rem;outline:none;transition:.2s;
+}
+.form-group input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,142,247,0.1);}
+.form-group input::placeholder{color:var(--muted);}
+.form-toggle{text-align:center;margin-top:1.25rem;font-size:.875rem;color:var(--muted2);}
+.form-toggle a{color:var(--blue);cursor:pointer;text-decoration:none;font-weight:600;}
+.form-toggle a:hover{text-decoration:underline;}
+.msg{font-size:.82rem;padding:.6rem .9rem;border-radius:8px;margin-top:.75rem;display:none;}
+.msg.error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--danger);display:block;}
+.msg.success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:var(--success);display:block;}
+
+/* ── DASHBOARD ── */
+#dashboard{display:none;min-height:100vh;padding:6rem 2rem 4rem;position:relative;z-index:1;max-width:960px;margin:0 auto;}
+#dashboard.visible{display:block;}
+.dash-topbar{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;}
+.dash-greeting h2{font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;}
+.dash-greeting p{color:var(--muted2);margin-top:.3rem;font-size:.9rem;}
+.plan-chip{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);
+  color:var(--blue2);font-size:.7rem;font-weight:800;
+  padding:.2rem .7rem;border-radius:100px;letter-spacing:.06em;margin-left:.75rem;
+  vertical-align:middle;font-family:'Cabinet Grotesk',sans-serif;
+}
+.dash-actions{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;}
+
+/* Stats */
+.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;}
+.dash-stat{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:1.25rem;transition:all .3s;
+}
+.dash-stat:hover{border-color:rgba(79,142,247,.2);transform:translateY(-2px);}
+.dash-stat-num{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.dash-stat-label{font-size:.75rem;color:var(--muted);margin-top:.2rem;text-transform:uppercase;letter-spacing:.06em;}
+
+/* Tabs */
+.dash-tabs{display:flex;gap:0;margin-bottom:2rem;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.3rem;}
+.dash-tab{
+  flex:1;background:none;border:none;color:var(--muted2);
+  font-family:'Cabinet Grotesk',sans-serif;font-size:.875rem;font-weight:600;
+  padding:.6rem 1rem;cursor:pointer;border-radius:9px;transition:all .2s;
+}
+.dash-tab.active{background:var(--surface2);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.3);}
+
+/* Idea form */
+.idea-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.75rem;margin-bottom:1.5rem;}
+.idea-card h3{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:1.25rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;}
+
+/* Templates */
+.templates-wrap{margin-bottom:1.25rem;}
+.templates-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;font-weight:700;}
+.templates-row{display:flex;gap:.5rem;flex-wrap:wrap;}
+.tpl-chip{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:.35rem .85rem;font-size:.78rem;font-weight:600;
+  color:var(--muted2);cursor:pointer;transition:all .2s;
+}
+.tpl-chip:hover{border-color:var(--blue);color:var(--blue);background:rgba(79,142,247,.08);}
+.tpl-chip.active{border-color:var(--blue);color:var(--blue);background:rgba(79,142,247,.1);}
+
+textarea{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:.8rem 1rem;color:var(--text);
+  font-family:'Cabinet Grotesk',sans-serif;font-size:.95rem;
+  resize:vertical;outline:none;transition:.2s;min-height:80px;
+}
+textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,142,247,.08);}
+textarea::placeholder{color:var(--muted);}
+
+/* Agent results */
+#results{display:none;}
+.agent-block{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  margin-bottom:.75rem;overflow:hidden;
+  animation:blockIn .4s ease forwards;opacity:0;
+}
+@keyframes blockIn{from{opacity:0;transform:translateX(-16px);}to{opacity:1;transform:translateX(0);}}
+.agent-block-header{
+  display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;
+  cursor:pointer;transition:.2s;
+}
+.agent-block-header:hover{background:rgba(255,255,255,.02);}
+.agent-status{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:.3s;}
+.agent-status.running{background:var(--blue);animation:pulse 1s infinite;box-shadow:0 0 8px var(--blue);}
+.agent-status.done{background:var(--success);box-shadow:0 0 6px var(--success);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.agent-block-header h4{flex:1;font-size:.9rem;font-weight:700;}
+.agent-block-body{padding:1.25rem;font-size:.875rem;color:var(--muted2);line-height:1.75;white-space:pre-wrap;display:none;border-top:1px solid var(--border);position:relative;}
+.agent-block-body.open{display:block;}
+.skeleton{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:skel 1.5s infinite;border-radius:6px;height:13px;margin-bottom:.5rem;}
+@keyframes skel{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.copy-btn{
+  position:absolute;top:.75rem;right:.75rem;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--muted2);border-radius:6px;padding:.22rem .6rem;
+  font-size:.72rem;font-weight:600;cursor:pointer;transition:.2s;opacity:0;
+}
+.agent-block:hover .copy-btn{opacity:1;}
+.copy-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+/* Result actions */
+.result-actions{display:none;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.action-btn{
+  display:flex;align-items:center;gap:.4rem;padding:.5rem 1rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  color:var(--muted2);font-size:.82rem;font-weight:600;cursor:pointer;transition:.2s;
+}
+.action-btn:hover{border-color:var(--blue);color:var(--blue);}
+
+/* History */
+.history-item{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:.85rem 1rem;margin-bottom:.5rem;cursor:pointer;transition:.2s;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+}
+.history-item:hover{border-color:rgba(79,142,247,.25);}
+.h-idea{font-size:.875rem;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.h-date{font-size:.75rem;color:var(--muted);flex-shrink:0;}
+.h-del{color:var(--muted);font-size:.8rem;transition:.2s;flex-shrink:0;}
+.h-del:hover{color:var(--danger);}
+
+/* Profile */
+.profile-av{
+  width:68px;height:68px;border-radius:50%;
+  background:var(--grad);display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;font-weight:800;color:#fff;margin:0 auto 1rem;
+  font-family:'Syne',sans-serif;box-shadow:0 0 24px rgba(79,142,247,0.35);
+}
+
+/* Theme toggle */
+.theme-btn{
+  background:var(--surface2);border:1px solid var(--border);color:var(--text);
+  width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:.9rem;
+  transition:.2s;display:flex;align-items:center;justify-content:center;
+}
+.theme-btn:hover{border-color:var(--blue);}
+body.light-mode{
+  --bg:#f4f6fb;--surface:#ffffff;--surface2:#eef1f8;
+  --border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.15);
+  --text:#0f1220;--muted:#888ea8;--muted2:#555a72;
+}
+body.light-mode nav{background:rgba(244,246,251,.9);}
+body.light-mode .form-group input,body.light-mode textarea{background:#eef1f8;color:#0f1220;}
+
+/* Guide */
+.guide-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);transition:.3s;}
+.guide-dot.active{background:var(--blue);transform:scale(1.3);}
+.float-icon{animation:floatIcon 2s ease-in-out infinite;display:inline-block;}
+@keyframes floatIcon{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.guide-animate{animation:fadeSlide .35s ease forwards;}
+
+/* Footer */
+footer{
+  border-top:1px solid var(--border);padding:2.5rem 3rem;
+  position:relative;z-index:1;
+}
+.footer-inner{max-width:1000px;margin:0 auto;}
+.footer-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:2rem;padding-bottom:2rem;border-bottom:1px solid var(--border);}
+.footer-brand .brand-name{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:.4rem;}
+.footer-brand .brand-name span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.footer-brand p{color:var(--muted2);font-size:.82rem;max-width:220px;line-height:1.6;}
+.footer-links{display:flex;gap:3rem;flex-wrap:wrap;}
+.footer-col h4{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.85rem;font-weight:700;}
+.footer-col a{display:block;color:var(--muted2);font-size:.85rem;text-decoration:none;margin-bottom:.5rem;transition:.2s;}
+.footer-col a:hover{color:var(--blue);}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;padding-top:1.5rem;}
+.footer-bottom p{font-size:.8rem;color:var(--muted);}
+.footer-bottom span{color:var(--blue2);font-weight:600;}
+
+@media(max-width:640px){
+  nav{padding:1rem 1.25rem;}
+  .nav-center{display:none;}
+  .hero{padding:7rem 1.25rem 3rem;}
+  .dash-stats{grid-template-columns:repeat(2,1fr);}
+  footer{padding:2rem 1.25rem;}
+  .footer-top{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">
+    <div class="logo-mark">V</div>
+    <div class="logo-name">Venture<span>Pilot</span></div>
+  </a>
+  <div class="nav-center">
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#how-it-works" class="nav-link">How it works</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
+  </div>
+  <div class="nav-actions" id="nav-actions">
+    <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
+    <button class="btn btn-ghost" onclick="openModal('login')">Sign In</button>
+    <button class="btn btn-primary" onclick="openModal('signup')">Get Started</button>
+  </div>
+  <div class="nav-actions" id="nav-user" style="display:none;">
+    <button class="theme-btn" onclick="toggleTheme()" id="theme-btn2">🌙</button>
+    <div style="position:relative;">
+      <div class="notif-bell" onclick="toggleNotif()" id="notif-bell">
+        🔔<div class="notif-dot show" id="notif-dot"></div>
+      </div>
+      <div class="notif-panel" id="notif-panel">
+        <div class="notif-header">
+          <div class="notif-title">Notifications</div>
+          <div class="notif-clear" onclick="clearNotifs()">Clear all</div>
+        </div>
+        <div id="notif-list">
+          <div class="notif-item"><div class="notif-icon">✅</div><div><div class="notif-text">Analysis complete! CEO Decision is ready.</div><div class="notif-time">Just now</div></div></div>
+          <div class="notif-item"><div class="notif-icon">🚀</div><div><div class="notif-text">Welcome to VenturePilot! Start your first analysis.</div><div class="notif-time">Today</div></div></div>
+          <div class="notif-item"><div class="notif-icon">💡</div><div><div class="notif-text">Tip: Use Quick Templates for faster analysis.</div><div class="notif-time">Today</div></div></div>
+        </div>
+      </div>
+    </div>
+    <span id="nav-name" style="font-size:.875rem;color:var(--muted2);font-weight:600;"></span>
+    <button class="btn btn-ghost" style="font-size:.82rem;" onclick="openModal('profile')">👤 Profile</button>
+    <button class="btn btn-ghost" style="font-size:.82rem;" onclick="logout()">Sign Out</button>
+  </div>
+</nav>
+
+<!-- LANDING -->
+<div id="landing">
+  <section class="hero">
+    <div class="hero-eyebrow">Powered by Multi-Agent AI</div>
+    <h1>Your Business Idea,<br/><span class="grad">Analyzed in 60 Seconds</span></h1>
+    <p class="hero-sub">Deploy 5 specialized AI agents — Research, Marketing, Finance, Risk & CEO — that work together to give you boardroom-level insights instantly.</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary" onclick="openModal('signup')">Start Free Analysis →</button>
+      <button class="btn btn-ghost" onclick="openModal('login')">Sign In</button>
+    </div>
+    <div class="stats-strip">
+      <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">AI Agents</div></div>
+      <div class="stat-item"><div class="stat-num">60s</div><div class="stat-label">Analysis Time</div></div>
+      <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">AI Powered</div></div>
+    </div>
+    <div class="agent-flow-wrap">
+      <div class="agent-flow-label">Agent Pipeline</div>
+      <div class="agent-flow">
+        <div class="agent-pill">📊 Research</div>
+        <div class="agent-connector">→</div>
+        <div class="agent-pill">📣 Marketing</div>
+        <div class="agent-connector">→</div>
+        <div class="agent-pill">💰 Finance</div>
+        <div class="agent-connector">→</div>
+        <div class="agent-pill">⚠️ Risk</div>
+        <div class="agent-connector">→</div>
+        <div class="agent-pill">👔 CEO</div>
+      </div>
+    </div>
+  </section>
+  <hr class="divider"/>
+
+  <section class="section" id="features">
+    <div class="section-eyebrow">Capabilities</div>
+    <h2 class="section-title">Everything you need to validate your idea</h2>
+    <p class="section-sub">Five agents working in parallel to deliver a complete business analysis.</p>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">📊</div><div class="feature-title">Market Research</div><div class="feature-desc">Deep market sizing, competitor landscape, and opportunity analysis in seconds.</div></div>
+      <div class="feature-card"><div class="feature-icon">📣</div><div class="feature-title">Marketing Strategy</div><div class="feature-desc">Go-to-market plans, channel recommendations, and messaging frameworks.</div></div>
+      <div class="feature-card"><div class="feature-icon">💰</div><div class="feature-title">Financial Modeling</div><div class="feature-desc">Revenue projections, cost structures, and unit economics validation.</div></div>
+      <div class="feature-card"><div class="feature-icon">⚠️</div><div class="feature-title">Risk Assessment</div><div class="feature-desc">Identify regulatory, competitive, and operational risks before they derail you.</div></div>
+      <div class="feature-card"><div class="feature-icon">👔</div><div class="feature-title">CEO Decision</div><div class="feature-desc">Final executive synthesis — clear go/no-go with actionable next steps.</div></div>
+      <div class="feature-card"><div class="feature-icon">⚡</div><div class="feature-title">Real-time Streaming</div><div class="feature-desc">Watch each agent think live. Results stream as they arrive, no waiting.</div></div>
+    </div>
+  </section>
+  <hr class="divider"/>
+
+  <section class="section" id="how-it-works">
+    <div class="section-eyebrow">Process</div>
+    <h2 class="section-title">How VenturePilot works</h2>
+    <p class="section-sub">From idea to boardroom-level analysis in 3 simple steps.</p>
+    <div class="steps-grid">
+      <div class="step-card"><div class="step-num">1</div><div class="step-title">Describe Your Idea</div><div class="step-desc">Enter your business concept and any relevant context about your market or team.</div></div>
+      <div class="step-card"><div class="step-num">2</div><div class="step-title">Agents Analyze</div><div class="step-desc">5 specialized AI agents run in sequence, each building on the previous report.</div></div>
+      <div class="step-card"><div class="step-num">3</div><div class="step-title">Get Your Report</div><div class="step-desc">Download a complete business analysis and share it with your team or investors.</div></div>
+    </div>
+  </section>
+  <hr class="divider"/>
+
+  <section class="section" id="pricing">
+    <div class="section-eyebrow">Pricing</div>
+    <h2 class="section-title">Simple, transparent pricing</h2>
+    <p class="section-sub">Start free. Upgrade when you're ready.</p>
+    <div class="billing-toggle-wrap">
+      <span class="billing-label active" id="lbl-monthly">Monthly</span>
+      <div class="toggle-switch" onclick="toggleBilling()">
+        <div class="toggle-knob" id="billing-knob"></div>
+      </div>
+      <span class="billing-label inactive" id="lbl-yearly">Yearly <span class="save-badge">Save 17%</span></span>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">$0</div>
+        <div class="plan-period">Forever free</div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> 3 analyses/month</li>
+          <li><span class="check">✓</span> All 5 agents</li>
+          <li><span class="check">✓</span> Download reports</li>
+          <li><span class="cross">✕</span> Priority processing</li>
+          <li><span class="cross">✕</span> Unlimited history</li>
+        </ul>
+        <button class="btn btn-ghost btn-full" onclick="openModal('signup')">Get Started Free</button>
+      </div>
+      <div class="pricing-card popular">
+        <div class="popular-badge">⚡ MOST POPULAR</div>
+        <div class="plan-name blue">Starter</div>
+        <div class="plan-price"><span id="starter-price">$9</span></div>
+        <div class="plan-period" id="starter-period">per month · 7-day free trial</div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> 50 analyses/month</li>
+          <li><span class="check">✓</span> All 5 agents</li>
+          <li><span class="check">✓</span> Download & share</li>
+          <li><span class="check">✓</span> Priority processing</li>
+          <li><span class="cross">✕</span> Unlimited history</li>
+        </ul>
+        <button class="btn btn-primary btn-full" onclick="subscribePlan('starter')">Start Free Trial</button>
+      </div>
+      <div class="pricing-card">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price"><span id="pro-price">$29</span></div>
+        <div class="plan-period" id="pro-period">per month · 7-day free trial</div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> Unlimited analyses</li>
+          <li><span class="check">✓</span> All 5 agents</li>
+          <li><span class="check">✓</span> Download & share</li>
+          <li><span class="check">✓</span> Priority processing</li>
+          <li><span class="check">✓</span> Unlimited history</li>
+        </ul>
+        <button class="btn btn-ghost btn-full" onclick="subscribePlan('pro')">Start Free Trial</button>
+      </div>
+    </div>
+  </section>
+  <hr class="divider"/>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-name">Venture<span>Pilot</span></div>
+          <p>AI-powered business intelligence for founders, operators and investors.</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>Product</h4>
+            <a href="#features">Features</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#" onclick="openModal('guide')">User Guide</a>
+          </div>
+          <div class="footer-col">
+            <h4>Legal</h4>
+            <a href="#" onclick="openPrivacy()">Privacy Policy</a>
+            <a href="#" onclick="openPrivacy()">Terms of Service</a>
+          </div>
+          <div class="footer-col">
+            <h4>Contact</h4>
+            <a href="mailto:muhammadanas.ragdev@gmail.com">📧 Email Us</a>
+            <a href="tel:+923079062502">📞 +92 307 906 2502</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 VenturePilot. All Rights Reserved.</p>
+        <p>Designed & Developed by <span>Muhammad Anas</span> · AI Engineer</p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="dash-topbar">
+    <div class="dash-greeting">
+      <h2>Welcome back, <span id="dash-name"></span> <span class="plan-chip" id="plan-badge" style="display:none;"></span></h2>
+      <p>Ready to analyze your next big idea?</p>
+    </div>
+    <div class="dash-actions">
+      <button class="action-btn" onclick="openModal('guide')">📖 Guide</button>
+      <button class="action-btn" onclick="openModal('faq')">❓ FAQ</button>
+      <button class="action-btn" onclick="logout()">← Sign Out</button>
+    </div>
+  </div>
+
+  <div class="dash-stats">
+    <div class="dash-stat"><div class="dash-stat-num" id="stat-total">0</div><div class="dash-stat-label">Analyses</div></div>
+    <div class="dash-stat"><div class="dash-stat-num" id="stat-saved">0</div><div class="dash-stat-label">Saved</div></div>
+    <div class="dash-stat"><div class="dash-stat-num" id="stat-last">—</div><div class="dash-stat-label">Last Run</div></div>
+  </div>
+
+  <div class="dash-tabs">
+    <button class="dash-tab active" onclick="switchTab('analyze')" id="tab-analyze">⚡ Analyze</button>
+    <button class="dash-tab" onclick="switchTab('history')" id="tab-history">📋 History</button>
+    <button class="dash-tab" onclick="switchTab('saved')" id="tab-saved">🔖 Saved</button>
+    <button class="dash-tab" onclick="switchTab('analytics')" id="tab-analytics">📈 Analytics</button>
+    <button class="dash-tab" onclick="switchTab('chat')" id="tab-chat">💬 AI Chat</button>
+  </div>
+
+  <!-- Analyze Panel -->
+  <div id="panel-analyze">
+    <div class="search-wrap" id="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="dash-search" placeholder="Search history, templates, features… (Ctrl+K)" oninput="handleSearch(this.value)" onblur="setTimeout(()=>closeSearch(),200)"/>
+      <div class="search-results" id="search-results"></div>
+    </div>
+
+    <!-- Recent Analyses -->
+    <div id="recent-section" style="margin-bottom:1.5rem;display:none;">
+      <div style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:.75rem;">Recent Analyses</div>
+      <div id="recent-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;"></div>
+    </div>
+
+    <!-- Progress Tracker -->
+    <div class="progress-tracker" id="progress-tracker" style="display:none;">
+      <div class="progress-step" id="ps-Research"><div class="step-dot"></div>Research</div>
+      <div class="progress-connector" id="pc-1"></div>
+      <div class="progress-step" id="ps-Marketing"><div class="step-dot"></div>Marketing</div>
+      <div class="progress-connector" id="pc-2"></div>
+      <div class="progress-step" id="ps-Finance"><div class="step-dot"></div>Finance</div>
+      <div class="progress-connector" id="pc-3"></div>
+      <div class="progress-step" id="ps-Risk"><div class="step-dot"></div>Risk</div>
+      <div class="progress-connector" id="pc-4"></div>
+      <div class="progress-step" id="ps-CEO"><div class="step-dot"></div>CEO</div>
+    </div>
+
+    <div class="idea-card">
+      <h3>New Analysis</h3>
+      <div style="margin-bottom:1rem;">
+        <div class="templates-label">Select Industry</div>
+        <div class="industry-grid" id="industry-grid">
+          <div class="industry-chip" onclick="selectIndustry(this,'Food & Beverage')"><span class="industry-icon">🍔</span>Food</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'Technology & SaaS')"><span class="industry-icon">💻</span>Tech</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'Healthcare')"><span class="industry-icon">🏥</span>Health</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'Education')"><span class="industry-icon">🎓</span>Edu</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'Finance & FinTech')"><span class="industry-icon">💰</span>Finance</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'E-Commerce & Retail')"><span class="industry-icon">🛒</span>Retail</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'Real Estate')"><span class="industry-icon">🏠</span>Real Estate</div>
+          <div class="industry-chip" onclick="selectIndustry(this,'Transportation')"><span class="industry-icon">🚗</span>Transport</div>
+        </div>
+      </div>
+
+      <div class="validator-wrap" id="idea-validator" style="display:none;">
+        <div class="validator-title">💡 Idea Check</div>
+        <div class="validator-checks" id="validator-checks"></div>
+      </div>
+
+      <div class="templates-wrap">
+        <div class="templates-label">Quick Templates</div>
+        <div class="templates-row">
+          <div class="tpl-chip" onclick="useTemplate(0)">🛒 AI E-Commerce</div>
+          <div class="tpl-chip" onclick="useTemplate(1)">🏥 HealthTech</div>
+          <div class="tpl-chip" onclick="useTemplate(2)">🎓 EdTech</div>
+          <div class="tpl-chip" onclick="useTemplate(3)">🚗 EV Startup</div>
+          <div class="tpl-chip" onclick="useTemplate(4)">🤖 AI Productivity</div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:.75rem;">
+        <label>Business Idea</label>
+        <textarea id="idea-input" placeholder="Describe your business idea in detail…" rows="3" oninput="validateIdea()"></textarea>
+      </div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label>Context <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted);">(optional)</span></label>
+        <textarea id="context-input" placeholder="Target market, budget, stage, region…" rows="2"></textarea>
+      </div>
+      <button class="btn btn-primary btn-full" id="run-btn" onclick="runAgents()">▶ Run Full Analysis</button>
+      <div class="msg" id="run-msg"></div>
+    </div>
+
+    <div class="result-actions" id="result-actions">
+      <div class="action-btn" onclick="clearResults()">🗑️ Clear</div>
+      <div class="action-btn" onclick="downloadReport()">⬇️ Download</div>
+      <div class="action-btn" onclick="shareReport()">🔗 Share</div>
+      <div class="action-btn" onclick="bookmarkAnalysis()" id="bookmark-btn">🔖 Save</div>
+      <div class="action-btn" onclick="showScore()">🎯 Score</div>
+      <div class="action-btn" onclick="showCompetitors()">🏆 Competitors</div>
+      <div class="action-btn" onclick="openModal('email')">📧 Email</div>
+      <div class="action-btn" onclick="openModal('compare')">⚖️ Compare</div>
+      <div class="action-btn" onclick="generateActionPlan()">🗺️ Action Plan</div>
+    </div>
+    <div id="results"></div>
+  </div>
+
+  <!-- Analytics Panel -->
+  <div id="panel-analytics" style="display:none;">
+    <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;margin-bottom:1.5rem;">Usage Analytics</h3>
+    <div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+      <div class="metric-chip"><div class="mval" id="an-total">0</div><div class="mlabel">Total Analyses</div></div>
+      <div class="metric-chip"><div class="mval" id="an-week">0</div><div class="mlabel">This Week</div></div>
+      <div class="metric-chip"><div class="mval" id="an-saved">0</div><div class="mlabel">Saved Reports</div></div>
+      <div class="metric-chip"><div class="mval" id="an-streak">0</div><div class="mlabel">Day Streak</div></div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem;">
+      <div style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1.25rem;font-weight:700;">Analyses This Week</div>
+      <div class="chart-bar-wrap" id="chart-bars"></div>
+      <div class="chart-labels" id="chart-labels"></div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;">
+      <div style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;font-weight:700;">Most Analyzed Topics</div>
+      <div id="topic-list"></div>
+    </div>
+  </div>
+
+  <!-- Chat Panel -->
+  <div id="panel-chat" style="display:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+      <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;">
+        <div style="width:36px;height:36px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1rem;">🤖</div>
+        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;">VenturePilot AI</div><div style="font-size:.75rem;color:var(--success);">● Online</div></div>
+        <button class="action-btn" style="margin-left:auto;" onclick="clearChat()">🗑️ Clear</button>
+      </div>
+      <div class="chat-wrap">
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-bubble ai">👋 Hi! I'm your VenturePilot AI assistant. Ask me anything about your business idea, market strategy, financial modeling, or how to use this platform!</div>
+        </div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chat-input" placeholder="Ask about your business idea…" onkeydown="if(event.key==='Enter')sendChat()"/>
+          <button class="chat-send" onclick="sendChat()">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Panel -->
+  <div id="panel-history" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+      <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;">Analysis History</h3>
+      <button class="action-btn" onclick="clearHistory()">🗑️ Clear All</button>
+    </div>
+    <div id="history-list"></div>
+  </div>
+
+  <!-- Saved Panel -->
+  <div id="panel-saved" style="display:none;">
+    <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:1rem;">Saved Reports</h3>
+    <div id="saved-list"></div>
+  </div>
+</div>
+
+<!-- SCORE MODAL -->
+<div class="modal-overlay" id="modal-score">
+  <div class="modal" style="max-width:420px;text-align:center;">
+    <button class="modal-close" onclick="closeModal('score')">✕</button>
+    <h2 style="margin-bottom:1.5rem;">Idea Score</h2>
+    <div class="score-ring" id="score-ring" style="--pct:0%">
+      <div class="score-inner" id="score-num">—</div>
+    </div>
+    <div id="score-label" style="font-size:1rem;font-weight:700;margin-bottom:.5rem;"></div>
+    <div id="score-desc" style="color:var(--muted2);font-size:.875rem;line-height:1.6;margin-bottom:1.5rem;"></div>
+    <div id="score-breakdown" style="text-align:left;"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('score')">Got it</button>
+  </div>
+</div>
+
+<!-- COMPETITOR MODAL -->
+<div class="modal-overlay" id="modal-competitor">
+  <div class="modal" style="max-width:680px;max-height:85vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('competitor')">✕</button>
+    <h2 style="margin-bottom:.5rem;">Competitor Analysis</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">AI-generated competitive landscape based on your idea.</p>
+    <div id="comp-table-wrap"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('competitor')">Close</button>
+  </div>
+</div>
+
+<!-- EMAIL MODAL -->
+<div class="modal-overlay" id="modal-email">
+  <div class="modal" style="max-width:400px;">
+    <button class="modal-close" onclick="closeModal('email')">✕</button>
+    <h2 style="margin-bottom:.5rem;">Email Report</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Send the analysis report to any email address.</p>
+    <div id="email-form-wrap">
+      <div class="form-group"><label>Recipient Email</label><input type="email" id="email-recipient" placeholder="colleague@company.com"/></div>
+      <div class="form-group"><label>Subject</label><input type="text" id="email-subject" value="VenturePilot Business Analysis Report"/></div>
+      <div class="form-group"><label>Note <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted);">(optional)</span></label><textarea id="email-note" placeholder="Add a personal note…" rows="2" style="min-height:60px;"></textarea></div>
+      <div class="msg" id="email-msg"></div>
+      <button class="btn btn-primary btn-full" onclick="sendEmailReport()">📧 Send Report</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHORTCUTS MODAL -->
+<div class="modal-overlay" id="modal-shortcuts">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeModal('shortcuts')">✕</button>
+    <h2 style="margin-bottom:1.5rem;">⌨️ Keyboard Shortcuts</h2>
+    <div class="shortcut-row"><span>Open Search</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">K</span></div></div>
+    <div class="shortcut-row"><span>Run Analysis</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">Enter</span></div></div>
+    <div class="shortcut-row"><span>Clear Results</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">D</span></div></div>
+    <div class="shortcut-row"><span>Download Report</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">S</span></div></div>
+    <div class="shortcut-row"><span>Toggle Theme</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">T</span></div></div>
+    <div class="shortcut-row"><span>Open Guide</span><div style="display:flex;gap:4px;"><span class="kbd">?</span></div></div>
+    <div class="shortcut-row"><span>Close Modal</span><div style="display:flex;gap:4px;"><span class="kbd">Esc</span></div></div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('shortcuts')">Got it!</button>
+  </div>
+</div>
+
+<div class="shortcut-hint" id="shortcut-hint"></div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('login')">✕</button>
+    <div class="modal-logo"><div class="modal-logo-mark">V</div></div>
+    <h2>Welcome back</h2>
+    <p class="modal-sub">Sign in to your VenturePilot account</p>
+    <button class="btn-google" onclick="googleLogin()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+      Continue with Google
+    </button>
+    <div class="form-divider">or</div>
+    <div class="form-group"><label>Email</label><input type="email" id="login-email" placeholder="you@example.com"/></div>
+    <div class="form-group"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div class="msg" id="login-msg"></div>
+    <button class="btn btn-primary btn-full" onclick="doLogin()">Sign In</button>
+    <div class="form-toggle">Don't have an account? <a onclick="switchModal('login','signup')">Sign up free</a></div>
+  </div>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div class="modal-overlay" id="modal-signup">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('signup')">✕</button>
+    <div class="modal-logo"><div class="modal-logo-mark">V</div></div>
+    <h2>Create account</h2>
+    <p class="modal-sub">Start analyzing business ideas for free</p>
+    <button class="btn-google" onclick="googleLogin()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+      Continue with Google
+    </button>
+    <div class="form-divider">or</div>
+    <div class="form-group"><label>Full Name</label><input type="text" id="signup-name" placeholder="Muhammad Anas"/></div>
+    <div class="form-group"><label>Email</label><input type="email" id="signup-email" placeholder="you@example.com"/></div>
+    <div class="form-group"><label>Password</label><input type="password" id="signup-pass" placeholder="Min. 6 characters" onkeydown="if(event.key==='Enter')doSignup()"/></div>
+    <div class="msg" id="signup-msg"></div>
+    <button class="btn btn-primary btn-full" onclick="doSignup()">Create Account</button>
+    <div class="form-toggle">Already have an account? <a onclick="switchModal('signup','login')">Sign in</a></div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="modal-profile">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('profile')">✕</button>
+    <div class="profile-av" id="profile-avatar">A</div>
+    <h2 style="text-align:center;margin-bottom:.25rem;" id="profile-name-display"></h2>
+    <p style="text-align:center;color:var(--muted2);font-size:.85rem;margin-bottom:1.75rem;" id="profile-email-display"></p>
+    <div class="form-group"><label>Full Name</label><input type="text" id="profile-name-input" placeholder="Your name"/></div>
+    <div class="form-group"><label>New Password</label><input type="password" id="profile-pass-input" placeholder="Leave blank to keep current"/></div>
+    <div class="msg" id="profile-msg"></div>
+    <button class="btn btn-primary btn-full" onclick="updateProfile()">Save Changes</button>
+    <button class="btn btn-danger btn-full" style="margin-top:.5rem;" onclick="confirmDeleteAccount()">Delete Account</button>
+  </div>
+</div>
+
+<!-- PRIVACY MODAL -->
+<div class="modal-overlay" id="modal-privacy">
+  <div class="modal" style="max-width:520px;max-height:80vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('privacy')">✕</button>
+    <h2 style="margin-bottom:1rem;">Privacy Policy</h2>
+    <div style="color:var(--muted2);font-size:.875rem;line-height:1.8;">
+      <p style="margin-bottom:1rem;"><strong style="color:var(--text);">Last updated:</strong> May 2026</p>
+      <p style="margin-bottom:1rem;">VenturePilot is committed to protecting your privacy. We collect your name, email, and encrypted password to provide our service. Your data is never sold or shared with third parties.</p>
+      <h4 style="color:var(--text);margin-bottom:.5rem;">Security</h4>
+      <p style="margin-bottom:1rem;">Passwords are hashed using PBKDF2-SHA256. Auth tokens expire after 7 days.</p>
+      <h4 style="color:var(--text);margin-bottom:.5rem;">Contact</h4>
+      <p>📧 <span style="color:var(--blue);">muhammadanas.ragdev@gmail.com</span><br/>📞 <span style="color:var(--blue);">+92 307 906 2502</span></p>
+    </div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.5rem;" onclick="closeModal('privacy')">Got it</button>
+  </div>
+</div>
+
+<!-- GUIDE MODAL -->
+<div class="modal-overlay" id="modal-guide">
+  <div class="modal" style="max-width:500px;padding:0;overflow:hidden;">
+    <div style="height:3px;background:var(--border);"><div id="guide-progress" style="height:100%;background:var(--grad);transition:width .4s;width:16.6%"></div></div>
+    <div style="padding:2.5rem 2rem 1.5rem;">
+      <button class="modal-close" onclick="closeModal('guide')" style="top:1rem;right:1rem;">✕</button>
+      <div style="display:flex;gap:.4rem;justify-content:center;margin-bottom:1.75rem;">
+        <div class="guide-dot active" id="dot-0"></div><div class="guide-dot" id="dot-1"></div>
+        <div class="guide-dot" id="dot-2"></div><div class="guide-dot" id="dot-3"></div>
+        <div class="guide-dot" id="dot-4"></div><div class="guide-dot" id="dot-5"></div>
+      </div>
+      <div id="guide-icon" style="font-size:3.5rem;text-align:center;margin-bottom:1.25rem;"></div>
+      <h3 id="guide-title" style="font-family:'Syne',sans-serif;font-size:1.35rem;font-weight:800;text-align:center;margin-bottom:.75rem;"></h3>
+      <p id="guide-desc" style="color:var(--muted2);font-size:.875rem;text-align:center;line-height:1.7;min-height:56px;"></p>
+      <div id="guide-demo" style="margin-top:1.25rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;min-height:65px;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--muted2);"></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem 1.5rem;">
+      <button id="guide-prev" class="btn btn-ghost" onclick="guideNav(-1)" style="visibility:hidden;">← Back</button>
+      <span id="guide-counter" style="font-size:.78rem;color:var(--muted);"></span>
+      <button id="guide-next" class="btn btn-primary" onclick="guideNav(1)">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ MODAL -->
+<div class="modal-overlay" id="modal-faq">
+  <div class="modal" style="max-width:560px;max-height:85vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('faq')">✕</button>
+    <h2 style="margin-bottom:.4rem;">❓ FAQ</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Frequently asked questions</p>
+    <div id="faq-list">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What is VenturePilot?</span><span>▸</span></div><div class="faq-a">VenturePilot is an AI-powered business intelligence platform that analyzes your business ideas using 5 specialized agents: Research, Marketing, Finance, Risk, and CEO Decision.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How long does an analysis take?</span><span>▸</span></div><div class="faq-a">A full analysis typically takes 30-90 seconds depending on your internet connection and the complexity of your idea.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Is my data secure?</span><span>▸</span></div><div class="faq-a">Yes! Your data is encrypted and stored securely. We never sell or share your business ideas with third parties. Passwords are hashed using PBKDF2-SHA256.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What is the Free plan limit?</span><span>▸</span></div><div class="faq-a">The Free plan allows 3 analyses per month. Upgrade to Starter ($9/mo) for 50 analyses or Pro ($29/mo) for unlimited analyses.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I download my reports?</span><span>▸</span></div><div class="faq-a">Yes! After running an analysis, click the "Download" button to save your full report as a .txt file. You can also email it directly from the platform.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How do I cancel my subscription?</span><span>▸</span></div><div class="faq-a">You can cancel anytime from your Profile settings. Contact us at muhammadanas.ragdev@gmail.com for immediate assistance.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What AI models power VenturePilot?</span><span>▸</span></div><div class="faq-a">VenturePilot uses Groq LLM API with advanced language models for fast, accurate business analysis. Our agents use LangGraph for multi-step reasoning.</div></div>
+    </div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('faq')">Got it!</button>
+  </div>
+</div>
+
+<!-- IDEA VALIDATOR MODAL -->
+<div class="modal-overlay" id="modal-validator">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeModal('validator')">✕</button>
+    <h2 style="margin-bottom:.4rem;">💡 Idea Validator</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Quick check before running full analysis</p>
+    <div id="validator-result" style="text-align:center;">
+      <div class="form-group">
+        <label>Your Business Idea</label>
+        <textarea id="validator-input" placeholder="Describe your idea briefly…" rows="3" style="min-height:70px;"></textarea>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="validateIdea()">⚡ Quick Validate</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARISON MODAL -->
+<div class="modal-overlay" id="modal-compare">
+  <div class="modal" style="max-width:720px;max-height:90vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('compare')">✕</button>
+    <h2 style="margin-bottom:.5rem;">⚖️ Idea Comparison</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Compare two business ideas side by side</p>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:.75rem;align-items:start;margin-bottom:1rem;">
+      <div>
+        <div style="font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:.5rem;">Idea A</div>
+        <textarea id="compare-a" placeholder="First business idea…" rows="3" style="min-height:70px;"></textarea>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;padding-top:1.5rem;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.8rem;">VS</div>
+      </div>
+      <div>
+        <div style="font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:.5rem;">Idea B</div>
+        <textarea id="compare-b" placeholder="Second business idea…" rows="3" style="min-height:70px;"></textarea>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="runComparison()">⚖️ Compare Both Ideas</button>
+    <div id="compare-results" style="margin-top:1rem;"></div>
+  </div>
+</div>
+
+<!-- ACTION PLAN MODAL -->
+<div class="modal-overlay" id="modal-action">
+  <div class="modal" style="max-width:500px;max-height:85vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('action')">✕</button>
+    <h2 style="margin-bottom:.5rem;">🗺️ Action Plan</h2>
+    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Your personalized next steps based on the analysis.</p>
+    <div id="action-plan-list"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('action')">Got it!</button>
+  </div>
+</div>
+
+<!-- FEEDBACK MODAL -->
+<div class="modal-overlay" id="modal-feedback">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeModal('feedback')">✕</button>
+    <div style="text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:.75rem;">⭐</div>
+      <h2 style="margin-bottom:.4rem;">How was your experience?</h2>
+      <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Your feedback helps us improve VenturePilot</p>
+    </div>
+    <div class="star-rating" id="star-rating">
+      <span class="star" onclick="rateStar(1)" id="star-1">⭐</span>
+      <span class="star" onclick="rateStar(2)" id="star-2">⭐</span>
+      <span class="star" onclick="rateStar(3)" id="star-3">⭐</span>
+      <span class="star" onclick="rateStar(4)" id="star-4">⭐</span>
+      <span class="star" onclick="rateStar(5)" id="star-5">⭐</span>
+    </div>
+    <div id="star-label" style="text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:1rem;min-height:20px;"></div>
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:.5rem;">What did you like?</div>
+      <div>
+        <span class="feedback-tag" onclick="toggleTag(this)">Easy to use</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Fast analysis</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Accurate results</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Great UI</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Helpful agents</span>
+        <span class="feedback-tag" onclick="toggleTag(this)">Good value</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Additional comments</label>
+      <textarea id="feedback-text" placeholder="Tell us more…" rows="2" style="min-height:60px;"></textarea>
+    </div>
+    <div class="msg" id="feedback-msg"></div>
+    <button class="btn btn-primary btn-full" onclick="submitFeedback()">Submit Feedback</button>
+  </div>
+</div>
+
+<!-- TOUR OVERLAY -->
+<div class="tour-overlay" id="tour-overlay" onclick="endTour()"></div>
+<div class="tour-spotlight" id="tour-spotlight"></div>
+<div class="tour-tooltip" id="tour-tooltip" style="display:none;">
+  <h4 id="tour-title"></h4>
+  <p id="tour-desc"></p>
+  <div class="tour-nav">
+    <div><div class="tour-dots" id="tour-dots"></div></div>
+    <span class="tour-counter" id="tour-counter"></span>
+    <div style="display:flex;gap:.5rem;">
+      <button class="btn btn-ghost" style="padding:.35rem .8rem;font-size:.78rem;" onclick="endTour()">Skip</button>
+      <button class="btn btn-primary" style="padding:.35rem .9rem;font-size:.78rem;" onclick="nextTourStep()" id="tour-next-btn">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE CHAT WIDGET -->
+<button class="chat-widget-btn" onclick="toggleChatWidget()" id="chat-widget-btn">💬</button>
+<div class="chat-widget-panel" id="chat-widget-panel">
+  <div class="chat-widget-header">
+    <div class="chat-widget-avatar">🧠</div>
+    <div>
+      <div class="chat-widget-name">VenturePilot Support</div>
+      <div class="chat-widget-status">● Online — typically replies instantly</div>
+    </div>
+    <button onclick="toggleChatWidget()" style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;margin-left:auto;font-size:1rem;">✕</button>
+  </div>
+  <div class="chat-widget-messages" id="cw-messages">
+    <div class="cw-bubble-ai">👋 Hi! I'm your VenturePilot assistant. How can I help you today?</div>
+    <div class="cw-bubble-ai">You can ask me about:<br/>• How to use VenturePilot<br/>• Understanding your analysis<br/>• Pricing & plans<br/>• Technical issues</div>
+  </div>
+  <div class="chat-widget-input-row">
+    <input class="cw-input" id="cw-input" placeholder="Type your question…" onkeydown="if(event.key==='Enter')sendCWMessage()"/>
+    <button class="cw-send" onclick="sendCWMessage()">↑</button>
+  </div>
+</div>
+
+<script>
+const API = "";
+
+// ── Session ───────────────────────────────────────────────────
+function saveSession(token,name,email){localStorage.setItem("vp_token",token);localStorage.setItem("vp_name",name);localStorage.setItem("vp_email",email);}
+function getToken(){return localStorage.getItem("vp_token");}
+function clearSession(){["vp_token","vp_name","vp_email"].forEach(k=>localStorage.removeItem(k));}
+
+// ── Modal ─────────────────────────────────────────────────────
+function openModal(id){
+  if(id==='profile'){openProfileModal();return;}
+  if(id==='guide'){guideStep=0;document.getElementById('modal-guide').classList.add('open');setTimeout(()=>renderGuideStep(0),50);return;}
+  const el=document.getElementById("modal-"+id);
+  if(el)el.classList.add("open");
+}
+function closeModal(id){const el=document.getElementById("modal-"+id);if(el)el.classList.remove("open");}
+function switchModal(a,b){closeModal(a);openModal(b);}
+document.querySelectorAll(".modal-overlay").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");}));
+
+// ── Theme ─────────────────────────────────────────────────────
+function toggleTheme(){
+  document.body.classList.toggle('light-mode');
+  const l=document.body.classList.contains('light-mode');
+  localStorage.setItem('vp_theme',l?'light':'dark');
+  document.querySelectorAll('#theme-btn,#theme-btn2').forEach(b=>b.textContent=l?'☀️':'🌙');
+}
+
+// ── Billing toggle ────────────────────────────────────────────
+let billingYearly=false;
+function toggleBilling(){
+  billingYearly=!billingYearly;
+  document.getElementById('billing-knob').style.left=billingYearly?'30px':'4px';
+  document.getElementById('lbl-monthly').classList.toggle('active',!billingYearly);
+  document.getElementById('lbl-monthly').classList.toggle('inactive',billingYearly);
+  document.getElementById('lbl-yearly').classList.toggle('active',billingYearly);
+  document.getElementById('lbl-yearly').classList.toggle('inactive',!billingYearly);
+  document.getElementById('starter-price').textContent=billingYearly?'$90':'$9';
+  document.getElementById('starter-period').textContent=billingYearly?'per year · 7-day free trial':'per month · 7-day free trial';
+  document.getElementById('pro-price').textContent=billingYearly?'$290':'$29';
+  document.getElementById('pro-period').textContent=billingYearly?'per year · 7-day free trial':'per month · 7-day free trial';
+}
+
+// ── Google Login ──────────────────────────────────────────────
+function googleLogin(){window.location.href='/auth/google';}
+
+// ── Signup ────────────────────────────────────────────────────
+async function doSignup(){
+  const name=document.getElementById("signup-name").value.trim();
+  const email=document.getElementById("signup-email").value.trim();
+  const password=document.getElementById("signup-pass").value;
+  const msg=document.getElementById("signup-msg");
+  msg.className="msg";
+  if(!name||!email||!password){showMsg(msg,"error","Please fill in all fields.");return;}
+  try{
+    const r=await fetch(API+"/auth/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,email,password})});
+    const data=await r.json();
+    if(!r.ok){showMsg(msg,"error",data.detail||"Signup failed.");return;}
+    saveSession(data.token,data.name,data.email);
+    closeModal("signup");showDashboard(data.name);
+  }catch(e){showMsg(msg,"error","Network error.");}
+}
+
+// ── Login ─────────────────────────────────────────────────────
+async function doLogin(){
+  const email=document.getElementById("login-email").value.trim();
+  const password=document.getElementById("login-pass").value;
+  const msg=document.getElementById("login-msg");
+  msg.className="msg";
+  if(!email||!password){showMsg(msg,"error","Please fill in all fields.");return;}
+  try{
+    const r=await fetch(API+"/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});
+    const data=await r.json();
+    if(!r.ok){showMsg(msg,"error",data.detail||"Login failed.");return;}
+    saveSession(data.token,data.name,data.email);
+    closeModal("login");showDashboard(data.name);
+  }catch(e){showMsg(msg,"error","Network error.");}
+}
+
+function logout(){clearSession();showLanding();}
+function showMsg(el,type,text){el.className="msg "+type;el.textContent=text;}
+
+// ── Dashboard ─────────────────────────────────────────────────
+function showDashboard(name){
+  document.getElementById("landing").style.display="none";
+  document.getElementById("dashboard").classList.add("visible");
+  document.getElementById("dash-name").textContent=name;
+  document.getElementById("nav-actions").style.display="none";
+  document.getElementById("nav-user").style.display="flex";
+  document.getElementById("nav-name").textContent=name;
+  const av=document.getElementById('profile-avatar');
+  if(av)av.textContent=name.charAt(0).toUpperCase();
+  updateStats();
+  loadMyPlan();
+  renderRecent();   // FIX 1: function now defined below
+}
+function showLanding(){
+  document.getElementById("landing").style.display="block";
+  document.getElementById("dashboard").classList.remove("visible");
+  document.getElementById("nav-actions").style.display="flex";
+  document.getElementById("nav-user").style.display="none";
+}
+
+// ── Stats ─────────────────────────────────────────────────────
+function updateStats(){
+  const h=getHistory(),s=getSaved();
+  const el=id=>document.getElementById(id);
+  if(el('stat-total'))el('stat-total').textContent=h.length;
+  if(el('stat-saved'))el('stat-saved').textContent=s.length;
+  if(el('stat-last'))el('stat-last').textContent=h.length>0?new Date(h[0].date).toLocaleDateString('en',{month:'short',day:'numeric'}):'—';
+}
+
+// ── Tab switch ────────────────────────────────────────────────
+function switchTab(tab){
+  ['analyze','history','saved','analytics','chat'].forEach(t=>{
+    const p=document.getElementById('panel-'+t);
+    const b=document.getElementById('tab-'+t);
+    if(p)p.style.display=t===tab?'block':'none';
+    if(b)b.classList.toggle('active',t===tab);
+  });
+  if(tab==='history')renderHistory();
+  if(tab==='saved')renderSaved();
+  if(tab==='analytics')renderAnalytics();
+}
+
+// ── History ───────────────────────────────────────────────────
+function getHistory(){try{return JSON.parse(localStorage.getItem('vp_history')||'[]');}catch{return[];}}
+function saveToHistory(idea){const h=getHistory();h.unshift({idea,date:new Date().toISOString(),id:Date.now()});if(h.length>20)h.pop();localStorage.setItem('vp_history',JSON.stringify(h));updateStats();}
+function clearHistory(){if(confirm('Clear all history?')){localStorage.removeItem('vp_history');renderHistory();updateStats();renderRecent();}}
+function renderHistory(){
+  const list=document.getElementById('history-list');
+  const h=getHistory();
+  if(!list)return;
+  if(!h.length){list.innerHTML='<p style="color:var(--muted2);font-size:.875rem;">No history yet. Run your first analysis!</p>';return;}
+  window._hmap={};
+  h.forEach(item=>window._hmap[item.id]=item.idea);
+  list.innerHTML=h.map(item=>{
+    const short=item.idea.length>65?item.idea.substring(0,65)+'...':item.idea;
+    const date=new Date(item.date).toLocaleDateString();
+    return '<div class="history-item" onclick="rerunIdea('+item.id+')">'
+      +'<span class="h-idea">💡 '+short+'</span>'
+      +'<span class="h-date">'+date+'</span>'
+      +'<span class="h-del" onclick="event.stopPropagation();deleteHistory('+item.id+')">✕</span>'
+      +'</div>';
+  }).join('');
+}
+function deleteHistory(id){localStorage.setItem('vp_history',JSON.stringify(getHistory().filter(h=>h.id!==id)));renderHistory();updateStats();renderRecent();}
+function rerunIdea(id){const idea=(window._hmap&&window._hmap[id])||'';switchTab('analyze');const el=document.getElementById('idea-input');if(el){el.value=idea;el.focus();}}
+
+// ── Recent (Analyze panel) ────────────────────────────────────
+// FIX 1: Added missing renderRecent function
+function renderRecent(){
+  const list=document.getElementById('recent-list');
+  const section=document.getElementById('recent-section');
+  if(!list)return;
+  const h=getHistory().slice(0,6);
+  if(!h.length){if(section)section.style.display='none';return;}
+  if(section)section.style.display='block';
+  window._hmap=window._hmap||{};
+  h.forEach(item=>window._hmap[item.id]=item.idea);
+  list.innerHTML=h.map(item=>{
+    const short=item.idea.length>55?item.idea.substring(0,55)+'…':item.idea;
+    const date=new Date(item.date).toLocaleDateString('en',{month:'short',day:'numeric'});
+    return '<div class="history-item" onclick="rerunIdea('+item.id+')">'
+      +'<span class="h-idea">💡 '+short+'</span>'
+      +'<span class="h-date">'+date+'</span>'
+      +'</div>';
+  }).join('');
+}
+
+// ── Saved ─────────────────────────────────────────────────────
+function getSaved(){try{return JSON.parse(localStorage.getItem('vp_saved')||'[]');}catch{return[];}}
+function renderSaved(){
+  const list=document.getElementById('saved-list');
+  const s=getSaved();
+  if(!list)return;
+  if(!s.length){list.innerHTML='<p style="color:var(--muted2);font-size:.875rem;">No saved reports yet.</p>';return;}
+  list.innerHTML=s.map(item=>{
+    const short=item.idea.length>65?item.idea.substring(0,65)+'...':item.idea;
+    const date=new Date(item.date).toLocaleDateString();
+    return '<div class="history-item">'
+      +'<span class="h-idea">🔖 '+short+'</span>'
+      +'<span class="h-date">'+date+'</span>'
+      +'<span class="h-del" onclick="deleteSaved('+item.id+')">✕</span>'
+      +'</div>';
+  }).join('');
+}
+function deleteSaved(id){localStorage.setItem('vp_saved',JSON.stringify(getSaved().filter(s=>s.id!==id)));renderSaved();updateStats();}
+function bookmarkAnalysis(){
+  const idea=document.getElementById('idea-input').value.trim();
+  if(!idea)return;
+  const blocks=document.querySelectorAll('.agent-block');
+  let content='';
+  blocks.forEach(b=>{const t=b.querySelector('h4')?.textContent?.trim()||'';const bd=b.querySelector('.agent-block-body')?.textContent?.trim()||'';if(t&&bd)content+=t+'\n\n'+bd+'\n\n---\n\n';});
+  const s=getSaved();
+  s.unshift({idea,content,date:new Date().toISOString(),id:Date.now()});
+  localStorage.setItem('vp_saved',JSON.stringify(s));
+  const btn=document.getElementById('bookmark-btn');
+  if(btn){btn.innerHTML='✅ Saved!';setTimeout(()=>btn.innerHTML='🔖 Save',2000);}
+  updateStats();
+}
+
+// ── Profile ───────────────────────────────────────────────────
+function openProfileModal(){
+  const name=localStorage.getItem('vp_name')||'';
+  const email=localStorage.getItem('vp_email')||'';
+  const el=id=>document.getElementById(id);
+  if(el('profile-name-display'))el('profile-name-display').textContent=name;
+  if(el('profile-email-display'))el('profile-email-display').textContent=email;
+  if(el('profile-name-input'))el('profile-name-input').value=name;
+  if(el('profile-avatar'))el('profile-avatar').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('modal-profile').classList.add('open');
+}
+function updateProfile(){
+  const name=document.getElementById('profile-name-input').value.trim();
+  const msg=document.getElementById('profile-msg');
+  msg.className='msg';
+  if(!name){showMsg(msg,'error','Name cannot be empty');return;}
+  localStorage.setItem('vp_name',name);
+  ['dash-name','nav-name'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=name;});
+  const av=document.getElementById('profile-avatar');if(av)av.textContent=name.charAt(0).toUpperCase();
+  showMsg(msg,'success','Profile updated!');
+  setTimeout(()=>closeModal('profile'),1500);
+}
+function confirmDeleteAccount(){
+  if(confirm('Delete your account? This cannot be undone.')){
+    clearSession();localStorage.removeItem('vp_history');localStorage.removeItem('vp_saved');
+    closeModal('profile');showLanding();
+  }
+}
+
+// ── Templates ─────────────────────────────────────────────────
+const promptTemplates=[
+  {idea:"An AI-powered e-commerce platform that uses machine learning to personalize product recommendations, dynamic pricing, and automated inventory management for small to medium online retailers globally.",context:"B2B SaaS, subscription-based, targeting retailers with $10K-$500K monthly revenue, bootstrap stage"},
+  {idea:"A HealthTech SaaS platform that uses AI to help clinics and hospitals automate patient triage, appointment scheduling, and follow-up reminders while integrating with existing EHR systems.",context:"B2B model targeting private clinics, HIPAA compliant, per-seat pricing, Series A stage"},
+  {idea:"An AI-driven EdTech platform offering personalized learning paths for university students using adaptive testing, peer collaboration tools, and job-market alignment to improve career outcomes.",context:"B2C and B2B2C model, freemium with premium subscriptions, targeting universities globally"},
+  {idea:"An electric vehicle startup focused on affordable last-mile delivery vehicles for logistics companies, with a battery-swap network and fleet management software to reduce operational costs.",context:"Hardware + software, targeting logistics companies, Series A, partnerships with battery manufacturers"},
+  {idea:"An AI productivity platform acting as a personal work assistant — automating email responses, meeting summaries, task prioritization, and cross-app workflows for remote and hybrid teams.",context:"B2B SaaS, per-seat pricing, integrates with Slack, Gmail, Notion and Jira, targeting teams of 10-500"}
+];
+function useTemplate(i){
+  const t=promptTemplates[i];
+  const ia=document.getElementById('idea-input');
+  const ca=document.getElementById('context-input');
+  if(ia){ia.value=t.idea;ia.style.borderColor='var(--blue)';setTimeout(()=>ia.style.borderColor='',1000);}
+  if(ca){ca.value=t.context;ca.style.borderColor='var(--blue)';setTimeout(()=>ca.style.borderColor='',1000);}
+  document.querySelectorAll('.tpl-chip').forEach((c,idx)=>c.classList.toggle('active',idx===i));
+  ia.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// ── Skeleton ──────────────────────────────────────────────────
+function showSkeleton(blockEl){const b=blockEl.querySelector('.agent-block-body');if(!b)return;b.innerHTML='<div class="skeleton" style="width:90%"></div><div class="skeleton" style="width:75%"></div><div class="skeleton" style="width:82%"></div><div class="skeleton" style="width:60%"></div>';b.classList.add('open');}
+function clearSkeleton(blockEl){const b=blockEl.querySelector('.agent-block-body');if(!b)return;b.innerHTML='';b.classList.remove('open');}
+
+// ── Copy button ───────────────────────────────────────────────
+function addCopyButton(blockEl){
+  const body=blockEl.querySelector('.agent-block-body');
+  if(!body||body.querySelector('.copy-btn'))return;
+  const btn=document.createElement('button');btn.className='copy-btn';btn.textContent='Copy';
+  btn.onclick=()=>{navigator.clipboard.writeText(body.innerText.replace('Copy','').trim());btn.textContent='✓ Copied!';setTimeout(()=>btn.textContent='Copy',2000);};
+  body.appendChild(btn);
+}
+
+// ── Run Agents ────────────────────────────────────────────────
+async function runAgents(){
+  const idea=document.getElementById("idea-input").value.trim();
+  const context=document.getElementById("context-input").value.trim();
+  const msg=document.getElementById("run-msg");
+  msg.className="msg";
+  if(!idea){showMsg(msg,"error","Please enter a business idea.");return;}
+  saveToHistory(idea);
+  renderRecent();
+  const btn=document.getElementById("run-btn");
+  btn.disabled=true;btn.textContent="⟳ Analyzing…";
+  const results=document.getElementById("results");
+  results.style.display="block";results.innerHTML="";
+  document.getElementById('result-actions').style.display='none';
+  const agents=["Research","Marketing","Finance","Risk","CEO Decision"];
+  agents.forEach((name,idx)=>{
+    const el=document.createElement("div");
+    el.className="agent-block";el.id="block-"+name.replace(" ","-");
+    el.style.animationDelay=(idx*0.12)+'s';
+    el.innerHTML=`<div class="agent-block-header" onclick="toggleBlock(this)"><div class="agent-status" id="status-${name.replace(" ","-")}"></div><h4>${agentIcon(name)} ${name}</h4><span style="color:var(--muted);font-size:.8rem;">▸</span></div><div class="agent-block-body" id="body-${name.replace(" ","-")}"></div>`;
+    results.appendChild(el);
+  });
+  try{
+    const token=getToken();
+    const r=await fetch(API+"/run",{method:"POST",headers:{"Content-Type":"application/json",...(token?{"Authorization":"Bearer "+token}:{})},body:JSON.stringify({idea,context})});
+    const reader=r.body.getReader();const dec=new TextDecoder();let buf="";
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      buf+=dec.decode(value,{stream:true});
+      const lines=buf.split("\n");buf=lines.pop();
+      for(const line of lines){if(!line.startsWith("data:"))continue;try{handleEvent(JSON.parse(line.slice(5)));}catch(_){}}
+    }
+  }catch(e){showMsg(msg,"error","Analysis failed: "+e.message);}
+  btn.disabled=false;btn.textContent="▶ Run Full Analysis";
+}
+function agentIcon(n){return{Research:"📊",Marketing:"📣",Finance:"💰",Risk:"⚠️","CEO Decision":"👔"}[n]||"🤖";}
+function handleEvent(ev){
+  const key=n=>n.replace(" ","-");
+  if(ev.event==="agent_start"){
+    const s=document.getElementById("status-"+key(ev.agent));if(s)s.className="agent-status running";
+    const block=document.getElementById("block-"+key(ev.agent));if(block)showSkeleton(block);
+  }
+  if(ev.event==="agent_done"){
+    const s=document.getElementById("status-"+key(ev.agent));if(s)s.className="agent-status done";
+    const block=document.getElementById("block-"+key(ev.agent));if(block)clearSkeleton(block);
+    const body=document.getElementById("body-"+key(ev.agent));
+    if(body){body.textContent=ev.output;body.classList.add("open");}
+    if(block)addCopyButton(block);
+  }
+  if(ev.event==="agent_error"){
+    const s=document.getElementById("status-"+key(ev.agent));if(s){s.className="agent-status";s.style.background="var(--danger)";}
+    const body=document.getElementById("body-"+key(ev.agent));if(body){body.textContent="Error: "+ev.error;body.classList.add("open");body.style.color="var(--danger)";}
+  }
+  if(ev.event==="complete"){document.getElementById('result-actions').style.display='flex';}
+}
+function toggleBlock(header){const body=header.nextElementSibling;body.classList.toggle('open');header.querySelector('span').textContent=body.classList.contains('open')?'▾':'▸';}
+
+// ── Result Actions ────────────────────────────────────────────
+function clearResults(){
+  document.getElementById("results").innerHTML="";
+  document.getElementById("results").style.display="none";
+  document.getElementById("result-actions").style.display="none";
+  document.getElementById("idea-input").value="";
+  document.getElementById("context-input").value="";
+  document.querySelectorAll('.tpl-chip').forEach(c=>c.classList.remove('active'));
+}
+function downloadReport(){
+  const idea=document.getElementById('idea-input').value.trim();
+  const blocks=document.querySelectorAll('.agent-block');if(!blocks.length)return;
+  let report="VENTUREPILOT — BUSINESS ANALYSIS REPORT\n"+"=".repeat(50)+"\nDate: "+new Date().toLocaleString()+"\nIdea: "+(idea||"N/A")+"\n"+"=".repeat(50)+"\n\n";
+  blocks.forEach(block=>{
+    const title=block.querySelector('h4')?.textContent?.trim()||'';
+    const body=block.querySelector('.agent-block-body')?.textContent?.trim()||'';
+    if(title&&body)report+="── "+title+" ──\n\n"+body+"\n\n"+"-".repeat(40)+"\n\n";
+  });
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([report],{type:'text/plain'}));a.download="venturepilot-report-"+Date.now()+".txt";a.click();
+}
+function shareReport(){
+  if(navigator.share){navigator.share({title:'VenturePilot Report',url:window.location.href});}
+  else{navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copied!'));}
+}
+
+// ── Payment ───────────────────────────────────────────────────
+async function subscribePlan(plan){
+  const token=getToken();if(!token){openModal('signup');return;}
+  const planKey=plan+(billingYearly?'_yearly':'_monthly');
+  try{
+    const r=await fetch('/paddle/subscribe',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({plan:planKey})});
+    const data=await r.json();
+    if(!r.ok){alert('Error: '+(data.detail||'Payment failed'));return;}
+    if(data.checkout_url)window.location.href=data.checkout_url;
+  }catch(e){alert('Payment error: '+e.message);}
+}
+
+// FIX 2: Guard against 404 — skip silently if the Paddle backend isn't live yet
+async function loadMyPlan(){
+  const token=getToken();if(!token)return;
+  try{
+    const r=await fetch('/paddle/my-plan',{headers:{'Authorization':'Bearer '+token}});
+    if(!r.ok)return;                          // 404 or any non-2xx → no-op
+    const data=await r.json();
+    const badge=document.getElementById('plan-badge');
+    if(badge&&data.plan){badge.textContent=data.plan.toUpperCase();badge.style.display='inline-flex';}
+  }catch(_){}                                 // network error → no-op
+}
+
+// ── Guide ─────────────────────────────────────────────────────
+const guideSteps=[
+  {icon:"🚀",title:"Welcome to VenturePilot!",desc:"Your AI-powered business intelligence platform. Get boardroom-level analysis of any business idea in under 60 seconds.",demo:'<div style="text-align:center;"><span style="color:var(--blue);font-size:1rem;font-weight:700;">Research → Marketing → Finance → Risk → CEO</span><br><span style="font-size:.78rem;margin-top:.4rem;display:block;color:var(--muted2);">5 agents working in sequence</span></div>'},
+  {icon:"✍️",title:"Step 1 — Create Account",desc:"Click 'Get Started' and sign up with your name, email and password. Or use Google for one-click signup.",demo:'<div style="width:100%;"><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.55rem .85rem;margin-bottom:.4rem;font-size:.8rem;">📧 your@email.com</div><div style="background:var(--grad);color:#fff;border-radius:8px;padding:.55rem;text-align:center;margin-top:.4rem;font-size:.8rem;font-weight:700;">Create Account →</div></div>'},
+  {icon:"💡",title:"Step 2 — Enter Your Idea",desc:"Type your business idea. Use Quick Templates for inspiration or write your own detailed concept.",demo:'<div id="typing-demo" style="background:var(--surface);border:1px solid var(--blue);border-radius:8px;padding:.65rem;font-size:.78rem;color:var(--text);min-height:45px;"></div>'},
+  {icon:"⚡",title:"Step 3 — Run Analysis",desc:"Hit 'Run Full Analysis' and watch 5 AI agents analyze your idea live — each one lighting up as it works.",demo:'<div style="display:flex;flex-direction:column;gap:.35rem;width:100%;"><div style="display:flex;align-items:center;gap:.55rem;padding:.38rem .65rem;background:var(--surface);border-radius:6px;font-size:.78rem;"><div style="width:7px;height:7px;border-radius:50%;background:var(--success);"></div>📊 Research — Done</div><div style="display:flex;align-items:center;gap:.55rem;padding:.38rem .65rem;background:var(--surface);border-radius:6px;font-size:.78rem;"><div style="width:7px;height:7px;border-radius:50%;background:var(--blue);animation:pulse 1s infinite;"></div>📣 Marketing — Running…</div><div style="display:flex;align-items:center;gap:.55rem;padding:.38rem .65rem;background:var(--surface);border-radius:6px;font-size:.78rem;color:var(--muted2);"><div style="width:7px;height:7px;border-radius:50%;background:var(--muted);"></div>💰 Finance — Waiting</div></div>'},
+  {icon:"📊",title:"Step 4 — Read Report",desc:"Each agent delivers a detailed report. Click any section to expand. Get market research, marketing plan, financial model, risk analysis and CEO decision.",demo:'<div style="display:flex;flex-direction:column;gap:.35rem;width:100%;"><div style="padding:.45rem .7rem;background:var(--surface);border-radius:6px;font-size:.78rem;">📊 Research Report ▾</div><div style="padding:.45rem .7rem;background:rgba(79,142,247,.08);border-radius:6px;border:1px solid rgba(79,142,247,.2);font-size:.75rem;color:var(--muted2);">Market size: $2.3B globally. Top 3 competitors identified…</div></div>'},
+  {icon:"⬇️",title:"Step 5 — Save & Share",desc:"Download your full report as a .txt file, bookmark it for later, or share the link with your team or investors.",demo:'<div style="display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;"><div style="padding:.45rem .9rem;background:var(--surface);border:1px solid var(--border);border-radius:7px;font-size:.78rem;">🔖 Save</div><div style="padding:.45rem .9rem;background:var(--grad);color:#fff;border-radius:7px;font-size:.78rem;font-weight:700;">⬇️ Download</div><div style="padding:.45rem .9rem;background:var(--surface);border:1px solid var(--border);border-radius:7px;font-size:.78rem;">🔗 Share</div></div>'}
+];
+let guideStep=0,typingInterval=null;
+function renderGuideStep(step){
+  const s=guideSteps[step];
+  ['guide-icon','guide-title','guide-desc','guide-demo'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.remove('guide-animate');void el.offsetWidth;el.classList.add('guide-animate');}});
+  document.getElementById('guide-icon').innerHTML='<span class="float-icon">'+s.icon+'</span>';
+  document.getElementById('guide-title').textContent=s.title;
+  document.getElementById('guide-desc').textContent=s.desc;
+  document.getElementById('guide-demo').innerHTML=s.demo;
+  if(step===2){
+    const target=document.getElementById('typing-demo');
+    if(target){const text="An AI-powered food delivery app targeting restaurants in major cities with low commission fees and real-time analytics…";let i=0;if(typingInterval)clearInterval(typingInterval);target.textContent="";typingInterval=setInterval(()=>{if(i<text.length)target.textContent+=text[i++];else clearInterval(typingInterval);},30);}
+  }
+  document.querySelectorAll('.guide-dot').forEach((d,i)=>d.classList.toggle('active',i===step));
+  document.getElementById('guide-progress').style.width=((step+1)/guideSteps.length*100)+'%';
+  document.getElementById('guide-counter').textContent=(step+1)+' / '+guideSteps.length;
+  document.getElementById('guide-prev').style.visibility=step===0?'hidden':'visible';
+  document.getElementById('guide-next').textContent=step===guideSteps.length-1?'🎉 Let\'s Go!':'Next →';
+}
+function guideNav(dir){
+  if(typingInterval){clearInterval(typingInterval);typingInterval=null;}
+  if(dir===1&&guideStep===guideSteps.length-1){closeModal('guide');return;}
+  guideStep=Math.max(0,Math.min(guideSteps.length-1,guideStep+dir));
+  renderGuideStep(guideStep);
+}
+
+// ── Analytics ─────────────────────────────────────────────────
+function renderAnalytics(){
+  const h=getHistory();const s=getSaved();
+  const el=id=>document.getElementById(id);
+  if(el('an-total'))el('an-total').textContent=h.length;
+  if(el('an-saved'))el('an-saved').textContent=s.length;
+  const weekAgo=Date.now()-7*24*60*60*1000;
+  const weekCount=h.filter(i=>new Date(i.date).getTime()>weekAgo).length;
+  if(el('an-week'))el('an-week').textContent=weekCount;
+  let streak=0;
+  const dates=[...new Set(h.map(i=>new Date(i.date).toDateString()))];
+  for(let i=0;i<dates.length;i++){const d=new Date();d.setDate(d.getDate()-i);if(dates.includes(d.toDateString()))streak++;else break;}
+  if(el('an-streak'))el('an-streak').textContent=streak;
+  const barsEl=el('chart-bars');const labelsEl=el('chart-labels');
+  if(barsEl&&labelsEl){
+    const days=[];
+    for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const label=d.toLocaleDateString('en',{weekday:'short'});const count=h.filter(item=>new Date(item.date).toDateString()===d.toDateString()).length;days.push({label,count});}
+    const max=Math.max(...days.map(d=>d.count),1);
+    barsEl.innerHTML=days.map(d=>{const pct=Math.max(8,(d.count/max)*100);return '<div class="chart-bar" style="height:'+pct+'%;background:var(--grad);" title="'+d.count+' analyses"></div>';}).join('');
+    labelsEl.innerHTML='<div style="display:flex;gap:.5rem;margin-top:.4rem;">'+days.map(d=>'<div style="flex:1;text-align:center;font-size:.72rem;color:var(--muted);">'+d.label+'</div>').join('')+'</div>';
+  }
+  const topicEl=el('topic-list');
+  if(topicEl){
+    const words={};
+    h.forEach(item=>{item.idea.toLowerCase().split(/\s+/).forEach(w=>{if(w.length>4&&!['with','that','this','from','have','your','will','they','their','into','about','would','could','platform','using','based'].includes(w))words[w]=(words[w]||0)+1;});});
+    const top=Object.entries(words).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    if(top.length){topicEl.innerHTML=top.map(([w,c])=>'<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.875rem;"><span style="color:var(--text);text-transform:capitalize;">'+w+'</span><span style="color:var(--blue);font-weight:700;font-size:.8rem;">'+c+' time'+(c>1?'s':'')+'</span></div>').join('');}
+    else{topicEl.innerHTML='<p style="color:var(--muted2);font-size:.875rem;">Run some analyses to see your topics!</p>';}
+  }
+}
+
+// ── AI Chat ───────────────────────────────────────────────────
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  const messages=document.getElementById('chat-messages');
+  const text=input.value.trim();
+  if(!text)return;
+  input.value='';
+  const userBubble=document.createElement('div');userBubble.className='chat-bubble user';userBubble.textContent=text;messages.appendChild(userBubble);
+  const typing=document.createElement('div');typing.className='chat-bubble typing';
+  typing.innerHTML='<span style="display:inline-flex;gap:3px;align-items:center;"><span style="animation:pulse .6s infinite;width:6px;height:6px;background:var(--muted2);border-radius:50%;display:inline-block;"></span><span style="animation:pulse .6s .2s infinite;width:6px;height:6px;background:var(--muted2);border-radius:50%;display:inline-block;"></span><span style="animation:pulse .6s .4s infinite;width:6px;height:6px;background:var(--muted2);border-radius:50%;display:inline-block;"></span></span>';
+  messages.appendChild(typing);messages.scrollTop=messages.scrollHeight;
+  try{
+    const idea=document.getElementById('idea-input')?.value||'';
+    const systemPrompt=`You are VenturePilot AI, a helpful business intelligence assistant. ${idea?'The user is working on this business idea: '+idea:''} Give concise, practical advice. Keep responses under 150 words.`;
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:systemPrompt,messages:[{role:'user',content:text}]})});
+    const data=await r.json();
+    const reply=data.content?.[0]?.text||'Sorry, I could not process that. Please try again.';
+    typing.remove();
+    const aiBubble=document.createElement('div');aiBubble.className='chat-bubble ai';aiBubble.textContent=reply;messages.appendChild(aiBubble);
+  }catch(e){
+    typing.remove();
+    const errBubble=document.createElement('div');errBubble.className='chat-bubble ai';errBubble.textContent='Sorry, I am having trouble connecting. Please try again later.';messages.appendChild(errBubble);
+  }
+  messages.scrollTop=messages.scrollHeight;
+}
+function clearChat(){const messages=document.getElementById('chat-messages');if(messages)messages.innerHTML='<div class="chat-bubble ai">👋 Hi! I\'m your VenturePilot AI assistant. Ask me anything about your business idea, market strategy, or financial modeling!</div>';}
+
+// ── Idea Score ────────────────────────────────────────────────
+function showScore(){
+  const blocks=document.querySelectorAll('.agent-block');
+  if(!blocks.length){alert('Run an analysis first to get a score!');return;}
+  let totalText='';
+  blocks.forEach(b=>{totalText+=b.querySelector('.agent-block-body')?.textContent||'';});
+  const positiveWords=['opportunity','growth','potential','innovative','strong','profitable','scalable','demand','advantage','market'];
+  const negativeWords=['risk','challenge','competition','difficult','barrier','threat','concern','problem','regulatory','limited'];
+  let pos=0,neg=0;
+  positiveWords.forEach(w=>{pos+=(totalText.toLowerCase().match(new RegExp(w,'g'))||[]).length;});
+  negativeWords.forEach(w=>{neg+=(totalText.toLowerCase().match(new RegExp(w,'g'))||[]).length;});
+  const raw=Math.min(95,Math.max(35,Math.round(60+(pos-neg)*2)));
+  const pct=raw+'%';
+  const labels=raw>=80?['🚀 Excellent','Strong fundamentals — this idea has real potential!']:raw>=65?['✅ Good','Solid idea with some areas to strengthen.']:raw>=50?['⚠️ Moderate','Needs refinement. Focus on the risk areas.']:['🔴 Challenging','Significant hurdles. Consider pivoting.'];
+  const breakdown=[
+    {label:'Market Opportunity',score:Math.min(10,Math.max(3,Math.round(pos/2)))},
+    {label:'Risk Level',score:Math.min(10,Math.max(3,10-Math.round(neg/2)))},
+    {label:'Innovation',score:Math.floor(Math.random()*3)+7},
+    {label:'Scalability',score:Math.floor(Math.random()*3)+6},
+  ];
+  document.getElementById('score-ring').style.setProperty('--pct',pct);
+  document.getElementById('score-num').textContent=raw;
+  document.getElementById('score-label').textContent=labels[0];
+  document.getElementById('score-desc').textContent=labels[1];
+  document.getElementById('score-breakdown').innerHTML=breakdown.map(b=>'<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);"><span style="font-size:.875rem;color:var(--muted2);">'+b.label+'</span><div style="display:flex;align-items:center;gap:.5rem;"><div style="width:80px;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;"><div style="width:'+b.score*10+'%;height:100%;background:var(--grad);border-radius:3px;"></div></div><span style="font-size:.8rem;font-weight:700;color:var(--blue);min-width:24px;">'+b.score+'/10</span></div></div>').join('');
+  openModal('score');
+}
+
+// ── Competitor Analysis ───────────────────────────────────────
+function showCompetitors(){
+  const idea=document.getElementById('idea-input').value.trim();
+  if(!idea){alert('Enter a business idea first!');return;}
+  const competitors=[
+    {name:'Competitor A',funding:'$50M Series B',strength:'Strong brand',weakness:'High pricing',threat:'Medium'},
+    {name:'Competitor B',funding:'$12M Series A',strength:'Large user base',weakness:'Poor UX',threat:'High'},
+    {name:'Competitor C',funding:'Bootstrapped',strength:'Niche focus',weakness:'Limited scale',threat:'Low'},
+    {name:'Your Venture',funding:'—',strength:'AI-powered, modern',weakness:'New entrant',threat:'—'},
+  ];
+  document.getElementById('comp-table-wrap').innerHTML='<table class="comp-table"><thead><tr><th>Company</th><th>Funding</th><th>Strength</th><th>Weakness</th><th>Threat</th></tr></thead><tbody>'+competitors.map((c,i)=>'<tr style="'+(i===3?'background:rgba(79,142,247,.05);':'')+'"><td style="font-weight:700;color:var(--text);">'+c.name+(i===3?' 🎯':'')+'</td><td>'+c.funding+'</td><td>'+c.strength+'</td><td>'+c.weakness+'</td><td>'+(c.threat==='—'?'—':'<span class="comp-badge '+(c.threat==='High'?'weak':c.threat==='Low'?'strong':'mid')+'">'+c.threat+'</span>')+'</td></tr>').join('')+'</tbody></table>';
+  openModal('competitor');
+}
+
+// ── Email Report ──────────────────────────────────────────────
+function sendEmailReport(){
+  const recipient=document.getElementById('email-recipient').value.trim();
+  const subject=document.getElementById('email-subject').value.trim();
+  const note=document.getElementById('email-note').value.trim();
+  const msg=document.getElementById('email-msg');
+  msg.className='msg';
+  if(!recipient){showMsg(msg,'error','Please enter a recipient email.');return;}
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(recipient)){showMsg(msg,'error','Please enter a valid email.');return;}
+  const blocks=document.querySelectorAll('.agent-block');
+  let body=note?note+'\n\n---\n\n':'';
+  body+='VenturePilot Business Analysis Report\n\n';
+  blocks.forEach(block=>{const title=block.querySelector('h4')?.textContent?.trim()||'';const content=block.querySelector('.agent-block-body')?.textContent?.trim()||'';if(title&&content)body+=title+'\n'+'-'.repeat(30)+'\n'+content.substring(0,300)+'...\n\n';});
+  window.open('mailto:'+recipient+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body));
+  const fw=document.getElementById('email-form-wrap');
+  if(fw)fw.innerHTML='<div style="text-align:center;padding:1rem;"><div style="font-size:2rem;margin-bottom:.5rem;">✅</div><h3>Opening your email client!</h3><p style="color:var(--muted2);font-size:.875rem;">Email ready to send to '+recipient+'</p></div>';
+  setTimeout(()=>{const fw2=document.getElementById('email-form-wrap');if(fw2)fw2.innerHTML='<div class="form-group"><label>Recipient Email</label><input type="email" id="email-recipient" placeholder="colleague@company.com"/></div><div class="form-group"><label>Subject</label><input type="text" id="email-subject" value="VenturePilot Business Analysis Report"/></div><div class="form-group"><label>Note</label><textarea id="email-note" placeholder="Add a personal note..." rows="2" style="min-height:60px;"></textarea></div><div class="msg" id="email-msg"></div><button class="btn btn-primary btn-full" onclick="sendEmailReport()">Send Report</button>';},4000);
+}
+
+// ── Stubs for functions referenced in HTML but not fully implemented ──
+function handleSearch(v){}
+function closeSearch(){}
+function selectIndustry(el,name){}
+function validateIdea(){}
+function generateActionPlan(){}
+function runComparison(){}
+function toggleFaq(el){const a=el.nextElementSibling;const open=a.style.display==='block';a.style.display=open?'none':'block';el.querySelector('span:last-child').textContent=open?'▸':'▾';}
+function toggleChatWidget(){const p=document.getElementById('chat-widget-panel');if(p)p.style.display=p.style.display==='flex'?'none':'flex';}
+function sendCWMessage(){}
+function startTour(){}
+function endTour(){}
+function nextTourStep(){}
+function toggleNotif(){const p=document.getElementById('notif-panel');if(p)p.style.display=p.style.display==='block'?'none':'block';}
+function clearNotifs(){const l=document.getElementById('notif-list');if(l)l.innerHTML='<p style="color:var(--muted2);font-size:.82rem;padding:.5rem 0;">No notifications.</p>';const d=document.getElementById('notif-dot');if(d)d.classList.remove('show');}
+function submitFeedback(){const msg=document.getElementById('feedback-msg');if(msg){msg.className='msg success';msg.textContent='Thank you for your feedback!';setTimeout(()=>closeModal('feedback'),1500);}}
+function rateStar(n){document.getElementById('star-label').textContent=['','😞 Poor','😐 Fair','🙂 Good','😊 Great','🤩 Excellent'][n]||'';}
+function toggleTag(el){el.classList.toggle('active');}
+function addNotif(icon,text){}
+
+// ── Handle Google OAuth redirect ──────────────────────────────
+function handleGoogleCallback(){
+  const params=new URLSearchParams(window.location.search);
+  const token=params.get('token');const name=params.get('name');const email=params.get('email');
+  if(token&&name){saveSession(token,decodeURIComponent(name),decodeURIComponent(email||''));window.history.replaceState({},document.title,'/');showDashboard(decodeURIComponent(name));}
+}
+
+// ── Privacy ───────────────────────────────────────────────────
+function openPrivacy(){openModal('privacy');}
+
+// ── Scroll animations ─────────────────────────────────────────
+const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.15});
+
+// ── Init ──────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.feature-card').forEach(c=>observer.observe(c));
+  if(localStorage.getItem('vp_theme')==='light'){document.body.classList.add('light-mode');document.querySelectorAll('#theme-btn,#theme-btn2').forEach(b=>b.textContent='☀️');}
+  handleGoogleCallback();
+  const token=getToken();const name=localStorage.getItem('vp_name');
+  if(token&&name){showDashboard(name);if(!localStorage.getItem('vp_toured'))setTimeout(startTour,1500);}
+});
+</script>
+</body>
+</html>
