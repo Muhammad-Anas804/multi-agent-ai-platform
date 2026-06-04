@@ -11,4 +11,4 @@ uvicorn
 pytest
 boto3
 psycopg2-binary
-https
+httpx
