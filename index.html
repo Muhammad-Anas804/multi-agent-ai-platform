@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>VenturePilot — AI Business Intelligence</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet"/>
-<!-- Paddle disabled temporarily -->
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <style>
 :root {
   --bg:#04050a;
@@ -625,6 +625,7 @@ footer{
           <div class="footer-col">
             <h4>Contact</h4>
             <a href="mailto:muhammadanas.ragdev@gmail.com">📧 Email Us</a>
+            <a href="mailto:muhammadanas.ragdev@gmail.com" style="font-size:.8rem;color:var(--muted2);">muhammadanas.ragdev@gmail.com</a>
             <a href="tel:+923079062502">📞 +92 307 906 2502</a>
           </div>
         </div>
@@ -1085,26 +1086,7 @@ footer{
   </div>
 </div>
 
-<!-- LIVE CHAT WIDGET -->
-<button class="chat-widget-btn" onclick="toggleChatWidget()" id="chat-widget-btn">💬</button>
-<div class="chat-widget-panel" id="chat-widget-panel">
-  <div class="chat-widget-header">
-    <div class="chat-widget-avatar">🧠</div>
-    <div>
-      <div class="chat-widget-name">VenturePilot Support</div>
-      <div class="chat-widget-status">● Online — typically replies instantly</div>
-    </div>
-    <button onclick="toggleChatWidget()" style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;margin-left:auto;font-size:1rem;">✕</button>
-  </div>
-  <div class="chat-widget-messages" id="cw-messages">
-    <div class="cw-bubble-ai">👋 Hi! I'm your VenturePilot assistant. How can I help you today?</div>
-    <div class="cw-bubble-ai">You can ask me about:<br/>• How to use VenturePilot<br/>• Understanding your analysis<br/>• Pricing & plans<br/>• Technical issues</div>
-  </div>
-  <div class="chat-widget-input-row">
-    <input class="cw-input" id="cw-input" placeholder="Type your question…" onkeydown="if(event.key==='Enter')sendCWMessage()"/>
-    <button class="cw-send" onclick="sendCWMessage()">↑</button>
-  </div>
-</div>
+
 
 <script>
 const API = "";
@@ -1552,9 +1534,9 @@ async function sendChat(){
   try{
     const idea=document.getElementById('idea-input')?.value||'';
     const systemPrompt=`You are VenturePilot AI, a helpful business intelligence assistant. ${idea?'The user is working on this business idea: '+idea:''} Give concise, practical advice. Keep responses under 150 words.`;
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:systemPrompt,messages:[{role:'user',content:text}]})});
+    const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+(localStorage.getItem('vp_token')||'')},body:JSON.stringify({message:text,idea:idea})});
     const data=await r.json();
-    const reply=data.content?.[0]?.text||'Sorry, I could not process that. Please try again.';
+    const reply=data.reply||'Sorry, I could not process that. Please try again.';
     typing.remove();
     const aiBubble=document.createElement('div');aiBubble.className='chat-bubble ai';aiBubble.textContent=reply;messages.appendChild(aiBubble);
   }catch(e){
@@ -1634,7 +1616,7 @@ function validateIdea(){}
 function generateActionPlan(){}
 function runComparison(){}
 function toggleFaq(el){const a=el.nextElementSibling;const open=a.style.display==='block';a.style.display=open?'none':'block';el.querySelector('span:last-child').textContent=open?'▸':'▾';}
-function toggleChatWidget(){const p=document.getElementById('chat-widget-panel');if(p)p.style.display=p.style.display==='flex'?'none':'flex';}
+
 function sendCWMessage(){}
 function startTour(){}
 function endTour(){}
