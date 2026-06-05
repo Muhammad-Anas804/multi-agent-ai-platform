@@ -1,25 +1,23 @@
-# api.py — FastAPI Backend with Google OAuth
-# Run: python api.py
-# Then open: http://localhost:8000
-
-import os, sys, json, asyncio
+# api.py — FastAPI Backend with Google OAuth + JWT Auth
+import os, sys, json, asyncio, hashlib, hmac, base64, time
 from datetime import datetime
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import HTMLResponse, StreamingResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import httpx
 
 load_dotenv()
-
 sys.path.insert(0, os.path.dirname(__file__))
 
-GROQ_API_KEY       = os.getenv("GROQ_API_KEY")
-GOOGLE_CLIENT_ID   = os.getenv("GOOGLE_CLIENT_ID")
-GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-GOOGLE_REDIRECT_URI  = os.getenv("GOOGLE_REDIRECT_URI")
-FRONTEND_URL         = os.getenv("FRONTEND_URL", "https://multi-agent-ai-platform-production.up.railway.app")
+GROQ_API_KEY        = os.getenv("GROQ_API_KEY")
+GOOGLE_CLIENT_ID    = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET= os.getenv("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+FRONTEND_URL        = os.getenv("FRONTEND_URL", "https://multi-agent-ai-platform-production.up.railway.app")
+JWT_SECRET          = os.getenv("JWT_SECRET", "venturepilot-secret-key-change-in-production")
 
 from ceo_brain import CEOBrain
 from marketing_agent import MarketingAgent
@@ -27,24 +25,85 @@ from finance_agent import FinanceAgent
 from risk_agent import RiskAgent
 from State import AgentState
 
-app = FastAPI(title="CEO Agent SaaS")
+app = FastAPI(title="VenturePilot API")
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+security = HTTPBearer(auto_error=False)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
+# ── Simple in-memory user store (replace with DB in production) ──
+USERS = {}  # email -> {name, email, password_hash}
+
+# ── JWT helpers ──────────────────────────────────────────────────
+def make_token(email: str, name: str) -> str:
+    payload = {"email": email, "name": name, "exp": int(time.time()) + 7*24*3600}
+    data = base64.b64encode(json.dumps(payload).encode()).decode()
+    sig = hmac.new(JWT_SECRET.encode(), data.encode(), hashlib.sha256).hexdigest()
+    return f"{data}.{sig}"
+
+def verify_token(token: str):
+    try:
+        data, sig = token.rsplit(".", 1)
+        expected = hmac.new(JWT_SECRET.encode(), data.encode(), hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(sig, expected):
+            return None
+        payload = json.loads(base64.b64decode(data).decode())
+        if payload.get("exp", 0) < time.time():
+            return None
+        return payload
+    except:
+        return None
+
+def hash_password(password: str) -> str:
+    return hashlib.pbkdf2_hmac("sha256", password.encode(), JWT_SECRET.encode(), 100000).hex()
+
+# ── Models ───────────────────────────────────────────────────────
+class SignupRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
 
 class IdeaRequest(BaseModel):
     idea: str
     context: str = ""
 
-# ─── Google OAuth Routes ───────────────────────────────────────────────────────
+# ── Auth Routes ──────────────────────────────────────────────────
+@app.post("/auth/signup")
+async def signup(req: SignupRequest):
+    if req.email in USERS:
+        raise HTTPException(400, "Email already registered.")
+    if len(req.password) < 6:
+        raise HTTPException(400, "Password must be at least 6 characters.")
+    USERS[req.email] = {
+        "name": req.name,
+        "email": req.email,
+        "password_hash": hash_password(req.password)
+    }
+    token = make_token(req.email, req.name)
+    return {"token": token, "name": req.name, "email": req.email}
 
+@app.post("/auth/login")
+async def login(req: LoginRequest):
+    user = USERS.get(req.email)
+    if not user or user["password_hash"] != hash_password(req.password):
+        raise HTTPException(401, "Invalid email or password.")
+    token = make_token(req.email, user["name"])
+    return {"token": token, "name": user["name"], "email": req.email}
+
+@app.get("/auth/me")
+async def get_me(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    if not credentials:
+        raise HTTPException(401, "Not authenticated.")
+    payload = verify_token(credentials.credentials)
+    if not payload:
+        raise HTTPException(401, "Invalid or expired token.")
+    return {"email": payload["email"], "name": payload["name"]}
+
+# ── Google OAuth Routes ──────────────────────────────────────────
 @app.get("/auth/google")
 async def google_login():
-    """Redirect user to Google OAuth consent screen."""
     params = (
         "https://accounts.google.com/o/oauth2/v2/auth"
         f"?client_id={GOOGLE_CLIENT_ID}"
@@ -56,60 +115,64 @@ async def google_login():
     )
     return RedirectResponse(params)
 
-
 @app.get("/auth/google/callback")
 async def google_callback(code: str = None, error: str = None):
-    """Handle Google OAuth callback, exchange code for tokens."""
     if error or not code:
         return RedirectResponse(f"{FRONTEND_URL}?auth_error=access_denied")
+    try:
+        async with httpx.AsyncClient() as client:
+            # Exchange code for tokens
+            token_res = await client.post(
+                "https://oauth2.googleapis.com/token",
+                data={
+                    "code": code,
+                    "client_id": GOOGLE_CLIENT_ID,
+                    "client_secret": GOOGLE_CLIENT_SECRET,
+                    "redirect_uri": GOOGLE_REDIRECT_URI,
+                    "grant_type": "authorization_code",
+                }
+            )
+            tokens = token_res.json()
+            if "access_token" not in tokens:
+                return RedirectResponse(f"{FRONTEND_URL}?auth_error=token_failed")
 
-    async with httpx.AsyncClient() as client:
-        # Exchange code for tokens
-        token_res = await client.post(
-            "https://oauth2.googleapis.com/token",
-            data={
-                "code": code,
-                "client_id": GOOGLE_CLIENT_ID,
-                "client_secret": GOOGLE_CLIENT_SECRET,
-                "redirect_uri": GOOGLE_REDIRECT_URI,
-                "grant_type": "authorization_code",
-            }
+            # Get user info from Google
+            user_res = await client.get(
+                "https://www.googleapis.com/oauth2/v2/userinfo",
+                headers={"Authorization": f"Bearer {tokens['access_token']}"}
+            )
+            user = user_res.json()
+
+        email = user.get("email", "")
+        name  = user.get("name", email.split("@")[0])
+
+        # Auto-register user if not exists
+        if email not in USERS:
+            USERS[email] = {"name": name, "email": email, "password_hash": ""}
+
+        # Generate JWT token
+        token = make_token(email, name)
+
+        # Redirect to frontend with token
+        import urllib.parse
+        encoded_name  = urllib.parse.quote(name)
+        encoded_email = urllib.parse.quote(email)
+        return RedirectResponse(
+            f"{FRONTEND_URL}?token={token}&name={encoded_name}&email={encoded_email}"
         )
-        tokens = token_res.json()
-
-        if "access_token" not in tokens:
-            return RedirectResponse(f"{FRONTEND_URL}?auth_error=token_failed")
-
-        # Get user info
-        user_res = await client.get(
-            "https://www.googleapis.com/oauth2/v2/userinfo",
-            headers={"Authorization": f"Bearer {tokens['access_token']}"}
-        )
-        user = user_res.json()
-
-    # Redirect back to frontend with user info
-    name  = user.get("name", "")
-    email = user.get("email", "")
-    picture = user.get("picture", "")
-
-    return RedirectResponse(
-        f"{FRONTEND_URL}?auth_success=true&email={email}&name={name}&picture={picture}"
-    )
-
+    except Exception as e:
+        return RedirectResponse(f"{FRONTEND_URL}?auth_error=server_error")
 
 @app.get("/auth/logout")
 async def logout():
-    """Simple logout redirect."""
     return RedirectResponse(f"{FRONTEND_URL}?logged_out=true")
 
-# ─── Existing Routes ───────────────────────────────────────────────────────────
-
+# ── Main App Routes ──────────────────────────────────────────────
 @app.get("/", response_class=HTMLResponse)
 async def serve_ui():
     html_path = os.path.join(os.path.dirname(__file__), "index.html")
     with open(html_path, "r", encoding="utf-8") as f:
         return f.read()
-
 
 @app.post("/run")
 async def run_agents(req: IdeaRequest):
@@ -183,11 +246,9 @@ async def run_agents(req: IdeaRequest):
 
     return StreamingResponse(generate(), media_type="text/event-stream")
 
-
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
-
+    return {"status": "ok", "users": len(USERS)}
 
 if __name__ == "__main__":
     import uvicorn, webbrowser, threading
