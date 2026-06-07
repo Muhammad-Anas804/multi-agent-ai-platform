@@ -1340,6 +1340,13 @@ const API = "";
 // ── Session ───────────────────────────────────────────────────
 function saveSession(token,name,email){localStorage.setItem("vp_token",token);localStorage.setItem("vp_name",name);localStorage.setItem("vp_email",email);}
 function getToken(){return localStorage.getItem("vp_token");}
+function getSession(){
+  const token=localStorage.getItem("vp_token");
+  const name=localStorage.getItem("vp_name");
+  const email=localStorage.getItem("vp_email");
+  if(!token)return null;
+  return {token,name:name||'User',email:email||''};
+}
 function clearSession(){["vp_token","vp_name","vp_email"].forEach(k=>localStorage.removeItem(k));}
 
 // ── Modal ─────────────────────────────────────────────────────
