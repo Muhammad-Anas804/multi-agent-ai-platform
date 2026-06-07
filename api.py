@@ -333,6 +333,113 @@ async def run_agents(req: IdeaRequest):
 
     return StreamingResponse(generate(), media_type="text/event-stream")
 
+
+# ── Admin Routes ─────────────────────────────────────────────
+ADMIN_EMAILS = ['muhammadanas9062@gmail.com','developer9062@gmail.com','muhammadanas.ragdev@gmail.com']
+BANNED_USERS = set()
+
+class BanRequest(BaseModel):
+    email: str
+    ban: bool
+
+class DeleteUserRequest(BaseModel):
+    email: str
+
+def require_admin(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    if not credentials:
+        raise HTTPException(403, "Admin access required.")
+    payload = verify_token(credentials.credentials)
+    if not payload or payload.get("email") not in ADMIN_EMAILS:
+        raise HTTPException(403, "Admin access required.")
+    return payload
+
+@app.get("/admin/users")
+async def admin_get_users(admin=Depends(require_admin)):
+    users = []
+    for email, u in USERS.items():
+        users.append({
+            "name": u["name"],
+            "email": email,
+            "plan": u.get("plan", "free"),
+            "banned": email in BANNED_USERS,
+            "active": True
+        })
+    return {"users": users, "total": len(users)}
+
+@app.post("/admin/ban")
+async def admin_ban_user(req: BanRequest, admin=Depends(require_admin)):
+    if req.ban:
+        BANNED_USERS.add(req.email)
+    else:
+        BANNED_USERS.discard(req.email)
+    return {"success": True, "email": req.email, "banned": req.ban}
+
+@app.post("/admin/delete-user")
+async def admin_delete_user(req: DeleteUserRequest, admin=Depends(require_admin)):
+    if req.email in ADMIN_EMAILS:
+        raise HTTPException(403, "Cannot delete admin users.")
+    USERS.pop(req.email, None)
+    BANNED_USERS.discard(req.email)
+    return {"success": True}
+
+@app.get("/admin/stats")
+async def admin_stats(admin=Depends(require_admin)):
+    return {
+        "total_users": len(USERS),
+        "banned_users": len(BANNED_USERS),
+        "plans": {
+            "free": sum(1 for u in USERS.values() if u.get("plan","free")=="free"),
+            "pro": sum(1 for u in USERS.values() if u.get("plan")=="pro"),
+            "enterprise": sum(1 for u in USERS.values() if u.get("plan")=="enterprise"),
+        }
+    }
+
+
+# ── PWA Routes ────────────────────────────────────────
+from fastapi.responses import JSONResponse, Response
+
+@app.get("/manifest.json")
+async def manifest():
+    return JSONResponse({
+        "name": "VenturePilot",
+        "short_name": "VenturePilot",
+        "description": "AI-Powered Business Intelligence Platform",
+        "start_url": "/",
+        "display": "standalone",
+        "background_color": "#04050a",
+        "theme_color": "#04050a",
+        "orientation": "portrait-primary",
+        "icons": [
+            {"src": "/icon-192.png", "sizes": "192x192", "type": "image/png"},
+            {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png"}
+        ]
+    })
+
+@app.get("/sw.js")
+async def service_worker():
+    sw_code = '''
+const CACHE = "vp-v1";
+const ASSETS = ["/", "/manifest.json"];
+self.addEventListener("install", e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))));
+self.addEventListener("fetch", e => {
+  if (e.request.method !== "GET") return;
+  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+});
+'''
+    return Response(content=sw_code, media_type="application/javascript")
+
+# ── Email Notification Route ──────────────────────────
+class NotifyRequest(BaseModel):
+    email: str
+    subject: str
+    message: str
+
+@app.post("/notify")
+async def send_notification(req: NotifyRequest):
+    # Placeholder - connect SMTP or SendGrid here
+    return {"success": True, "message": f"Notification queued for {req.email}"}
+
+
 @app.get("/health")
 async def health():
     return {"status": "ok", "users": len(USERS)}
