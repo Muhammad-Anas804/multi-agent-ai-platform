@@ -8,6 +8,7 @@
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#04050a"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="VenturePilot"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1416,14 +1417,28 @@ function showMsg(el,type,text){el.className="msg "+type;el.textContent=text;}
 
 // ── Dashboard ─────────────────────────────────────────────────
 function showDashboard(name){
-  document.getElementById("landing").style.display="none";
-  document.getElementById("dashboard").classList.add("visible");
-  document.getElementById("dash-name").textContent=name;
-  document.getElementById("nav-actions").style.display="none";
-  document.getElementById("nav-user").style.display="flex";
-  document.getElementById("nav-name").textContent=name;
+  const landing=document.getElementById("landing");
+  const dashboard=document.getElementById("dashboard");
+  if(landing)landing.style.display="none";
+  if(dashboard){dashboard.style.display="flex";dashboard.classList.add("visible");}
+  const s=getSession();
+  const displayName=name||(s&&s.name)||'User';
+  const displayEmail=(s&&s.email)||'';
+  // Safe element updates
+  const safe=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  safe('dash-name',displayName);
+  safe('db-user-name',displayName);
+  safe('db-user-email',displayEmail);
+  const initials=displayName.charAt(0).toUpperCase();
+  safe('db-avatar',initials);
+  safe('db-topbar-avatar',initials);
+  const navActions=document.getElementById("nav-actions");
+  const navUser=document.getElementById("nav-user");
+  if(navActions)navActions.style.display="none";
+  if(navUser)navUser.style.display="flex";
+  safe('nav-name',displayName);
   const av=document.getElementById('profile-avatar');
-  if(av)av.textContent=name.charAt(0).toUpperCase();
+  if(av)av.textContent=initials;
   updateStats();
   loadMyPlan();
   renderRecent();
