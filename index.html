@@ -1723,12 +1723,16 @@ async function subscribePlan(plan){
 async function loadMyPlan(){
   const token=getToken();if(!token)return;
   try{
-    const r=await fetch('/paddle/my-plan',{headers:{'Authorization':'Bearer '+token}});
-    if(!r.ok)return;                          // 404 or any non-2xx → no-op
+    // Try /auth/me for plan info, skip paddle until integrated
+    const r=await fetch('/auth/me',{headers:{'Authorization':'Bearer '+token}});
+    if(!r.ok)return;
     const data=await r.json();
     const badge=document.getElementById('plan-badge');
-    if(badge&&data.plan){badge.textContent=data.plan.toUpperCase();badge.style.display='inline-flex';}
-  }catch(_){}                                 // network error → no-op
+    const planBadge=document.getElementById('db-user-plan');
+    const plan=(data.plan||'free').toUpperCase();
+    if(badge){badge.textContent=plan;badge.style.display='inline-flex';}
+    if(planBadge)planBadge.textContent=plan;
+  }catch(_){}
 }
 
 // ── Guide ─────────────────────────────────────────────────────
@@ -2111,7 +2115,6 @@ function setLang(lang) {
 let deferredPrompt = null;
 
 window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
   deferredPrompt = e;
   const btn = document.getElementById('pwa-install-btn');
   if (btn) btn.style.display = 'inline-flex';
