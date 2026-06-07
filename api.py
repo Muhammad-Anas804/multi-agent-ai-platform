@@ -410,8 +410,12 @@ async def manifest():
         "theme_color": "#04050a",
         "orientation": "portrait-primary",
         "icons": [
-            {"src": "/icon-192.png", "sizes": "192x192", "type": "image/png"},
-            {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png"}
+            {
+                "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23818cf8'/%3E%3Ctext x='15' y='72' font-size='55' font-weight='bold' fill='white' font-family='Arial'%3EVP%3C/text%3E%3C/svg%3E",
+                "sizes": "any",
+                "type": "image/svg+xml",
+                "purpose": "any maskable"
+            }
         ]
     })
 
