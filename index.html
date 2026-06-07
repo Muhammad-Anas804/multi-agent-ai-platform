@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>VenturePilot — AI Business Intelligence</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<link rel="manifest" href="/manifest.json"/>
+<meta name="theme-color" content="#04050a"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="VenturePilot"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <style>
 :root {
@@ -406,6 +413,7 @@ body.light-mode{
 }
 body.light-mode nav{background:rgba(244,246,251,.9);}
 body.light-mode .form-group input,body.light-mode textarea{background:#eef1f8;color:#0f1220;}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* Guide */
 .guide-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);transition:.3s;}
@@ -441,6 +449,280 @@ footer{
   footer{padding:2rem 1.25rem;}
   .footer-top{flex-direction:column;}
 }
+
+/* ═══════════════════════════════════════════
+   PROFESSIONAL SIDEBAR DASHBOARD
+═══════════════════════════════════════════ */
+#dashboard { display:flex; min-height:100vh; background:var(--bg); }
+
+/* Sidebar */
+.db-sidebar {
+  width:240px; min-height:100vh; background:var(--surface);
+  border-right:1px solid var(--border); display:flex;
+  flex-direction:column; position:fixed; left:0; top:0; bottom:0;
+  z-index:100; transition:width .25s ease; overflow:hidden;
+}
+.db-sidebar.collapsed { width:64px; }
+.db-sidebar.collapsed .db-nav-label,
+.db-sidebar.collapsed .db-nav-section,
+.db-sidebar.collapsed .db-user-info,
+.db-sidebar.collapsed .db-logo-text,
+.db-sidebar.collapsed .db-sidebar-footer span,
+.db-sidebar.collapsed .db-lang-select { display:none !important; }
+.db-sidebar.collapsed .db-nav-badge { display:none; }
+.db-sidebar.collapsed .db-user-card { justify-content:center; padding:.75rem 0; }
+
+/* Logo */
+.db-logo {
+  display:flex; align-items:center; gap:.75rem; padding:1.25rem 1rem;
+  border-bottom:1px solid var(--border); flex-shrink:0;
+}
+.db-logo-icon {
+  width:34px; height:34px; border-radius:9px; background:var(--grad);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:.82rem;
+  color:#fff; flex-shrink:0;
+}
+.db-logo-text { font-family:'Syne',sans-serif; font-weight:800; font-size:.9rem; flex:1; white-space:nowrap; }
+.db-sidebar-toggle {
+  background:none; border:1px solid var(--border); color:var(--muted);
+  width:22px; height:22px; border-radius:5px; cursor:pointer;
+  font-size:.85rem; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:all .2s;
+}
+.db-sidebar-toggle:hover { border-color:var(--blue2); color:var(--blue2); }
+
+/* User Card */
+.db-user-card {
+  display:flex; align-items:center; gap:.75rem; padding:.85rem 1rem;
+  border-bottom:1px solid var(--border); flex-shrink:0;
+}
+.db-avatar {
+  width:36px; height:36px; border-radius:50%; background:var(--grad);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:.9rem; color:#fff; flex-shrink:0;
+}
+.db-user-name { font-weight:700; font-size:.82rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.db-user-email { font-size:.7rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.db-user-plan { font-size:.65rem; color:var(--blue2); font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin-top:.1rem; }
+
+/* Nav */
+.db-nav { flex:1; overflow-y:auto; padding:.5rem 0; }
+.db-nav::-webkit-scrollbar { width:3px; }
+.db-nav::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+.db-nav-section {
+  font-size:.62rem; font-weight:700; letter-spacing:.1em; color:var(--muted);
+  padding:.85rem 1rem .3rem; text-transform:uppercase; white-space:nowrap;
+}
+.db-nav-item {
+  display:flex; align-items:center; gap:.75rem; padding:.6rem 1rem;
+  cursor:pointer; border-radius:0; color:var(--muted);
+  font-size:.82rem; font-weight:500; transition:all .15s;
+  border-left:3px solid transparent; white-space:nowrap; text-decoration:none;
+  position:relative;
+}
+.db-nav-item:hover { background:rgba(255,255,255,.04); color:var(--fg); }
+.db-nav-item.active { background:rgba(99,102,241,.1); color:#818cf8; border-left-color:#818cf8; }
+.db-nav-icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
+.db-nav-label { flex:1; }
+.db-nav-badge {
+  background:var(--blue2); color:#fff; border-radius:99px;
+  font-size:.62rem; font-weight:700; padding:.1rem .45rem; min-width:18px; text-align:center;
+}
+.db-nav-badge-red { background:#ef4444; }
+.db-nav-admin .db-nav-icon, .db-nav-admin .db-nav-label { color:#f59e0b; }
+.db-nav-admin.active { border-left-color:#f59e0b; background:rgba(245,158,11,.08); }
+.db-nav-logout:hover { color:#f87171; }
+.db-nav-logout .db-nav-icon { color:#f87171; }
+
+/* Sidebar Footer */
+.db-sidebar-footer {
+  border-top:1px solid var(--border); padding:.85rem 1rem;
+  display:flex; flex-direction:column; gap:.6rem; flex-shrink:0;
+}
+.db-theme-row, .db-lang-row {
+  display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+}
+.db-theme-toggle {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:7px; padding:.3rem .5rem; cursor:pointer; font-size:.85rem;
+}
+.db-lang-select {
+  background:var(--surface2); border:1px solid var(--border); color:var(--fg);
+  padding:.25rem .4rem; border-radius:7px; font-size:.72rem; cursor:pointer; outline:none;
+}
+
+/* Main Content */
+.db-main { margin-left:240px; flex:1; display:flex; flex-direction:column; transition:margin-left .25s; min-height:100vh; }
+.db-main.expanded { margin-left:64px; }
+
+/* Top Bar */
+.db-topbar {
+  height:56px; background:var(--surface); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 1.5rem; position:sticky; top:0; z-index:50; flex-shrink:0;
+}
+.db-topbar-left { display:flex; align-items:center; gap:.75rem; }
+.db-menu-btn { background:none; border:1px solid var(--border); color:var(--muted); width:32px; height:32px; border-radius:7px; cursor:pointer; font-size:1rem; display:none; }
+.db-breadcrumb { font-family:'Syne',sans-serif; font-weight:700; font-size:.9rem; }
+.db-topbar-right { display:flex; align-items:center; gap:1rem; }
+.db-kpi-strip { display:flex; align-items:center; gap:.85rem; }
+.db-kpi { text-align:center; }
+.db-kpi-val { font-family:'Syne',sans-serif; font-weight:800; font-size:.9rem; line-height:1; }
+.db-kpi-lbl { font-size:.6rem; color:var(--muted); margin-top:.1rem; text-transform:uppercase; letter-spacing:.05em; }
+.db-kpi-sep { width:1px; height:24px; background:var(--border); }
+.db-install-btn { background:var(--blue2); color:#fff; border:none; padding:.3rem .75rem; border-radius:7px; font-size:.75rem; font-weight:600; cursor:pointer; }
+.db-topbar-avatar { width:32px; height:32px; border-radius:50%; background:var(--grad); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.82rem; color:#fff; }
+
+/* Panels */
+.db-panel { flex:1; }
+.db-panel-inner { padding:1.5rem; max-width:1200px; }
+.db-panel-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem; }
+.db-panel-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem; }
+.db-panel-sub { font-size:.78rem; color:var(--muted); margin-top:.25rem; }
+.db-section-label { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-weight:700; }
+.db-empty { padding:2.5rem; text-align:center; color:var(--muted); font-size:.85rem; }
+
+/* Cards */
+.db-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:1.25rem; margin-bottom:1.25rem; }
+.db-card:last-child { margin-bottom:0; }
+.db-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.db-card-title { font-family:'Syne',sans-serif; font-weight:700; font-size:.88rem; }
+.db-card-sub { font-size:.72rem; color:var(--muted); margin-top:.15rem; }
+.db-card-main { flex:1; }
+.db-card-agents { min-width:220px; }
+
+/* Two Column Layout */
+.db-two-col { display:grid; grid-template-columns:1fr 340px; gap:1.25rem; }
+.db-right-col { display:flex; flex-direction:column; gap:1.25rem; }
+
+/* Chips & Templates */
+.db-industry-grid { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; }
+.db-chip { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:.35rem .75rem; font-size:.78rem; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.db-chip:hover, .db-chip.selected { background:rgba(99,102,241,.15); border-color:rgba(99,102,241,.4); color:#818cf8; }
+.db-tpl-row { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; }
+.db-tpl-chip { background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:8px; padding:.35rem .75rem; font-size:.75rem; cursor:pointer; transition:all .15s; }
+.db-tpl-chip:hover { border-color:var(--blue2); color:var(--blue2); }
+
+/* Fields */
+.db-field { margin-bottom:.85rem; }
+.db-label { font-size:.75rem; color:var(--muted); display:block; margin-bottom:.35rem; text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
+.db-label-opt { text-transform:none; letter-spacing:0; font-weight:400; color:var(--muted); }
+.db-textarea { width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--fg); padding:.65rem .85rem; border-radius:9px; font-size:.85rem; resize:vertical; font-family:inherit; box-sizing:border-box; outline:none; transition:border-color .15s; }
+.db-textarea:focus { border-color:rgba(99,102,241,.5); }
+.db-input { width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--fg); padding:.55rem .75rem; border-radius:9px; font-size:.85rem; box-sizing:border-box; outline:none; transition:border-color .15s; }
+.db-input:focus { border-color:rgba(99,102,241,.5); }
+
+/* Run Button */
+.db-run-btn { width:100%; background:var(--grad); color:#fff; border:none; padding:.85rem; border-radius:10px; font-weight:700; font-size:.9rem; cursor:pointer; font-family:inherit; transition:opacity .2s; margin-top:.5rem; }
+.db-run-btn:hover { opacity:.9; }
+.db-run-btn:disabled { opacity:.5; cursor:not-allowed; }
+
+/* Buttons */
+.db-btn-primary { background:var(--blue2); color:#fff; border:none; padding:.45rem 1.1rem; border-radius:8px; font-size:.82rem; font-weight:600; cursor:pointer; }
+.db-btn-outline { background:transparent; color:var(--blue2); border:1px solid var(--blue2); padding:.45rem 1.1rem; border-radius:8px; font-size:.82rem; font-weight:600; cursor:pointer; }
+
+/* Agent Rows */
+.db-agents-list { display:flex; flex-direction:column; gap:.5rem; }
+.db-agent-row { display:flex; align-items:center; gap:.75rem; padding:.6rem .75rem; background:var(--surface2); border-radius:9px; border:1px solid var(--border); transition:all .2s; }
+.db-agent-row.running { border-color:rgba(99,102,241,.4); background:rgba(99,102,241,.06); }
+.db-agent-row.done { border-color:rgba(16,185,129,.3); background:rgba(16,185,129,.05); }
+.db-agent-icon { font-size:1rem; width:24px; text-align:center; flex-shrink:0; }
+.db-agent-info { flex:1; }
+.db-agent-name { font-size:.78rem; font-weight:600; }
+.db-agent-desc { font-size:.68rem; color:var(--muted); }
+.db-agent-state { font-size:.68rem; color:var(--muted); white-space:nowrap; }
+.db-agent-state.running { color:#818cf8; }
+.db-agent-state.done { color:#10b981; }
+.db-agent-status-dot { width:8px; height:8px; border-radius:50%; background:var(--muted); }
+.db-agent-status-dot.active { background:#10b981; animation:pulse 1.5s infinite; }
+
+/* Actions Grid */
+.db-actions-grid { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; }
+.db-action-btn { background:var(--surface2); border:1px solid var(--border); color:var(--fg); padding:.5rem .6rem; border-radius:8px; font-size:.75rem; cursor:pointer; transition:all .15s; text-align:center; font-family:inherit; }
+.db-action-btn:hover { border-color:var(--blue2); color:var(--blue2); }
+
+/* KPI Cards */
+.db-kpi-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin-bottom:1.25rem; }
+.db-kpi-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1rem 1.1rem; }
+.db-kpi-card-label { font-size:.7rem; color:var(--muted); margin-bottom:.5rem; }
+.db-kpi-card-val { font-family:'Syne',sans-serif; font-weight:800; font-size:1.4rem; }
+.db-kpi-green { border-left:3px solid #10b981; } .db-kpi-green .db-kpi-card-val { color:#10b981; }
+.db-kpi-purple { border-left:3px solid #818cf8; } .db-kpi-purple .db-kpi-card-val { color:#818cf8; }
+.db-kpi-amber { border-left:3px solid #f59e0b; } .db-kpi-amber .db-kpi-card-val { color:#f59e0b; }
+.db-kpi-pink { border-left:3px solid #ec4899; } .db-kpi-pink .db-kpi-card-val { color:#ec4899; }
+
+/* Chat */
+.db-chat-avatar { width:36px; height:36px; border-radius:9px; background:var(--grad); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+.db-chat-messages { flex:1; overflow-y:auto; padding:1.25rem; display:flex; flex-direction:column; gap:.75rem; }
+.db-chat-bubble { max-width:80%; padding:.75rem 1rem; border-radius:12px; font-size:.85rem; line-height:1.6; }
+.db-chat-ai { background:var(--surface2); border:1px solid var(--border); align-self:flex-start; border-radius:4px 12px 12px 12px; }
+.db-chat-user { background:var(--blue2); color:#fff; align-self:flex-end; border-radius:12px 4px 12px 12px; }
+.db-chat-input-row { display:flex; gap:.5rem; padding:1rem 1.25rem; border-top:1px solid var(--border); }
+.db-chat-input { flex:1; background:var(--surface2); border:1px solid var(--border); color:var(--fg); padding:.6rem .85rem; border-radius:9px; font-size:.85rem; outline:none; font-family:inherit; }
+.db-chat-input:focus { border-color:rgba(99,102,241,.5); }
+.db-chat-send { background:var(--blue2); color:#fff; border:none; width:36px; height:36px; border-radius:9px; cursor:pointer; font-size:1rem; flex-shrink:0; }
+
+/* Search */
+.db-search-wrap { position:relative; margin-bottom:1.5rem; }
+.db-search-icon { position:absolute; left:.85rem; top:50%; transform:translateY(-50%); color:var(--muted); font-size:1rem; }
+.db-search-input { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--fg); padding:.65rem 1rem .65rem 2.5rem; border-radius:10px; font-size:.85rem; box-sizing:border-box; outline:none; transition:border-color .15s; }
+.db-search-input:focus { border-color:rgba(99,102,241,.4); }
+.db-search-results { position:absolute; top:calc(100% + .35rem); left:0; right:0; background:var(--surface2); border:1px solid var(--border); border-radius:10px; z-index:200; max-height:240px; overflow-y:auto; display:none; }
+.db-search-results.open { display:block; }
+
+/* Recent Grid */
+.db-recent-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:.75rem; }
+
+/* Admin */
+.db-admin-tabs { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1.25rem; }
+.db-admin-tab { background:transparent; color:var(--muted); border:1px solid var(--border); padding:.35rem .9rem; border-radius:99px; font-size:.78rem; font-weight:600; cursor:pointer; transition:all .15s; }
+.db-admin-tab.active { background:rgba(99,102,241,.15); color:#818cf8; border-color:rgba(99,102,241,.3); }
+.db-badge-admin { background:rgba(99,102,241,.15); color:#818cf8; border:1px solid rgba(99,102,241,.3); padding:.3rem .85rem; border-radius:99px; font-size:.72rem; font-weight:700; }
+.db-table-header { display:grid; grid-template-columns:2fr 2fr 1fr 1fr 1fr; padding:.65rem 1rem; font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; font-weight:700; border-bottom:1px solid var(--border); }
+.db-plans-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; }
+.db-plan-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:1.35rem; position:relative; }
+.db-plan-popular { border-color:rgba(99,102,241,.4); }
+.db-plan-enterprise { border-color:rgba(245,158,11,.3); }
+.db-plan-badge { position:absolute; top:.75rem; right:.75rem; background:var(--blue2); color:#fff; font-size:.62rem; font-weight:700; padding:.15rem .5rem; border-radius:99px; }
+.db-plan-name { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; font-weight:700; margin-bottom:.5rem; }
+.db-plan-price { font-family:'Syne',sans-serif; font-size:1.75rem; font-weight:800; margin-bottom:.5rem; }
+.db-plan-price span { font-size:.85rem; font-weight:400; color:var(--muted); }
+.db-plan-features { font-size:.8rem; line-height:1.9; color:var(--fg); margin-bottom:1rem; }
+.db-plan-count { background:var(--surface2); border-radius:7px; text-align:center; padding:.4rem; font-size:.78rem; color:var(--muted); }
+
+/* Table */
+.db-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.db-table th { padding:.7rem 1rem; text-align:left; color:var(--muted); font-weight:600; font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; border-bottom:1px solid var(--border); }
+.db-table th:not(:first-child) { text-align:right; }
+.db-table td { padding:.7rem 1rem; border-bottom:1px solid var(--border); }
+.db-table td:not(:first-child) { text-align:right; }
+
+/* Projections */
+.db-proj-inputs { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-top:.75rem; }
+
+/* Validator */
+.db-validator { background:rgba(99,102,241,.07); border:1px solid rgba(99,102,241,.2); border-radius:10px; padding:.85rem 1rem; margin:.75rem 0; }
+.db-validator-title { font-size:.75rem; font-weight:700; color:#818cf8; margin-bottom:.5rem; }
+
+/* Responsive */
+@media(max-width:900px){
+  .db-sidebar { width:64px; }
+  .db-sidebar .db-nav-label, .db-sidebar .db-nav-section, .db-sidebar .db-user-info,
+  .db-sidebar .db-logo-text, .db-sidebar .db-sidebar-footer span, .db-sidebar .db-lang-select { display:none !important; }
+  .db-sidebar .db-user-card { justify-content:center; }
+  .db-main { margin-left:64px; }
+  .db-two-col { grid-template-columns:1fr; }
+  .db-right-col { order:-1; }
+  .db-menu-btn { display:flex !important; }
+  .db-kpi-strip { display:none; }
+}
+@media(max-width:600px){
+  .db-sidebar { display:none; }
+  .db-main { margin-left:0; }
+  .db-panel-inner { padding:1rem; }
+}
+
 </style>
 </head>
 <body>
@@ -460,12 +742,18 @@ footer{
     <a href="#pricing" class="nav-link">Pricing</a>
   </div>
   <div class="nav-actions" id="nav-actions">
+    <select id="lang-select" onchange="setLang(this.value)" style="background:var(--surface);border:1px solid var(--border);color:var(--fg);padding:.3rem .6rem;border-radius:8px;font-size:.78rem;cursor:pointer;outline:none;">
+      <option value="en">🌍 EN</option>
+      <option value="ur">اردو</option>
+      <option value="ar">العربية</option>
+    </select>
     <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
     <button class="btn btn-ghost" onclick="openModal('login')">Sign In</button>
     <button class="btn btn-primary" onclick="openModal('signup')">Get Started</button>
   </div>
   <div class="nav-actions" id="nav-user" style="display:none;">
     <button class="theme-btn" onclick="toggleTheme()" id="theme-btn2">🌙</button>
+    <button id="pwa-install-btn" onclick="installPWA()" style="display:none;background:var(--blue2);color:#fff;border:none;padding:.35rem .85rem;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;">📱 Install App</button>
     <div style="position:relative;">
       <div class="notif-bell" onclick="toggleNotif()" id="notif-bell">
         🔔<div class="notif-dot show" id="notif-dot"></div>
@@ -639,453 +927,410 @@ footer{
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard">
-  <div class="dash-topbar">
-    <div class="dash-greeting">
-      <h2>Welcome back, <span id="dash-name"></span> <span class="plan-chip" id="plan-badge" style="display:none;"></span></h2>
-      <p>Ready to analyze your next big idea?</p>
+<div id="dashboard" style="display:none;">
+  <!-- Sidebar -->
+  <div class="db-sidebar" id="db-sidebar">
+    <div class="db-logo">
+      <div class="db-logo-icon">VP</div>
+      <span class="db-logo-text">VenturePilot</span>
+      <button class="db-sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">‹</button>
     </div>
-    <div class="dash-actions">
-      <button class="action-btn" onclick="openModal('guide')">📖 Guide</button>
-      <button class="action-btn" onclick="openModal('faq')">❓ FAQ</button>
-      <button class="action-btn" onclick="logout()">← Sign Out</button>
+
+    <div class="db-user-card">
+      <div class="db-avatar" id="db-avatar">?</div>
+      <div class="db-user-info">
+        <div class="db-user-name" id="db-user-name">Loading…</div>
+        <div class="db-user-email" id="db-user-email">—</div>
+        <div class="db-user-plan" id="db-user-plan">Free</div>
+      </div>
+    </div>
+
+    <nav class="db-nav">
+      <div class="db-nav-section">WORKSPACE</div>
+      <a class="db-nav-item active" onclick="switchTab('analyze')" id="nav-analyze">
+        <span class="db-nav-icon">⚡</span><span class="db-nav-label">Analyze</span>
+        <span class="db-nav-badge" id="badge-analyze"></span>
+      </a>
+      <a class="db-nav-item" onclick="switchTab('chat')" id="nav-chat">
+        <span class="db-nav-icon">🤖</span><span class="db-nav-label">AI Assistant</span>
+      </a>
+      <a class="db-nav-item" onclick="switchTab('finance')" id="nav-finance">
+        <span class="db-nav-icon">💹</span><span class="db-nav-label">Projections</span>
+      </a>
+
+      <div class="db-nav-section">REPORTS</div>
+      <a class="db-nav-item" onclick="switchTab('history')" id="nav-history">
+        <span class="db-nav-icon">📋</span><span class="db-nav-label">History</span>
+        <span class="db-nav-badge" id="badge-history"></span>
+      </a>
+      <a class="db-nav-item" onclick="switchTab('saved')" id="nav-saved">
+        <span class="db-nav-icon">🔖</span><span class="db-nav-label">Saved</span>
+        <span class="db-nav-badge" id="badge-saved"></span>
+      </a>
+      <a class="db-nav-item" onclick="switchTab('analytics')" id="nav-analytics">
+        <span class="db-nav-icon">📈</span><span class="db-nav-label">Analytics</span>
+      </a>
+
+      <div class="db-nav-section">SYSTEM</div>
+      <a class="db-nav-item" onclick="openModal('guide')" id="nav-guide">
+        <span class="db-nav-icon">📖</span><span class="db-nav-label">Guide</span>
+      </a>
+      <a class="db-nav-item db-nav-admin" onclick="switchTab('admin')" id="nav-admin" style="display:none;">
+        <span class="db-nav-icon">🛡️</span><span class="db-nav-label">Admin Panel</span>
+        <span class="db-nav-badge db-nav-badge-red" id="badge-admin"></span>
+      </a>
+      <a class="db-nav-item db-nav-logout" onclick="logout()">
+        <span class="db-nav-icon">↩</span><span class="db-nav-label">Sign Out</span>
+      </a>
+    </nav>
+
+    <div class="db-sidebar-footer">
+      <div class="db-theme-row">
+        <span style="font-size:.72rem;color:var(--muted);">Theme</span>
+        <button class="db-theme-toggle" onclick="toggleTheme()" id="db-theme-btn">🌙</button>
+      </div>
+      <div class="db-lang-row">
+        <span style="font-size:.72rem;color:var(--muted);">Language</span>
+        <select id="lang-select" onchange="setLang(this.value)" class="db-lang-select">
+          <option value="en">🌍 EN</option>
+          <option value="ur">اردو</option>
+          <option value="ar">عربي</option>
+        </select>
+      </div>
     </div>
   </div>
 
-  <div class="dash-stats">
-    <div class="dash-stat"><div class="dash-stat-num" id="stat-total">0</div><div class="dash-stat-label">Analyses</div></div>
-    <div class="dash-stat"><div class="dash-stat-num" id="stat-saved">0</div><div class="dash-stat-label">Saved</div></div>
-    <div class="dash-stat"><div class="dash-stat-num" id="stat-last">—</div><div class="dash-stat-label">Last Run</div></div>
-  </div>
+  <!-- Main Content -->
+  <div class="db-main" id="db-main">
 
-  <div class="dash-tabs">
-    <button class="dash-tab active" onclick="switchTab('analyze')" id="tab-analyze">⚡ Analyze</button>
-    <button class="dash-tab" onclick="switchTab('history')" id="tab-history">📋 History</button>
-    <button class="dash-tab" onclick="switchTab('saved')" id="tab-saved">🔖 Saved</button>
-    <button class="dash-tab" onclick="switchTab('analytics')" id="tab-analytics">📈 Analytics</button>
-    <button class="dash-tab" onclick="switchTab('chat')" id="tab-chat">💬 AI Chat</button>
-  </div>
-
-  <!-- Analyze Panel -->
-  <div id="panel-analyze">
-    <div class="search-wrap" id="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input class="search-input" id="dash-search" placeholder="Search history, templates, features… (Ctrl+K)" oninput="handleSearch(this.value)" onblur="setTimeout(()=>closeSearch(),200)"/>
-      <div class="search-results" id="search-results"></div>
-    </div>
-
-    <!-- Recent Analyses -->
-    <div id="recent-section" style="margin-bottom:1.5rem;display:none;">
-      <div style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:.75rem;">Recent Analyses</div>
-      <div id="recent-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;"></div>
-    </div>
-
-    <!-- Progress Tracker -->
-    <div class="progress-tracker" id="progress-tracker" style="display:none;">
-      <div class="progress-step" id="ps-Research"><div class="step-dot"></div>Research</div>
-      <div class="progress-connector" id="pc-1"></div>
-      <div class="progress-step" id="ps-Marketing"><div class="step-dot"></div>Marketing</div>
-      <div class="progress-connector" id="pc-2"></div>
-      <div class="progress-step" id="ps-Finance"><div class="step-dot"></div>Finance</div>
-      <div class="progress-connector" id="pc-3"></div>
-      <div class="progress-step" id="ps-Risk"><div class="step-dot"></div>Risk</div>
-      <div class="progress-connector" id="pc-4"></div>
-      <div class="progress-step" id="ps-CEO"><div class="step-dot"></div>CEO</div>
-    </div>
-
-    <div class="idea-card">
-      <h3>New Analysis</h3>
-      <div style="margin-bottom:1rem;">
-        <div class="templates-label">Select Industry</div>
-        <div class="industry-grid" id="industry-grid">
-          <div class="industry-chip" onclick="selectIndustry(this,'Food & Beverage')"><span class="industry-icon">🍔</span>Food</div>
-          <div class="industry-chip" onclick="selectIndustry(this,'Technology & SaaS')"><span class="industry-icon">💻</span>Tech</div>
-          <div class="industry-chip" onclick="selectIndustry(this,'Healthcare')"><span class="industry-icon">🏥</span>Health</div>
-          <div class="industry-chip" onclick="selectIndustry(this,'Education')"><span class="industry-icon">🎓</span>Edu</div>
-          <div class="industry-chip" onclick="selectIndustry(this,'Finance & FinTech')"><span class="industry-icon">💰</span>Finance</div>
-          <div class="industry-chip" onclick="selectIndustry(this,'E-Commerce & Retail')"><span class="industry-icon">🛒</span>Retail</div>
-          <div class="industry-chip" onclick="selectIndustry(this,'Real Estate')"><span class="industry-icon">🏠</span>Real Estate</div>
-          <div class="industry-chip" onclick="selectIndustry(this,'Transportation')"><span class="industry-icon">🚗</span>Transport</div>
+    <!-- Top Bar -->
+    <div class="db-topbar">
+      <div class="db-topbar-left">
+        <button class="db-menu-btn" onclick="toggleSidebar()">☰</button>
+        <div class="db-breadcrumb">
+          <span id="db-page-title">⚡ Analyze</span>
         </div>
       </div>
-
-      <div class="validator-wrap" id="idea-validator" style="display:none;">
-        <div class="validator-title">💡 Idea Check</div>
-        <div class="validator-checks" id="validator-checks"></div>
+      <div class="db-topbar-right">
+        <div class="db-kpi-strip">
+          <div class="db-kpi"><div class="db-kpi-val" id="kpi-total">0</div><div class="db-kpi-lbl">Analyses</div></div>
+          <div class="db-kpi-sep"></div>
+          <div class="db-kpi"><div class="db-kpi-val" id="kpi-saved">0</div><div class="db-kpi-lbl">Saved</div></div>
+          <div class="db-kpi-sep"></div>
+          <div class="db-kpi"><div class="db-kpi-val" id="kpi-streak">0🔥</div><div class="db-kpi-lbl">Streak</div></div>
+        </div>
+        <button id="pwa-install-btn" onclick="installPWA()" class="db-install-btn" style="display:none;">📱 Install</button>
+        <div class="db-topbar-avatar" id="db-topbar-avatar">?</div>
       </div>
+    </div>
 
-      <div class="templates-wrap">
-        <div class="templates-label">Quick Templates</div>
-        <div class="templates-row">
-          <div class="tpl-chip" onclick="useTemplate(0)">🛒 AI E-Commerce</div>
-          <div class="tpl-chip" onclick="useTemplate(1)">🏥 HealthTech</div>
-          <div class="tpl-chip" onclick="useTemplate(2)">🎓 EdTech</div>
-          <div class="tpl-chip" onclick="useTemplate(3)">🚗 EV Startup</div>
-          <div class="tpl-chip" onclick="useTemplate(4)">🤖 AI Productivity</div>
+    <!-- Panel: Analyze -->
+    <div class="db-panel" id="panel-analyze">
+      <div class="db-panel-inner">
+
+        <!-- Search Bar -->
+        <div class="db-search-wrap" id="search-wrap">
+          <span class="db-search-icon">⌕</span>
+          <input class="db-search-input" id="dash-search" placeholder="Search history, templates… (Ctrl+K)" oninput="handleSearch(this.value)" onblur="setTimeout(()=>closeSearch(),200)"/>
+          <div class="db-search-results" id="search-results"></div>
+        </div>
+
+        <!-- Recent Cards Row -->
+        <div id="recent-section" style="display:none;margin-bottom:1.75rem;">
+          <div class="db-section-label">Recent Analyses</div>
+          <div class="db-recent-grid" id="recent-list"></div>
+        </div>
+
+        <div class="db-two-col">
+          <!-- Left: New Analysis -->
+          <div class="db-card db-card-main">
+            <div class="db-card-header">
+              <div class="db-card-title">New Analysis</div>
+              <div class="db-card-sub">Powered by 5 AI Agents</div>
+            </div>
+
+            <!-- Industry Chips -->
+            <div class="db-section-label" style="margin-top:1rem;">Select Industry</div>
+            <div class="db-industry-grid" id="industry-grid">
+              <div class="db-chip" onclick="selectIndustry(this,'Food & Beverage')">🍔 Food</div>
+              <div class="db-chip" onclick="selectIndustry(this,'Technology & SaaS')">💻 Tech</div>
+              <div class="db-chip" onclick="selectIndustry(this,'Healthcare')">🏥 Health</div>
+              <div class="db-chip" onclick="selectIndustry(this,'Education')">🎓 Edu</div>
+              <div class="db-chip" onclick="selectIndustry(this,'Finance & FinTech')">💰 FinTech</div>
+              <div class="db-chip" onclick="selectIndustry(this,'E-Commerce')">🛒 E-Com</div>
+              <div class="db-chip" onclick="selectIndustry(this,'Real Estate')">🏠 PropTech</div>
+              <div class="db-chip" onclick="selectIndustry(this,'Transportation')">🚗 Transport</div>
+            </div>
+
+            <!-- Templates -->
+            <div class="db-section-label" style="margin-top:1rem;">Quick Templates</div>
+            <div class="db-tpl-row">
+              <div class="db-tpl-chip" onclick="useTemplate(0)">🛒 AI E-Commerce</div>
+              <div class="db-tpl-chip" onclick="useTemplate(1)">🏥 HealthTech</div>
+              <div class="db-tpl-chip" onclick="useTemplate(2)">🎓 EdTech</div>
+              <div class="db-tpl-chip" onclick="useTemplate(3)">🚗 EV Startup</div>
+              <div class="db-tpl-chip" onclick="useTemplate(4)">🤖 AI SaaS</div>
+            </div>
+
+            <!-- Idea Validator -->
+            <div class="db-validator" id="idea-validator" style="display:none;">
+              <div class="db-validator-title">💡 Idea Check</div>
+              <div id="validator-checks"></div>
+            </div>
+
+            <!-- Inputs -->
+            <div class="db-field" style="margin-top:1.25rem;">
+              <label class="db-label">Business Idea</label>
+              <textarea class="db-textarea" id="idea-input" placeholder="Describe your business idea in detail…" rows="3" oninput="validateIdea()"></textarea>
+            </div>
+            <div class="db-field">
+              <label class="db-label">Context <span class="db-label-opt">(optional)</span></label>
+              <textarea class="db-textarea" id="context-input" placeholder="Target market, budget, stage, region…" rows="2"></textarea>
+            </div>
+            <button class="db-run-btn" id="run-btn" onclick="runAgents()">▶ Run Full Analysis</button>
+            <div class="msg" id="run-msg"></div>
+          </div>
+
+          <!-- Right: Agent Status + Quick Actions -->
+          <div class="db-right-col">
+            <!-- Agent Status -->
+            <div class="db-card db-card-agents">
+              <div class="db-card-header">
+                <div class="db-card-title">AI Agents</div>
+                <div class="db-agent-status-dot" id="agent-status-dot"></div>
+              </div>
+              <div class="db-agents-list">
+                <div class="db-agent-row" id="ps-Research"><div class="db-agent-icon">📊</div><div class="db-agent-info"><div class="db-agent-name">Research</div><div class="db-agent-desc">Market & competitors</div></div><div class="db-agent-state" id="as-Research">Idle</div></div>
+                <div class="db-agent-row" id="ps-Marketing"><div class="db-agent-icon">📣</div><div class="db-agent-info"><div class="db-agent-name">Marketing</div><div class="db-agent-desc">GTM strategy</div></div><div class="db-agent-state" id="as-Marketing">Idle</div></div>
+                <div class="db-agent-row" id="ps-Finance"><div class="db-agent-icon">💰</div><div class="db-agent-info"><div class="db-agent-name">Finance</div><div class="db-agent-desc">Revenue model</div></div><div class="db-agent-state" id="as-Finance">Idle</div></div>
+                <div class="db-agent-row" id="ps-Risk"><div class="db-agent-icon">⚠️</div><div class="db-agent-info"><div class="db-agent-name">Risk</div><div class="db-agent-desc">Risk assessment</div></div><div class="db-agent-state" id="as-Risk">Idle</div></div>
+                <div class="db-agent-row" id="ps-CEO"><div class="db-agent-icon">👔</div><div class="db-agent-info"><div class="db-agent-name">CEO Decision</div><div class="db-agent-desc">Executive summary</div></div><div class="db-agent-state" id="as-CEO">Idle</div></div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="db-card db-card-actions" id="result-actions" style="display:none;">
+              <div class="db-card-header"><div class="db-card-title">Report Actions</div></div>
+              <div class="db-actions-grid">
+                <button class="db-action-btn" onclick="downloadReport()">📤 PDF Export</button>
+                <button class="db-action-btn" onclick="shareReport()">🔗 Share</button>
+                <button class="db-action-btn" onclick="bookmarkAnalysis()" id="bookmark-btn">🔖 Save</button>
+                <button class="db-action-btn" onclick="showScore()">🎯 Score</button>
+                <button class="db-action-btn" onclick="showCompetitors()">🏆 Competitors</button>
+                <button class="db-action-btn" onclick="openModal('email')">📧 Email</button>
+                <button class="db-action-btn" onclick="generateActionPlan()">🗺️ Action Plan</button>
+                <button class="db-action-btn" onclick="clearResults()">🗑️ Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div id="results" style="margin-top:1.5rem;"></div>
+      </div>
+    </div>
+
+    <!-- Panel: AI Chat -->
+    <div class="db-panel" id="panel-chat" style="display:none;">
+      <div class="db-panel-inner">
+        <div class="db-card" style="height:calc(100vh - 140px);display:flex;flex-direction:column;">
+          <div class="db-card-header" style="border-bottom:1px solid var(--border);padding-bottom:1rem;">
+            <div style="display:flex;align-items:center;gap:.75rem;">
+              <div class="db-chat-avatar">🤖</div>
+              <div>
+                <div class="db-card-title">VenturePilot AI</div>
+                <div style="font-size:.72rem;color:var(--success);">● Online — responds instantly</div>
+              </div>
+            </div>
+            <button class="db-action-btn" onclick="clearChat()">🗑️ Clear</button>
+          </div>
+          <div class="db-chat-messages" id="chat-messages">
+            <div class="db-chat-bubble db-chat-ai">👋 Hi! I\'m your VenturePilot AI assistant. Ask me anything about your business idea, market strategy, or financial modeling!</div>
+          </div>
+          <div class="db-chat-input-row">
+            <input class="db-chat-input" id="chat-input" placeholder="Ask about your business idea…" onkeydown="if(event.key===\'Enter\')sendChat()"/>
+            <button class="db-chat-send" onclick="sendChat()">↑</button>
+          </div>
         </div>
       </div>
-      <div class="form-group" style="margin-bottom:.75rem;">
-        <label>Business Idea</label>
-        <textarea id="idea-input" placeholder="Describe your business idea in detail…" rows="3" oninput="validateIdea()"></textarea>
-      </div>
-      <div class="form-group" style="margin-bottom:1rem;">
-        <label>Context <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted);">(optional)</span></label>
-        <textarea id="context-input" placeholder="Target market, budget, stage, region…" rows="2"></textarea>
-      </div>
-      <button class="btn btn-primary btn-full" id="run-btn" onclick="runAgents()">▶ Run Full Analysis</button>
-      <div class="msg" id="run-msg"></div>
     </div>
 
-    <div class="result-actions" id="result-actions">
-      <div class="action-btn" onclick="clearResults()">🗑️ Clear</div>
-      <div class="action-btn" onclick="downloadReport()">⬇️ Download</div>
-      <div class="action-btn" onclick="shareReport()">🔗 Share</div>
-      <div class="action-btn" onclick="bookmarkAnalysis()" id="bookmark-btn">🔖 Save</div>
-      <div class="action-btn" onclick="showScore()">🎯 Score</div>
-      <div class="action-btn" onclick="showCompetitors()">🏆 Competitors</div>
-      <div class="action-btn" onclick="openModal('email')">📧 Email</div>
-      <div class="action-btn" onclick="openModal('compare')">⚖️ Compare</div>
-      <div class="action-btn" onclick="generateActionPlan()">🗺️ Action Plan</div>
-    </div>
-    <div id="results"></div>
-  </div>
-
-  <!-- Analytics Panel -->
-  <div id="panel-analytics" style="display:none;">
-    <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;margin-bottom:1.5rem;">Usage Analytics</h3>
-    <div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
-      <div class="metric-chip"><div class="mval" id="an-total">0</div><div class="mlabel">Total Analyses</div></div>
-      <div class="metric-chip"><div class="mval" id="an-week">0</div><div class="mlabel">This Week</div></div>
-      <div class="metric-chip"><div class="mval" id="an-saved">0</div><div class="mlabel">Saved Reports</div></div>
-      <div class="metric-chip"><div class="mval" id="an-streak">0</div><div class="mlabel">Day Streak</div></div>
-    </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem;">
-      <div style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1.25rem;font-weight:700;">Analyses This Week</div>
-      <div class="chart-bar-wrap" id="chart-bars"></div>
-      <div class="chart-labels" id="chart-labels"></div>
-    </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;">
-      <div style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;font-weight:700;">Most Analyzed Topics</div>
-      <div id="topic-list"></div>
-    </div>
-  </div>
-
-  <!-- Chat Panel -->
-  <div id="panel-chat" style="display:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
-      <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;">
-        <div style="width:36px;height:36px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1rem;">🤖</div>
-        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;">VenturePilot AI</div><div style="font-size:.75rem;color:var(--success);">● Online</div></div>
-        <button class="action-btn" style="margin-left:auto;" onclick="clearChat()">🗑️ Clear</button>
-      </div>
-      <div class="chat-wrap">
-        <div class="chat-messages" id="chat-messages">
-          <div class="chat-bubble ai">👋 Hi! I'm your VenturePilot AI assistant. Ask me anything about your business idea, market strategy, financial modeling, or how to use this platform!</div>
+    <!-- Panel: Financial Projections -->
+    <div class="db-panel" id="panel-finance" style="display:none;">
+      <div class="db-panel-inner">
+        <div class="db-panel-header">
+          <div><div class="db-panel-title">💹 Financial Projections</div><div class="db-panel-sub">5-Year revenue & growth forecast</div></div>
+          <div style="display:flex;gap:.75rem;">
+            <button class="db-btn-primary" onclick="generateProjections()">⚡ Generate</button>
+            <button class="db-btn-outline" onclick="exportProjectionsPDF()">📤 Export PDF</button>
+          </div>
         </div>
-        <div class="chat-input-row">
-          <input class="chat-input" id="chat-input" placeholder="Ask about your business idea…" onkeydown="if(event.key==='Enter')sendChat()"/>
-          <button class="chat-send" onclick="sendChat()">↑</button>
+
+        <div class="db-card">
+          <div class="db-section-label">Projection Inputs</div>
+          <div class="db-proj-inputs">
+            <div class="db-field"><label class="db-label">Starting Revenue ($)</label><input class="db-input" id="proj-start" type="number" value="5000"/></div>
+            <div class="db-field"><label class="db-label">Monthly Growth (%)</label><input class="db-input" id="proj-growth" type="number" value="15"/></div>
+            <div class="db-field"><label class="db-label">Monthly Expenses ($)</label><input class="db-input" id="proj-expenses" type="number" value="3000"/></div>
+            <div class="db-field"><label class="db-label">Expense Growth (%)</label><input class="db-input" id="proj-exp-growth" type="number" value="5"/></div>
+          </div>
+        </div>
+
+        <div class="db-kpi-cards" id="proj-kpis" style="display:none;">
+          <div class="db-kpi-card db-kpi-green"><div class="db-kpi-card-label">Year 1 Revenue</div><div class="db-kpi-card-val" id="kpi-y1">$0</div></div>
+          <div class="db-kpi-card db-kpi-purple"><div class="db-kpi-card-label">Year 3 Revenue</div><div class="db-kpi-card-val" id="kpi-y3">$0</div></div>
+          <div class="db-kpi-card db-kpi-amber"><div class="db-kpi-card-label">Year 5 Revenue</div><div class="db-kpi-card-val" id="kpi-y5">$0</div></div>
+          <div class="db-kpi-card db-kpi-pink"><div class="db-kpi-card-label">Break-Even</div><div class="db-kpi-card-val" id="kpi-breakeven">—</div></div>
+        </div>
+
+        <div class="db-card" id="proj-chart-wrap" style="display:none;">
+          <div class="db-section-label">5-Year Forecast</div>
+          <canvas id="proj-canvas" style="width:100%;height:260px;"></canvas>
+          <div style="display:flex;gap:1.5rem;margin-top:1rem;justify-content:center;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:.4rem;font-size:.78rem;"><div style="width:10px;height:10px;border-radius:2px;background:#10b981;"></div>Revenue</div>
+            <div style="display:flex;align-items:center;gap:.4rem;font-size:.78rem;"><div style="width:10px;height:10px;border-radius:2px;background:#f87171;"></div>Expenses</div>
+            <div style="display:flex;align-items:center;gap:.4rem;font-size:.78rem;"><div style="width:10px;height:10px;border-radius:2px;background:#818cf8;"></div>Profit</div>
+          </div>
+        </div>
+
+        <div class="db-card" id="proj-table-wrap" style="display:none;overflow:hidden;">
+          <div class="db-section-label">Year-by-Year Breakdown</div>
+          <div style="overflow-x:auto;">
+            <table class="db-table" id="proj-table">
+              <thead><tr><th>Year</th><th>Revenue</th><th>Expenses</th><th>Profit</th><th>Margin</th></tr></thead>
+              <tbody id="proj-table-body"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- History Panel -->
-  <div id="panel-history" style="display:none;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-      <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;">Analysis History</h3>
-      <button class="action-btn" onclick="clearHistory()">🗑️ Clear All</button>
-    </div>
-    <div id="history-list"></div>
-  </div>
-
-  <!-- Saved Panel -->
-  <div id="panel-saved" style="display:none;">
-    <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:1rem;">Saved Reports</h3>
-    <div id="saved-list"></div>
-  </div>
-</div>
-
-<!-- SCORE MODAL -->
-<div class="modal-overlay" id="modal-score">
-  <div class="modal" style="max-width:420px;text-align:center;">
-    <button class="modal-close" onclick="closeModal('score')">✕</button>
-    <h2 style="margin-bottom:1.5rem;">Idea Score</h2>
-    <div class="score-ring" id="score-ring" style="--pct:0%">
-      <div class="score-inner" id="score-num">—</div>
-    </div>
-    <div id="score-label" style="font-size:1rem;font-weight:700;margin-bottom:.5rem;"></div>
-    <div id="score-desc" style="color:var(--muted2);font-size:.875rem;line-height:1.6;margin-bottom:1.5rem;"></div>
-    <div id="score-breakdown" style="text-align:left;"></div>
-    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('score')">Got it</button>
-  </div>
-</div>
-
-<!-- COMPETITOR MODAL -->
-<div class="modal-overlay" id="modal-competitor">
-  <div class="modal" style="max-width:680px;max-height:85vh;overflow-y:auto;">
-    <button class="modal-close" onclick="closeModal('competitor')">✕</button>
-    <h2 style="margin-bottom:.5rem;">Competitor Analysis</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">AI-generated competitive landscape based on your idea.</p>
-    <div id="comp-table-wrap"></div>
-    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('competitor')">Close</button>
-  </div>
-</div>
-
-<!-- EMAIL MODAL -->
-<div class="modal-overlay" id="modal-email">
-  <div class="modal" style="max-width:400px;">
-    <button class="modal-close" onclick="closeModal('email')">✕</button>
-    <h2 style="margin-bottom:.5rem;">Email Report</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Send the analysis report to any email address.</p>
-    <div id="email-form-wrap">
-      <div class="form-group"><label>Recipient Email</label><input type="email" id="email-recipient" placeholder="colleague@company.com"/></div>
-      <div class="form-group"><label>Subject</label><input type="text" id="email-subject" value="VenturePilot Business Analysis Report"/></div>
-      <div class="form-group"><label>Note <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted);">(optional)</span></label><textarea id="email-note" placeholder="Add a personal note…" rows="2" style="min-height:60px;"></textarea></div>
-      <div class="msg" id="email-msg"></div>
-      <button class="btn btn-primary btn-full" onclick="sendEmailReport()">📧 Send Report</button>
-    </div>
-  </div>
-</div>
-
-<!-- SHORTCUTS MODAL -->
-<div class="modal-overlay" id="modal-shortcuts">
-  <div class="modal" style="max-width:420px;">
-    <button class="modal-close" onclick="closeModal('shortcuts')">✕</button>
-    <h2 style="margin-bottom:1.5rem;">⌨️ Keyboard Shortcuts</h2>
-    <div class="shortcut-row"><span>Open Search</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">K</span></div></div>
-    <div class="shortcut-row"><span>Run Analysis</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">Enter</span></div></div>
-    <div class="shortcut-row"><span>Clear Results</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">D</span></div></div>
-    <div class="shortcut-row"><span>Download Report</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">S</span></div></div>
-    <div class="shortcut-row"><span>Toggle Theme</span><div style="display:flex;gap:4px;"><span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">T</span></div></div>
-    <div class="shortcut-row"><span>Open Guide</span><div style="display:flex;gap:4px;"><span class="kbd">?</span></div></div>
-    <div class="shortcut-row"><span>Close Modal</span><div style="display:flex;gap:4px;"><span class="kbd">Esc</span></div></div>
-    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('shortcuts')">Got it!</button>
-  </div>
-</div>
-
-<div class="shortcut-hint" id="shortcut-hint"></div>
-
-<!-- LOGIN MODAL -->
-<div class="modal-overlay" id="modal-login">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('login')">✕</button>
-    <div class="modal-logo"><div class="modal-logo-mark">V</div></div>
-    <h2>Welcome back</h2>
-    <p class="modal-sub">Sign in to your VenturePilot account</p>
-    <button class="btn-google" onclick="googleLogin()">
-      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-      Continue with Google
-    </button>
-    <div class="form-divider">or</div>
-    <div class="form-group"><label>Email</label><input type="email" id="login-email" placeholder="you@example.com"/></div>
-    <div class="form-group"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-    <div class="msg" id="login-msg"></div>
-    <button class="btn btn-primary btn-full" onclick="doLogin()">Sign In</button>
-    <div class="form-toggle">Don't have an account? <a onclick="switchModal('login','signup')">Sign up free</a></div>
-  </div>
-</div>
-
-<!-- SIGNUP MODAL -->
-<div class="modal-overlay" id="modal-signup">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('signup')">✕</button>
-    <div class="modal-logo"><div class="modal-logo-mark">V</div></div>
-    <h2>Create account</h2>
-    <p class="modal-sub">Start analyzing business ideas for free</p>
-    <button class="btn-google" onclick="googleLogin()">
-      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-      Continue with Google
-    </button>
-    <div class="form-divider">or</div>
-    <div class="form-group"><label>Full Name</label><input type="text" id="signup-name" placeholder="Muhammad Anas"/></div>
-    <div class="form-group"><label>Email</label><input type="email" id="signup-email" placeholder="you@example.com"/></div>
-    <div class="form-group"><label>Password</label><input type="password" id="signup-pass" placeholder="Min. 6 characters" onkeydown="if(event.key==='Enter')doSignup()"/></div>
-    <div class="msg" id="signup-msg"></div>
-    <button class="btn btn-primary btn-full" onclick="doSignup()">Create Account</button>
-    <div class="form-toggle">Already have an account? <a onclick="switchModal('signup','login')">Sign in</a></div>
-  </div>
-</div>
-
-<!-- PROFILE MODAL -->
-<div class="modal-overlay" id="modal-profile">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('profile')">✕</button>
-    <div class="profile-av" id="profile-avatar">A</div>
-    <h2 style="text-align:center;margin-bottom:.25rem;" id="profile-name-display"></h2>
-    <p style="text-align:center;color:var(--muted2);font-size:.85rem;margin-bottom:1.75rem;" id="profile-email-display"></p>
-    <div class="form-group"><label>Full Name</label><input type="text" id="profile-name-input" placeholder="Your name"/></div>
-    <div class="form-group"><label>New Password</label><input type="password" id="profile-pass-input" placeholder="Leave blank to keep current"/></div>
-    <div class="msg" id="profile-msg"></div>
-    <button class="btn btn-primary btn-full" onclick="updateProfile()">Save Changes</button>
-    <button class="btn btn-danger btn-full" style="margin-top:.5rem;" onclick="confirmDeleteAccount()">Delete Account</button>
-  </div>
-</div>
-
-<!-- PRIVACY MODAL -->
-<div class="modal-overlay" id="modal-privacy">
-  <div class="modal" style="max-width:520px;max-height:80vh;overflow-y:auto;">
-    <button class="modal-close" onclick="closeModal('privacy')">✕</button>
-    <h2 style="margin-bottom:1rem;">Privacy Policy</h2>
-    <div style="color:var(--muted2);font-size:.875rem;line-height:1.8;">
-      <p style="margin-bottom:1rem;"><strong style="color:var(--text);">Last updated:</strong> May 2026</p>
-      <p style="margin-bottom:1rem;">VenturePilot is committed to protecting your privacy. We collect your name, email, and encrypted password to provide our service. Your data is never sold or shared with third parties.</p>
-      <h4 style="color:var(--text);margin-bottom:.5rem;">Security</h4>
-      <p style="margin-bottom:1rem;">Passwords are hashed using PBKDF2-SHA256. Auth tokens expire after 7 days.</p>
-      <h4 style="color:var(--text);margin-bottom:.5rem;">Contact</h4>
-      <p>📧 <span style="color:var(--blue);">muhammadanas.ragdev@gmail.com</span><br/>📞 <span style="color:var(--blue);">+92 307 906 2502</span></p>
-    </div>
-    <button class="btn btn-primary btn-full" style="margin-top:1.5rem;" onclick="closeModal('privacy')">Got it</button>
-  </div>
-</div>
-
-<!-- GUIDE MODAL -->
-<div class="modal-overlay" id="modal-guide">
-  <div class="modal" style="max-width:500px;padding:0;overflow:hidden;">
-    <div style="height:3px;background:var(--border);"><div id="guide-progress" style="height:100%;background:var(--grad);transition:width .4s;width:16.6%"></div></div>
-    <div style="padding:2.5rem 2rem 1.5rem;">
-      <button class="modal-close" onclick="closeModal('guide')" style="top:1rem;right:1rem;">✕</button>
-      <div style="display:flex;gap:.4rem;justify-content:center;margin-bottom:1.75rem;">
-        <div class="guide-dot active" id="dot-0"></div><div class="guide-dot" id="dot-1"></div>
-        <div class="guide-dot" id="dot-2"></div><div class="guide-dot" id="dot-3"></div>
-        <div class="guide-dot" id="dot-4"></div><div class="guide-dot" id="dot-5"></div>
-      </div>
-      <div id="guide-icon" style="font-size:3.5rem;text-align:center;margin-bottom:1.25rem;"></div>
-      <h3 id="guide-title" style="font-family:'Syne',sans-serif;font-size:1.35rem;font-weight:800;text-align:center;margin-bottom:.75rem;"></h3>
-      <p id="guide-desc" style="color:var(--muted2);font-size:.875rem;text-align:center;line-height:1.7;min-height:56px;"></p>
-      <div id="guide-demo" style="margin-top:1.25rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;min-height:65px;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--muted2);"></div>
-    </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem 1.5rem;">
-      <button id="guide-prev" class="btn btn-ghost" onclick="guideNav(-1)" style="visibility:hidden;">← Back</button>
-      <span id="guide-counter" style="font-size:.78rem;color:var(--muted);"></span>
-      <button id="guide-next" class="btn btn-primary" onclick="guideNav(1)">Next →</button>
-    </div>
-  </div>
-</div>
-
-<!-- FAQ MODAL -->
-<div class="modal-overlay" id="modal-faq">
-  <div class="modal" style="max-width:560px;max-height:85vh;overflow-y:auto;">
-    <button class="modal-close" onclick="closeModal('faq')">✕</button>
-    <h2 style="margin-bottom:.4rem;">❓ FAQ</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Frequently asked questions</p>
-    <div id="faq-list">
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What is VenturePilot?</span><span>▸</span></div><div class="faq-a">VenturePilot is an AI-powered business intelligence platform that analyzes your business ideas using 5 specialized agents: Research, Marketing, Finance, Risk, and CEO Decision.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How long does an analysis take?</span><span>▸</span></div><div class="faq-a">A full analysis typically takes 30-90 seconds depending on your internet connection and the complexity of your idea.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Is my data secure?</span><span>▸</span></div><div class="faq-a">Yes! Your data is encrypted and stored securely. We never sell or share your business ideas with third parties. Passwords are hashed using PBKDF2-SHA256.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What is the Free plan limit?</span><span>▸</span></div><div class="faq-a">The Free plan allows 3 analyses per month. Upgrade to Starter ($9/mo) for 50 analyses or Pro ($29/mo) for unlimited analyses.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I download my reports?</span><span>▸</span></div><div class="faq-a">Yes! After running an analysis, click the "Download" button to save your full report as a .txt file. You can also email it directly from the platform.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How do I cancel my subscription?</span><span>▸</span></div><div class="faq-a">You can cancel anytime from your Profile settings. Contact us at muhammadanas.ragdev@gmail.com for immediate assistance.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What AI models power VenturePilot?</span><span>▸</span></div><div class="faq-a">VenturePilot uses Groq LLM API with advanced language models for fast, accurate business analysis. Our agents use LangGraph for multi-step reasoning.</div></div>
-    </div>
-    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('faq')">Got it!</button>
-  </div>
-</div>
-
-<!-- IDEA VALIDATOR MODAL -->
-<div class="modal-overlay" id="modal-validator">
-  <div class="modal" style="max-width:420px;">
-    <button class="modal-close" onclick="closeModal('validator')">✕</button>
-    <h2 style="margin-bottom:.4rem;">💡 Idea Validator</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Quick check before running full analysis</p>
-    <div id="validator-result" style="text-align:center;">
-      <div class="form-group">
-        <label>Your Business Idea</label>
-        <textarea id="validator-input" placeholder="Describe your idea briefly…" rows="3" style="min-height:70px;"></textarea>
-      </div>
-      <button class="btn btn-primary btn-full" onclick="validateIdea()">⚡ Quick Validate</button>
-    </div>
-  </div>
-</div>
-
-<!-- COMPARISON MODAL -->
-<div class="modal-overlay" id="modal-compare">
-  <div class="modal" style="max-width:720px;max-height:90vh;overflow-y:auto;">
-    <button class="modal-close" onclick="closeModal('compare')">✕</button>
-    <h2 style="margin-bottom:.5rem;">⚖️ Idea Comparison</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Compare two business ideas side by side</p>
-    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:.75rem;align-items:start;margin-bottom:1rem;">
-      <div>
-        <div style="font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:.5rem;">Idea A</div>
-        <textarea id="compare-a" placeholder="First business idea…" rows="3" style="min-height:70px;"></textarea>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:center;padding-top:1.5rem;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.8rem;">VS</div>
-      </div>
-      <div>
-        <div style="font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:.5rem;">Idea B</div>
-        <textarea id="compare-b" placeholder="Second business idea…" rows="3" style="min-height:70px;"></textarea>
+    <!-- Panel: History -->
+    <div class="db-panel" id="panel-history" style="display:none;">
+      <div class="db-panel-inner">
+        <div class="db-panel-header">
+          <div><div class="db-panel-title">📋 History</div><div class="db-panel-sub">All your past analyses</div></div>
+          <button class="db-btn-outline" onclick="clearHistory()">🗑️ Clear All</button>
+        </div>
+        <div class="db-card">
+          <div id="history-list"><div class="db-empty">No analyses yet. Run your first one!</div></div>
+        </div>
       </div>
     </div>
-    <button class="btn btn-primary btn-full" onclick="runComparison()">⚖️ Compare Both Ideas</button>
-    <div id="compare-results" style="margin-top:1rem;"></div>
-  </div>
-</div>
 
-<!-- ACTION PLAN MODAL -->
-<div class="modal-overlay" id="modal-action">
-  <div class="modal" style="max-width:500px;max-height:85vh;overflow-y:auto;">
-    <button class="modal-close" onclick="closeModal('action')">✕</button>
-    <h2 style="margin-bottom:.5rem;">🗺️ Action Plan</h2>
-    <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Your personalized next steps based on the analysis.</p>
-    <div id="action-plan-list"></div>
-    <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="closeModal('action')">Got it!</button>
-  </div>
-</div>
-
-<!-- FEEDBACK MODAL -->
-<div class="modal-overlay" id="modal-feedback">
-  <div class="modal" style="max-width:420px;">
-    <button class="modal-close" onclick="closeModal('feedback')">✕</button>
-    <div style="text-align:center;">
-      <div style="font-size:2.5rem;margin-bottom:.75rem;">⭐</div>
-      <h2 style="margin-bottom:.4rem;">How was your experience?</h2>
-      <p style="color:var(--muted2);font-size:.875rem;margin-bottom:1.5rem;">Your feedback helps us improve VenturePilot</p>
-    </div>
-    <div class="star-rating" id="star-rating">
-      <span class="star" onclick="rateStar(1)" id="star-1">⭐</span>
-      <span class="star" onclick="rateStar(2)" id="star-2">⭐</span>
-      <span class="star" onclick="rateStar(3)" id="star-3">⭐</span>
-      <span class="star" onclick="rateStar(4)" id="star-4">⭐</span>
-      <span class="star" onclick="rateStar(5)" id="star-5">⭐</span>
-    </div>
-    <div id="star-label" style="text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:1rem;min-height:20px;"></div>
-    <div style="margin-bottom:1rem;">
-      <div style="font-size:.78rem;color:var(--muted);margin-bottom:.5rem;">What did you like?</div>
-      <div>
-        <span class="feedback-tag" onclick="toggleTag(this)">Easy to use</span>
-        <span class="feedback-tag" onclick="toggleTag(this)">Fast analysis</span>
-        <span class="feedback-tag" onclick="toggleTag(this)">Accurate results</span>
-        <span class="feedback-tag" onclick="toggleTag(this)">Great UI</span>
-        <span class="feedback-tag" onclick="toggleTag(this)">Helpful agents</span>
-        <span class="feedback-tag" onclick="toggleTag(this)">Good value</span>
+    <!-- Panel: Saved -->
+    <div class="db-panel" id="panel-saved" style="display:none;">
+      <div class="db-panel-inner">
+        <div class="db-panel-header">
+          <div><div class="db-panel-title">🔖 Saved Reports</div><div class="db-panel-sub">Your bookmarked analyses</div></div>
+        </div>
+        <div class="db-card">
+          <div id="saved-list"><div class="db-empty">No saved reports yet.</div></div>
+        </div>
       </div>
     </div>
-    <div class="form-group">
-      <label>Additional comments</label>
-      <textarea id="feedback-text" placeholder="Tell us more…" rows="2" style="min-height:60px;"></textarea>
-    </div>
-    <div class="msg" id="feedback-msg"></div>
-    <button class="btn btn-primary btn-full" onclick="submitFeedback()">Submit Feedback</button>
-  </div>
-</div>
 
-<!-- TOUR OVERLAY -->
-<div class="tour-overlay" id="tour-overlay" onclick="endTour()"></div>
-<div class="tour-spotlight" id="tour-spotlight"></div>
-<div class="tour-tooltip" id="tour-tooltip" style="display:none;">
-  <h4 id="tour-title"></h4>
-  <p id="tour-desc"></p>
-  <div class="tour-nav">
-    <div><div class="tour-dots" id="tour-dots"></div></div>
-    <span class="tour-counter" id="tour-counter"></span>
-    <div style="display:flex;gap:.5rem;">
-      <button class="btn btn-ghost" style="padding:.35rem .8rem;font-size:.78rem;" onclick="endTour()">Skip</button>
-      <button class="btn btn-primary" style="padding:.35rem .9rem;font-size:.78rem;" onclick="nextTourStep()" id="tour-next-btn">Next →</button>
+    <!-- Panel: Analytics -->
+    <div class="db-panel" id="panel-analytics" style="display:none;">
+      <div class="db-panel-inner">
+        <div class="db-panel-title" style="margin-bottom:1.5rem;">📈 Analytics</div>
+        <div class="db-kpi-cards">
+          <div class="db-kpi-card db-kpi-purple"><div class="db-kpi-card-label">Total Analyses</div><div class="db-kpi-card-val" id="an-total">0</div></div>
+          <div class="db-kpi-card db-kpi-green"><div class="db-kpi-card-label">This Week</div><div class="db-kpi-card-val" id="an-week">0</div></div>
+          <div class="db-kpi-card db-kpi-amber"><div class="db-kpi-card-label">Saved Reports</div><div class="db-kpi-card-val" id="an-saved">0</div></div>
+          <div class="db-kpi-card db-kpi-pink"><div class="db-kpi-card-label">Day Streak 🔥</div><div class="db-kpi-card-val" id="an-streak">0</div></div>
+        </div>
+        <div class="db-card" style="margin-top:1.25rem;">
+          <div class="db-section-label">Analyses This Week</div>
+          <div class="chart-bar-wrap" id="chart-bars" style="margin-top:1rem;"></div>
+          <div class="chart-labels" id="chart-labels"></div>
+        </div>
+        <div class="db-card" style="margin-top:1.25rem;">
+          <div class="db-section-label">Top Topics</div>
+          <div id="topic-list" style="margin-top:.75rem;"></div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
+    <!-- Panel: Admin -->
+    <div class="db-panel" id="panel-admin" style="display:none;">
+      <div class="db-panel-inner">
+        <div class="db-panel-header">
+          <div><div class="db-panel-title">🛡️ Admin Panel</div><div class="db-panel-sub">VenturePilot Control Center</div></div>
+          <div class="db-badge-admin">ADMIN ACCESS</div>
+        </div>
+
+        <div class="db-kpi-cards">
+          <div class="db-kpi-card db-kpi-purple"><div class="db-kpi-card-label">Total Users</div><div class="db-kpi-card-val" id="adm-total-users">—</div></div>
+          <div class="db-kpi-card db-kpi-green"><div class="db-kpi-card-label">Active Today</div><div class="db-kpi-card-val" id="adm-active-users">—</div></div>
+          <div class="db-kpi-card db-kpi-amber"><div class="db-kpi-card-label">API Calls Today</div><div class="db-kpi-card-val" id="adm-api-calls">—</div></div>
+          <div class="db-kpi-card db-kpi-pink"><div class="db-kpi-card-label">Revenue</div><div class="db-kpi-card-val" id="adm-revenue">$0</div></div>
+        </div>
+
+        <div class="db-admin-tabs">
+          <button class="db-admin-tab active" onclick="switchAdminTab('users')" id="atab-users">👥 Users</button>
+          <button class="db-admin-tab" onclick="switchAdminTab('plans')" id="atab-plans">💳 Plans</button>
+          <button class="db-admin-tab" onclick="switchAdminTab('api')" id="atab-api">📊 API Usage</button>
+          <button class="db-admin-tab" onclick="switchAdminTab('revenue')" id="atab-revenue">💰 Revenue</button>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="apanel-users">
+          <div style="display:flex;gap:.75rem;margin-bottom:1rem;">
+            <input id="adm-search-users" placeholder="🔍 Search users…" oninput="filterAdminUsers(this.value)" class="db-input" style="flex:1;"/>
+            <button class="db-btn-primary" onclick="loadAdminUsers()">↻ Refresh</button>
+          </div>
+          <div class="db-card" style="overflow:hidden;">
+            <div class="db-table-header">
+              <span>User</span><span>Email</span><span>Plan</span><span>Status</span><span>Actions</span>
+            </div>
+            <div id="adm-users-list"><div class="db-empty">Loading users…</div></div>
+          </div>
+        </div>
+
+        <!-- Plans Tab -->
+        <div id="apanel-plans" style="display:none;">
+          <div class="db-plans-grid">
+            <div class="db-plan-card"><div class="db-plan-name">Free</div><div class="db-plan-price">$0<span>/mo</span></div><div class="db-plan-features">✓ 5 analyses/month<br/>✓ Basic AI chat<br/>✗ Export<br/>✗ Priority support</div><div class="db-plan-count" id="free-users-count">— users</div></div>
+            <div class="db-plan-card db-plan-popular"><div class="db-plan-badge">POPULAR</div><div class="db-plan-name">Pro</div><div class="db-plan-price">$29<span>/mo</span></div><div class="db-plan-features">✓ Unlimited analyses<br/>✓ Advanced AI chat<br/>✓ PDF Export<br/>✓ Priority support</div><div class="db-plan-count" id="pro-users-count">— users</div></div>
+            <div class="db-plan-card db-plan-enterprise"><div class="db-plan-name">Enterprise</div><div class="db-plan-price">$99<span>/mo</span></div><div class="db-plan-features">✓ Everything in Pro<br/>✓ Custom agents<br/>✓ API access<br/>✓ Dedicated support</div><div class="db-plan-count" id="ent-users-count">— users</div></div>
+          </div>
+        </div>
+
+        <!-- API Tab -->
+        <div id="apanel-api" style="display:none;">
+          <div class="db-kpi-cards" style="margin-bottom:1.25rem;">
+            <div class="db-kpi-card db-kpi-purple"><div class="db-kpi-card-label">Groq Calls</div><div class="db-kpi-card-val" id="api-groq">0</div></div>
+            <div class="db-kpi-card db-kpi-green"><div class="db-kpi-card-label">Agent Runs</div><div class="db-kpi-card-val" id="api-agents">0</div></div>
+            <div class="db-kpi-card db-kpi-amber"><div class="db-kpi-card-label">Chat Messages</div><div class="db-kpi-card-val" id="api-chats">0</div></div>
+            <div class="db-kpi-card db-kpi-pink"><div class="db-kpi-card-label">Avg Response</div><div class="db-kpi-card-val" id="api-resp">2.4s</div></div>
+          </div>
+          <div class="db-card">
+            <div class="db-section-label">API Calls — Last 7 Days</div>
+            <div id="api-chart" style="display:flex;align-items:flex-end;gap:.5rem;height:80px;margin-top:1rem;"></div>
+            <div id="api-chart-labels" style="display:flex;gap:.5rem;margin-top:.5rem;"></div>
+          </div>
+        </div>
+
+        <!-- Revenue Tab -->
+        <div id="apanel-revenue" style="display:none;">
+          <div class="db-kpi-cards" style="margin-bottom:1.25rem;">
+            <div class="db-kpi-card db-kpi-green"><div class="db-kpi-card-label">Monthly Revenue</div><div class="db-kpi-card-val">$0</div></div>
+            <div class="db-kpi-card db-kpi-purple"><div class="db-kpi-card-label">Annual Revenue</div><div class="db-kpi-card-val">$0</div></div>
+            <div class="db-kpi-card db-kpi-amber"><div class="db-kpi-card-label">Paying Users</div><div class="db-kpi-card-val">0</div></div>
+            <div class="db-kpi-card db-kpi-pink"><div class="db-kpi-card-label">Churn Rate</div><div class="db-kpi-card-val">0%</div></div>
+          </div>
+          <div class="db-card" style="text-align:center;padding:2.5rem;">
+            <div style="font-size:2.5rem;margin-bottom:1rem;">💳</div>
+            <div style="font-weight:700;font-size:1rem;margin-bottom:.5rem;">Paddle Integration Pending</div>
+            <div style="font-size:.85rem;color:var(--muted);">Revenue data will appear once Paddle payments are active.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /db-main -->
+</div><!-- /dashboard -->
 
 
 <script>
@@ -1181,7 +1426,9 @@ function showDashboard(name){
   if(av)av.textContent=name.charAt(0).toUpperCase();
   updateStats();
   loadMyPlan();
-  renderRecent();   // FIX 1: function now defined below
+  renderRecent();
+  updateTopbarKPIs();
+  checkAdminAccess();
 }
 function showLanding(){
   document.getElementById("landing").style.display="block";
@@ -1201,12 +1448,20 @@ function updateStats(){
 
 // ── Tab switch ────────────────────────────────────────────────
 function switchTab(tab){
-  ['analyze','history','saved','analytics','chat'].forEach(t=>{
+  ['analyze','history','saved','analytics','chat','finance','admin'].forEach(t=>{
     const p=document.getElementById('panel-'+t);
-    const b=document.getElementById('tab-'+t);
     if(p)p.style.display=t===tab?'block':'none';
+    // Sidebar nav items
+    const n=document.getElementById('nav-'+t);
+    if(n)n.classList.toggle('active',t===tab);
+    // Old tab buttons (if exist)
+    const b=document.getElementById('tab-'+t);
     if(b)b.classList.toggle('active',t===tab);
   });
+  // Update breadcrumb
+  const titles={analyze:'⚡ Analyze',history:'📋 History',saved:'🔖 Saved',analytics:'📈 Analytics',chat:'🤖 AI Assistant',finance:'💹 Projections',admin:'🛡️ Admin Panel'};
+  const el=document.getElementById('db-page-title');
+  if(el)el.textContent=titles[tab]||tab;
   if(tab==='history')renderHistory();
   if(tab==='saved')renderSaved();
   if(tab==='analytics')renderAnalytics();
@@ -1238,6 +1493,15 @@ function rerunIdea(id){const idea=(window._hmap&&window._hmap[id])||'';switchTab
 
 // ── Recent (Analyze panel) ────────────────────────────────────
 // FIX 1: Added missing renderRecent function
+function updateTopbarKPIs(){
+  const h=JSON.parse(localStorage.getItem('vp_history')||'[]');
+  const sv=JSON.parse(localStorage.getItem('vp_saved')||'[]');
+  const el1=document.getElementById('kpi-total'); if(el1)el1.textContent=h.length;
+  const el2=document.getElementById('kpi-saved'); if(el2)el2.textContent=sv.length;
+  // Update nav badges
+  const bh=document.getElementById('badge-history'); if(bh&&h.length)bh.textContent=h.length;
+  const bs=document.getElementById('badge-saved'); if(bs&&sv.length)bs.textContent=sv.length;
+}
 function renderRecent(){
   const list=document.getElementById('recent-list');
   const section=document.getElementById('recent-section');
@@ -1415,17 +1679,7 @@ function clearResults(){
   document.getElementById("context-input").value="";
   document.querySelectorAll('.tpl-chip').forEach(c=>c.classList.remove('active'));
 }
-function downloadReport(){
-  const idea=document.getElementById('idea-input').value.trim();
-  const blocks=document.querySelectorAll('.agent-block');if(!blocks.length)return;
-  let report="VENTUREPILOT — BUSINESS ANALYSIS REPORT\n"+"=".repeat(50)+"\nDate: "+new Date().toLocaleString()+"\nIdea: "+(idea||"N/A")+"\n"+"=".repeat(50)+"\n\n";
-  blocks.forEach(block=>{
-    const title=block.querySelector('h4')?.textContent?.trim()||'';
-    const body=block.querySelector('.agent-block-body')?.textContent?.trim()||'';
-    if(title&&body)report+="── "+title+" ──\n\n"+body+"\n\n"+"-".repeat(40)+"\n\n";
-  });
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([report],{type:'text/plain'}));a.download="venturepilot-report-"+Date.now()+".txt";a.click();
-}
+function downloadReport(){ exportAnalysisPDF(); }
 function shareReport(){
   if(navigator.share){navigator.share({title:'VenturePilot Report',url:window.location.href});}
   else{navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copied!'));}
@@ -1649,6 +1903,527 @@ window.addEventListener('DOMContentLoaded',()=>{
   const token=getToken();const name=localStorage.getItem('vp_name');
   if(token&&name){showDashboard(name);if(!localStorage.getItem('vp_toured'))setTimeout(startTour,1500);}
 });
+
+// ── ADMIN PANEL ─────────────────────────────────────────────
+const ADMIN_EMAILS = ['muhammadanas9062@gmail.com','developer9062@gmail.com','muhammadanas.ragdev@gmail.com'];
+
+function isAdmin(){
+  const s=getSession();
+  return s && ADMIN_EMAILS.includes(s.email);
+}
+
+function checkAdminAccess(){
+  const adminTab=document.getElementById('tab-admin');
+  if(isAdmin()){
+    const adminTab=document.getElementById('tab-admin'); if(adminTab)adminTab.style.display='inline-flex';
+    const navAdmin=document.getElementById('nav-admin'); if(navAdmin)navAdmin.style.display='flex';
+  }
+}
+
+function switchAdminTab(tab){
+  ['users','plans','api','revenue'].forEach(t=>{
+    const p=document.getElementById('apanel-'+t);
+    const b=document.getElementById('atab-'+t);
+    if(p) p.style.display=t===tab?'block':'none';
+    if(b){
+      b.style.background=t===tab?'rgba(99,102,241,.15)':'transparent';
+      b.style.color=t===tab?'#818cf8':'var(--muted)';
+      b.style.borderColor=t===tab?'rgba(99,102,241,.3)':'var(--border)';
+    }
+  });
+  if(tab==='users') loadAdminUsers();
+  if(tab==='api') loadApiStats();
+}
+
+async function loadAdminUsers(){
+  const list=document.getElementById('adm-users-list');
+  if(!list) return;
+  list.innerHTML='<div style="padding:1.5rem;text-align:center;color:var(--muted);font-size:.85rem;">Loading...</div>';
+  try{
+    const token=localStorage.getItem('vp_token')||'';
+    const r=await fetch('/admin/users',{headers:{'Authorization':'Bearer '+token}});
+    if(!r.ok) throw new Error('Not authorized');
+    const data=await r.json();
+    const users=data.users||[];
+    document.getElementById('adm-total-users').textContent=users.length;
+    document.getElementById('adm-active-users').textContent=users.filter(u=>u.active).length;
+    document.getElementById('free-users-count').textContent=users.filter(u=>u.plan==='free').length+' users';
+    document.getElementById('pro-users-count').textContent=users.filter(u=>u.plan==='pro').length+' users';
+    document.getElementById('ent-users-count').textContent=users.filter(u=>u.plan==='enterprise').length+' users';
+    window._adminUsers=users;
+    renderAdminUsers(users);
+  }catch(e){
+    list.innerHTML='<div style="padding:1.5rem;text-align:center;color:#f87171;font-size:.85rem;">❌ '+e.message+'</div>';
+  }
+}
+
+function renderAdminUsers(users){
+  const list=document.getElementById('adm-users-list');
+  if(!list) return;
+  if(!users.length){
+    list.innerHTML='<div style="padding:1.5rem;text-align:center;color:var(--muted);font-size:.85rem;">No users found.</div>';
+    return;
+  }
+  list.innerHTML=users.map(u=>`
+    <div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1fr;padding:.85rem 1rem;border-bottom:1px solid var(--border);align-items:center;font-size:.82rem;">
+      <span style="font-weight:600;display:flex;align-items:center;gap:.5rem;">
+        <span style="width:28px;height:28px;border-radius:50%;background:var(--grad);display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;">${u.name.charAt(0).toUpperCase()}</span>
+        ${u.name}
+      </span>
+      <span style="color:var(--muted);font-size:.78rem;">${u.email}</span>
+      <span style="background:${u.plan==='pro'?'rgba(99,102,241,.15)':u.plan==='enterprise'?'rgba(245,158,11,.15)':'rgba(255,255,255,.06)'};color:${u.plan==='pro'?'#818cf8':u.plan==='enterprise'?'#f59e0b':'var(--muted)'};padding:.2rem .6rem;border-radius:99px;font-size:.72rem;font-weight:700;text-transform:uppercase;">${u.plan||'free'}</span>
+      <span style="color:${u.banned?'#f87171':'var(--success)'};font-size:.78rem;">${u.banned?'● Banned':'● Active'}</span>
+      <div style="display:flex;gap:.4rem;">
+        <button onclick="banUser('${u.email}',${!u.banned})" style="background:${u.banned?'rgba(16,185,129,.15)':'rgba(248,113,113,.15)'};color:${u.banned?'#10b981':'#f87171'};border:none;padding:.25rem .6rem;border-radius:6px;font-size:.72rem;cursor:pointer;font-weight:600;">${u.banned?'Unban':'Ban'}</button>
+        <button onclick="deleteUser('${u.email}')" style="background:rgba(248,113,113,.1);color:#f87171;border:none;padding:.25rem .6rem;border-radius:6px;font-size:.72rem;cursor:pointer;font-weight:600;">Del</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterAdminUsers(q){
+  const users=window._adminUsers||[];
+  const filtered=users.filter(u=>u.name.toLowerCase().includes(q.toLowerCase())||u.email.toLowerCase().includes(q.toLowerCase()));
+  renderAdminUsers(filtered);
+}
+
+async function banUser(email,ban){
+  if(!confirm(`${ban?'Ban':'Unban'} ${email}?`)) return;
+  const token=localStorage.getItem('vp_token')||'';
+  await fetch('/admin/ban',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({email,ban})});
+  loadAdminUsers();
+}
+
+async function deleteUser(email){
+  if(!confirm(`Permanently delete ${email}? This cannot be undone.`)) return;
+  const token=localStorage.getItem('vp_token')||'';
+  await fetch('/admin/delete-user',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({email})});
+  loadAdminUsers();
+}
+
+function loadApiStats(){
+  // Simulated API stats - connect to real backend when ready
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const vals=[12,8,24,18,31,15,9];
+  const chart=document.getElementById('api-chart');
+  const labels=document.getElementById('api-chart-labels');
+  if(chart){
+    const max=Math.max(...vals);
+    chart.innerHTML=vals.map((v,i)=>`
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.25rem;">
+        <div style="font-size:.65rem;color:var(--muted);">${v}</div>
+        <div style="width:100%;background:rgba(99,102,241,.7);border-radius:4px 4px 0 0;height:${(v/max)*70}px;"></div>
+      </div>
+    `).join('');
+  }
+  if(labels){
+    labels.innerHTML=days.map(d=>`<div style="flex:1;text-align:center;font-size:.65rem;color:var(--muted);">${d}</div>`).join('');
+  }
+  const total=vals.reduce((a,b)=>a+b,0);
+  if(document.getElementById('api-groq')) document.getElementById('api-groq').textContent=total;
+  if(document.getElementById('api-agents')) document.getElementById('api-agents').textContent=Math.floor(total/3);
+  if(document.getElementById('api-chats')) document.getElementById('api-chats').textContent=Math.floor(total/2);
+  if(document.getElementById('adm-api-calls')) document.getElementById('adm-api-calls').textContent=vals[vals.length-1];
+}
+
+
+// ═══════════════════════════════════════════════════════
+// 🌍 MULTI-LANGUAGE SUPPORT
+// ═══════════════════════════════════════════════════════
+const LANGS = {
+  en: {
+    analyze: '⚡ Analyze', history: '📋 History', saved: '🔖 Saved',
+    analytics: '📈 Analytics', chat: '💬 AI Chat', finance: '💹 Projections',
+    newAnalysis: 'New Analysis', businessIdea: 'Business Idea',
+    context: 'Context', runBtn: '▶ Run Full Analysis',
+    ideaPlaceholder: 'Describe your business idea in detail…',
+    contextPlaceholder: 'Target market, budget, stage, region…',
+    greeting: '👋 Hi! I\'m your VenturePilot AI assistant. Ask me anything about your business idea!',
+    installApp: '📱 Install App',
+  },
+  ur: {
+    analyze: '⚡ تجزیہ', history: '📋 تاریخ', saved: '🔖 محفوظ',
+    analytics: '📈 اعداد', chat: '💬 AI چیٹ', finance: '💹 مالیات',
+    newAnalysis: 'نیا تجزیہ', businessIdea: 'کاروباری آئیڈیا',
+    context: 'سیاق', runBtn: '▶ مکمل تجزیہ چلائیں',
+    ideaPlaceholder: 'اپنا کاروباری آئیڈیا تفصیل سے بیان کریں…',
+    contextPlaceholder: 'ہدف مارکیٹ، بجٹ، مرحلہ، علاقہ…',
+    greeting: '👋 ہیلو! میں آپ کا VenturePilot AI اسسٹنٹ ہوں۔',
+    installApp: '📱 ایپ انسٹال کریں',
+  },
+  ar: {
+    analyze: '⚡ تحليل', history: '📋 التاريخ', saved: '🔖 محفوظ',
+    analytics: '📈 إحصائيات', chat: '💬 دردشة AI', finance: '💹 التوقعات',
+    newAnalysis: 'تحليل جديد', businessIdea: 'فكرة العمل',
+    context: 'السياق', runBtn: '▶ تشغيل التحليل الكامل',
+    ideaPlaceholder: 'صف فكرة عملك بالتفصيل…',
+    contextPlaceholder: 'السوق المستهدف، الميزانية، المرحلة، المنطقة…',
+    greeting: '👋 مرحباً! أنا مساعد VenturePilot الذكي.',
+    installApp: '📱 تثبيت التطبيق',
+  }
+};
+
+let currentLang = localStorage.getItem('vp_lang') || 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('vp_lang', lang);
+  const t = LANGS[lang] || LANGS.en;
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' || lang === 'ur' ? 'rtl' : 'ltr';
+  // Update tabs
+  const tabs = {analyze:'tab-analyze',history:'tab-history',saved:'tab-saved',analytics:'tab-analytics',chat:'tab-chat',finance:'tab-finance'};
+  Object.entries(tabs).forEach(([k,id])=>{ const el=document.getElementById(id); if(el) el.textContent=t[k]||el.textContent; });
+  // Update placeholders
+  const ideaEl=document.getElementById('idea-input'); if(ideaEl) ideaEl.placeholder=t.ideaPlaceholder;
+  const ctxEl=document.getElementById('context-input'); if(ctxEl) ctxEl.placeholder=t.contextPlaceholder;
+  const runBtn=document.getElementById('run-btn'); if(runBtn) runBtn.textContent=t.runBtn;
+  const pwaBtn=document.getElementById('pwa-install-btn'); if(pwaBtn) pwaBtn.textContent=t.installApp;
+  // Update lang select
+  const sel=document.getElementById('lang-select'); if(sel) sel.value=lang;
+}
+
+// ═══════════════════════════════════════════════════════
+// 📱 PWA — Progressive Web App
+// ═══════════════════════════════════════════════════════
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById('pwa-install-btn');
+  if (btn) btn.style.display = 'inline-flex';
+});
+
+async function installPWA() {
+  if (!deferredPrompt) {
+    alert('To install: open browser menu → "Add to Home Screen" or "Install App"');
+    return;
+  }
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+    const btn = document.getElementById('pwa-install-btn');
+    if (btn) btn.style.display = 'none';
+  }
+  deferredPrompt = null;
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+// ═══════════════════════════════════════════════════════
+// 💹 FINANCIAL PROJECTIONS
+// ═══════════════════════════════════════════════════════
+let projChartInstance = null;
+
+function generateProjections() {
+  const start   = parseFloat(document.getElementById('proj-start')?.value) || 5000;
+  const growth  = parseFloat(document.getElementById('proj-growth')?.value) / 100 || 0.15;
+  const expense = parseFloat(document.getElementById('proj-expenses')?.value) || 3000;
+  const expGrow = parseFloat(document.getElementById('proj-exp-growth')?.value) / 100 || 0.05;
+
+  const years = 5;
+  const labels = [], revenues = [], expenses_arr = [], profits = [];
+  let rev = start, exp = expense, breakEven = null;
+
+  for (let y = 1; y <= years; y++) {
+    let yearRev = 0, yearExp = 0;
+    for (let m = 1; m <= 12; m++) {
+      rev *= (1 + growth);
+      exp *= (1 + expGrow);
+      yearRev += rev;
+      yearExp += exp;
+      if (!breakEven && rev > exp) breakEven = `Month ${(y-1)*12+m}`;
+    }
+    const profit = yearRev - yearExp;
+    labels.push(`Year ${y}`);
+    revenues.push(Math.round(yearRev));
+    expenses_arr.push(Math.round(yearExp));
+    profits.push(Math.round(profit));
+  }
+
+  // Show KPIs
+  const fmt = n => '$' + (n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(0)+'K' : n);
+  document.getElementById('kpi-y1').textContent = fmt(revenues[0]);
+  document.getElementById('kpi-y3').textContent = fmt(revenues[2]);
+  document.getElementById('kpi-y5').textContent = fmt(revenues[4]);
+  document.getElementById('kpi-breakeven').textContent = breakEven || 'Already!';
+
+  ['proj-kpis','proj-chart-wrap','proj-table-wrap'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'grid' === id.includes('kpis') ? 'grid' : 'block';
+  });
+  document.getElementById('proj-kpis').style.display = 'grid';
+
+  // Draw Chart with Canvas
+  const canvas = document.getElementById('proj-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth || 600;
+  canvas.height = 260;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const pad = {top:20, right:20, bottom:40, left:70};
+  const w = canvas.width - pad.left - pad.right;
+  const h = canvas.height - pad.top - pad.bottom;
+  const allVals = [...revenues, ...expenses_arr, ...profits.filter(p=>p>0)];
+  const maxVal = Math.max(...allVals);
+  const minVal = Math.min(...profits, 0);
+  const range = maxVal - minVal;
+
+  function xPos(i) { return pad.left + (i / (labels.length - 1)) * w; }
+  function yPos(v) { return pad.top + h - ((v - minVal) / range) * h; }
+
+  // Zero line
+  if (minVal < 0) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, yPos(0));
+    ctx.lineTo(pad.left + w, yPos(0));
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Draw lines
+  const lines = [
+    { data: revenues, color: '#10b981', label: 'Revenue' },
+    { data: expenses_arr, color: '#f87171', label: 'Expenses' },
+    { data: profits, color: '#818cf8', label: 'Profit' },
+  ];
+
+  lines.forEach(({ data, color }) => {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    data.forEach((v, i) => {
+      const x = xPos(i), y = yPos(v);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    // Dots
+    data.forEach((v, i) => {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(xPos(i), yPos(v), 4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  });
+
+  // X labels
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  labels.forEach((l, i) => ctx.fillText(l, xPos(i), canvas.height - 10));
+
+  // Y labels
+  ctx.textAlign = 'right';
+  [0, 0.25, 0.5, 0.75, 1].forEach(pct => {
+    const val = minVal + pct * range;
+    ctx.fillText('$' + (val >= 1e6 ? (val/1e6).toFixed(1)+'M' : val >= 1e3 ? (val/1e3).toFixed(0)+'K' : Math.round(val)), pad.left - 8, yPos(val) + 4);
+  });
+
+  // Table
+  const tbody = document.getElementById('proj-table-body');
+  if (tbody) {
+    tbody.innerHTML = labels.map((l, i) => {
+      const margin = revenues[i] > 0 ? ((profits[i] / revenues[i]) * 100).toFixed(1) : '0';
+      const profitColor = profits[i] >= 0 ? '#10b981' : '#f87171';
+      return `<tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:.75rem 1rem;font-weight:600;">${l}</td>
+        <td style="padding:.75rem 1rem;text-align:right;color:#10b981;">${fmt(revenues[i])}</td>
+        <td style="padding:.75rem 1rem;text-align:right;color:#f87171;">${fmt(expenses_arr[i])}</td>
+        <td style="padding:.75rem 1rem;text-align:right;color:${profitColor};font-weight:700;">${fmt(profits[i])}</td>
+        <td style="padding:.75rem 1rem;text-align:right;color:${profitColor};">${margin}%</td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// 📤 PDF EXPORT (jsPDF)
+// ═══════════════════════════════════════════════════════
+async function exportProjectionsPDF() {
+  if (typeof window.jspdf === 'undefined') {
+    alert('PDF library loading... please try again in a moment.');
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const idea = document.getElementById('idea-input')?.value || 'Business Idea';
+  const pageW = doc.internal.pageSize.getWidth();
+
+  // Header
+  doc.setFillColor(4, 5, 10);
+  doc.rect(0, 0, pageW, 35, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.setFont('helvetica', 'bold');
+  doc.text('VenturePilot', 15, 15);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(160, 160, 200);
+  doc.text('Financial Projections Report', 15, 22);
+  doc.text(`Generated: ${new Date().toLocaleDateString()}`, 15, 28);
+
+  // Idea
+  doc.setTextColor(40, 40, 40);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Business Idea:', 15, 45);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  const ideaLines = doc.splitTextToSize(idea, pageW - 30);
+  doc.text(ideaLines, 15, 52);
+
+  // KPIs
+  let y = 70;
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(40, 40, 40);
+  doc.text('Key Performance Indicators', 15, y);
+  y += 8;
+
+  const kpis = [
+    ['Year 1 Revenue', document.getElementById('kpi-y1')?.textContent || 'N/A'],
+    ['Year 3 Revenue', document.getElementById('kpi-y3')?.textContent || 'N/A'],
+    ['Year 5 Revenue', document.getElementById('kpi-y5')?.textContent || 'N/A'],
+    ['Break-Even', document.getElementById('kpi-breakeven')?.textContent || 'N/A'],
+  ];
+
+  kpis.forEach(([label, val], i) => {
+    const x = 15 + (i % 2) * 90;
+    const ky = y + Math.floor(i / 2) * 20;
+    doc.setFillColor(245, 246, 250);
+    doc.roundedRect(x, ky, 85, 15, 2, 2, 'F');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 140);
+    doc.text(label, x + 5, ky + 5);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(40, 40, 40);
+    doc.text(val, x + 5, ky + 12);
+  });
+
+  y += 50;
+
+  // Table from DOM
+  const rows = document.querySelectorAll('#proj-table-body tr');
+  if (rows.length) {
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(40, 40, 40);
+    doc.text('Year-by-Year Breakdown', 15, y);
+    y += 8;
+
+    // Table header
+    ['Year','Revenue','Expenses','Profit','Margin'].forEach((h, i) => {
+      doc.setFillColor(4, 5, 10);
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(9);
+      doc.rect(15 + i * 36, y, 36, 8, 'F');
+      doc.text(h, 17 + i * 36, y + 5.5);
+    });
+    y += 10;
+
+    rows.forEach((row, ri) => {
+      const cells = row.querySelectorAll('td');
+      if (ri % 2 === 0) { doc.setFillColor(248, 249, 252); doc.rect(15, y, 180, 8, 'F'); }
+      cells.forEach((td, i) => {
+        doc.setTextColor(40, 40, 40);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.text(td.textContent.trim(), 17 + i * 36, y + 5.5);
+      });
+      y += 9;
+    });
+  }
+
+  // Footer
+  doc.setFillColor(4, 5, 10);
+  doc.rect(0, 287, pageW, 10, 'F');
+  doc.setTextColor(160, 160, 200);
+  doc.setFontSize(8);
+  doc.text('VenturePilot — AI-Powered Business Intelligence', 15, 293);
+  doc.text('muhammadanas.ragdev@gmail.com', pageW - 15, 293, { align: 'right' });
+
+  doc.save(`venturepilot-projections-${Date.now()}.pdf`);
+}
+
+// PDF Export for Analysis Report
+async function exportAnalysisPDF() {
+  if (typeof window.jspdf === 'undefined') { alert('PDF library loading...'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const idea = document.getElementById('idea-input')?.value || 'Business Analysis';
+  const blocks = document.querySelectorAll('.agent-block');
+  if (!blocks.length) { alert('Run an analysis first!'); return; }
+  const pageW = doc.internal.pageSize.getWidth();
+  let y = 15;
+
+  doc.setFillColor(4, 5, 10);
+  doc.rect(0, 0, pageW, 30, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(18); doc.setFont('helvetica', 'bold');
+  doc.text('VenturePilot Report', 15, 13);
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+  doc.setTextColor(160, 160, 200);
+  doc.text(`${new Date().toLocaleDateString()} | ${idea.substring(0, 60)}`, 15, 22);
+  y = 40;
+
+  blocks.forEach(block => {
+    const title = block.querySelector('h4')?.textContent?.trim() || '';
+    const body  = block.querySelector('.agent-block-body')?.textContent?.trim() || '';
+    if (!title || !body) return;
+    if (y > 250) { doc.addPage(); y = 15; }
+    doc.setFillColor(99, 102, 241);
+    doc.rect(15, y, 3, 7, 'F');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+    doc.setTextColor(40, 40, 40);
+    doc.text(title, 21, y + 5.5);
+    y += 12;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+    doc.setTextColor(70, 70, 80);
+    const lines = doc.splitTextToSize(body.substring(0, 800), pageW - 30);
+    lines.forEach(line => {
+      if (y > 270) { doc.addPage(); y = 15; }
+      doc.text(line, 15, y); y += 5.5;
+    });
+    y += 8;
+  });
+
+  doc.setFillColor(4, 5, 10); doc.rect(0, 287, pageW, 10, 'F');
+  doc.setTextColor(160, 160, 200); doc.setFontSize(8);
+  doc.text('VenturePilot — AI-Powered Business Intelligence', 15, 293);
+  doc.save(`venturepilot-analysis-${Date.now()}.pdf`);
+}
+
+// ═══════════════════════════════════════════════════════
+// 📧 EMAIL NOTIFICATIONS (toast system)
+// ═══════════════════════════════════════════════════════
+function showToast(msg, type='success', duration=3500) {
+  const existing = document.getElementById('vp-toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.id = 'vp-toast';
+  const colors = {success:'#10b981', error:'#f87171', info:'#818cf8', warning:'#f59e0b'};
+  toast.style.cssText = `position:fixed;bottom:1.5rem;right:1.5rem;background:var(--surface2);border:1px solid ${colors[type]||colors.info};color:var(--fg);padding:.85rem 1.25rem;border-radius:12px;font-size:.85rem;z-index:9999;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.4);display:flex;align-items:center;gap:.75rem;animation:slideIn .3s ease;`;
+  toast.innerHTML = `<span style="color:${colors[type]}">${type==='success'?'✓':type==='error'?'✕':type==='warning'?'⚠':'ℹ'}</span>${msg}`;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity='0'; toast.style.transition='opacity .3s'; setTimeout(()=>toast.remove(), 300); }, duration);
+}
+
+// Init on load
+document.addEventListener('DOMContentLoaded', () => {
+  setLang(currentLang);
+  const sel = document.getElementById('lang-select');
+  if (sel) sel.value = currentLang;
+});
+
 </script>
 </body>
 </html>
