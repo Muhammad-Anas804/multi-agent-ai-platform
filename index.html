@@ -2271,7 +2271,8 @@ function setLang(lang) {
   localStorage.setItem('vp_lang', lang);
   const t = LANGS[lang] || LANGS.en;
   document.documentElement.lang = lang;
-  document.documentElement.dir = lang === 'ar' || lang === 'ur' ? 'rtl' : 'ltr';
+  // Never change whole page direction - only change text of specific elements
+  document.documentElement.dir = 'ltr';
   // Update tabs
   const tabs = {analyze:'tab-analyze',history:'tab-history',saved:'tab-saved',analytics:'tab-analytics',chat:'tab-chat',finance:'tab-finance'};
   Object.entries(tabs).forEach(([k,id])=>{ const el=document.getElementById(id); if(el) el.textContent=t[k]||el.textContent; });
