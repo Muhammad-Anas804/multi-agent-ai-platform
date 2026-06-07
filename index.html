@@ -744,6 +744,12 @@ footer{
 .btn-google:hover{border-color:rgba(99,102,241,.4);}
 .btn.btn-full{width:100%;padding:.8rem;border-radius:9px;font-size:.9rem;}
 
+
+.faq-item{border-bottom:1px solid var(--border);padding:.75rem 0;}
+.faq-q{display:flex;justify-content:space-between;cursor:pointer;font-weight:600;font-size:.85rem;}
+.faq-a{font-size:.82rem;color:var(--muted);padding-top:.5rem;display:none;line-height:1.7;}
+.faq-a.open{display:block;}
+
 </style>
 </head>
 <body>
@@ -996,6 +1002,103 @@ footer{
       Continue with Google
     </button>
     <p class="modal-switch">No account? <a href="#" onclick="switchModal('login','signup')">Sign Up Free</a></p>
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="modal-profile">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('profile')">✕</button>
+    <div class="modal-logo">Venture<span>Pilot</span></div>
+    <h3 class="modal-title">My Profile</h3>
+    <div style="text-align:center;margin-bottom:1.25rem;">
+      <div id="profile-avatar" style="width:56px;height:56px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.4rem;color:#fff;margin:0 auto .75rem;"></div>
+      <div id="profile-name-display" style="font-weight:700;font-size:.95rem;"></div>
+      <div id="profile-email-display" style="font-size:.78rem;color:var(--muted);margin-top:.2rem;"></div>
+    </div>
+    <div class="form-group">
+      <label>Display Name</label>
+      <input type="text" id="profile-name-input" placeholder="Your name"/>
+    </div>
+    <div class="msg" id="profile-msg"></div>
+    <button class="btn btn-primary btn-full" onclick="updateProfile()">Save Changes</button>
+    <button class="btn btn-ghost btn-full" onclick="confirmDeleteAccount()" style="margin-top:.5rem;color:#f87171;border-color:#f87171;">Delete Account</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-guide">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="closeModal('guide')">✕</button>
+    <div id="guide-content" style="min-height:180px;"></div>
+    <div style="display:flex;justify-content:space-between;margin-top:1.5rem;">
+      <button class="btn btn-ghost" onclick="prevGuideStep()">← Back</button>
+      <button class="btn btn-primary" id="tour-next-btn" onclick="nextGuideStep()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-email">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('email')">✕</button>
+    <h3 class="modal-title">📧 Email Report</h3>
+    <div id="email-form-wrap">
+      <div class="form-group"><label>Recipient Email</label><input type="email" id="email-recipient" placeholder="colleague@company.com"/></div>
+      <div class="form-group"><label>Subject</label><input type="text" id="email-subject" value="VenturePilot Business Analysis Report"/></div>
+      <div class="form-group"><label>Note</label><textarea id="email-note" placeholder="Add a personal note..." rows="2" style="min-height:60px;width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--fg);padding:.65rem;border-radius:9px;font-family:inherit;box-sizing:border-box;outline:none;"></textarea></div>
+      <div class="msg" id="email-msg"></div>
+      <button class="btn btn-primary btn-full" onclick="sendEmailReport()">Send Report</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-score">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('score')">✕</button>
+    <h3 class="modal-title">🎯 Business Score</h3>
+    <div id="score-content" style="min-height:120px;"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-competitor">
+  <div class="modal" style="max-width:600px;">
+    <button class="modal-close" onclick="closeModal('competitor')">✕</button>
+    <h3 class="modal-title">🏆 Competitor Analysis</h3>
+    <div id="comp-table-wrap" style="overflow-x:auto;"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-compare">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('compare')">✕</button>
+    <h3 class="modal-title">⚖️ Compare Ideas</h3>
+    <div class="form-group"><label>Idea B</label><textarea id="compare-idea" rows="3" placeholder="Enter another idea to compare..." style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--fg);padding:.65rem;border-radius:9px;font-family:inherit;box-sizing:border-box;outline:none;"></textarea></div>
+    <button class="btn btn-primary btn-full" onclick="runComparison()">Compare →</button>
+    <div id="compare-result" style="margin-top:1rem;font-size:.85rem;line-height:1.7;"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-faq">
+  <div class="modal" style="max-width:520px;">
+    <button class="modal-close" onclick="closeModal('faq')">✕</button>
+    <h3 class="modal-title">❓ FAQ</h3>
+    <div id="faq-content">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What AI models power VenturePilot?</span><span>▸</span></div><div class="faq-a">VenturePilot uses Groq LLM API with advanced language models for fast, accurate business analysis.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How long does an analysis take?</span><span>▸</span></div><div class="faq-a">Typically 30–90 seconds depending on complexity. All 5 agents run sequentially.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I save my reports?</span><span>▸</span></div><div class="faq-a">Yes! Use the 🔖 Save button after analysis. Access them anytime from the Saved tab.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Is my data secure?</span><span>▸</span></div><div class="faq-a">Yes. We use JWT authentication and never store your business ideas on our servers permanently.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-privacy">
+  <div class="modal" style="max-width:540px;max-height:80vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('privacy')">✕</button>
+    <h3 class="modal-title">🔒 Privacy Policy</h3>
+    <div style="font-size:.82rem;line-height:1.8;color:var(--muted);">
+      <p><strong style="color:var(--fg);">Last updated:</strong> June 2026</p>
+      <p>VenturePilot collects only your name and email for authentication. We do not sell your data. OAuth tokens are stored securely and deleted on logout.</p>
+      <p><strong style="color:var(--fg);">Contact:</strong> <a href="mailto:muhammadanas.ragdev@gmail.com" style="color:var(--blue2);">muhammadanas.ragdev@gmail.com</a></p>
+    </div>
   </div>
 </div>
 
@@ -1656,7 +1759,7 @@ function openProfileModal(){
   if(el('profile-email-display'))el('profile-email-display').textContent=email;
   if(el('profile-name-input'))el('profile-name-input').value=name;
   if(el('profile-avatar'))el('profile-avatar').textContent=name.charAt(0).toUpperCase();
-  document.getElementById('modal-profile').classList.add('open');
+  const mp=document.getElementById('modal-profile');if(mp)mp.classList.add('open');
 }
 function updateProfile(){
   const name=document.getElementById('profile-name-input').value.trim();
