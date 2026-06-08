@@ -323,6 +323,124 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);font-si
   .analyze-wrap,.chat-wrap{padding:0 .75rem;}
   .finance-wrap,.list-wrap,.analytics-wrap,.admin-wrap{padding:1rem .75rem;}
 }
+
+/* ═══ ONBOARDING TOUR ═══ */
+.tour-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2000;pointer-events:none;}
+.tour-spotlight{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.6);z-index:2001;transition:all .35s ease;pointer-events:none;}
+.tour-tooltip{position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.35rem;max-width:300px;z-index:2002;box-shadow:0 8px 32px rgba(0,0,0,.15);}
+.tour-tooltip-title{font-weight:700;font-size:.9rem;margin-bottom:.4rem;}
+.tour-tooltip-desc{font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;}
+.tour-btns{display:flex;align-items:center;justify-content:space-between;gap:.5rem;}
+.tour-progress{font-size:.72rem;color:var(--muted2);}
+.tour-btn{background:var(--fg);color:var(--bg);border:none;padding:.4rem .9rem;border-radius:7px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;}
+.tour-skip{background:none;border:none;color:var(--muted);font-size:.75rem;cursor:pointer;font-family:inherit;}
+
+/* ═══ NOTIFICATIONS ═══ */
+.notif-btn{position:relative;}
+.notif-badge{position:absolute;top:-4px;right:-4px;background:#dc2626;color:#fff;border-radius:99px;font-size:.6rem;font-weight:700;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 3px;}
+.notif-panel{position:fixed;top:56px;right:1rem;width:320px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:500;display:none;max-height:420px;overflow:hidden;flex-direction:column;}
+.notif-panel.open{display:flex;}
+.notif-header{padding:.85rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.notif-title{font-weight:600;font-size:.85rem;}
+.notif-clear{background:none;border:none;color:var(--muted);font-size:.72rem;cursor:pointer;font-family:inherit;}
+.notif-list{overflow-y:auto;flex:1;}
+.notif-item{padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;gap:.65rem;align-items:flex-start;cursor:pointer;transition:background .15s;}
+.notif-item:hover{background:var(--surface2);}
+.notif-item.unread{background:rgba(217,119,6,.04);}
+.notif-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;}
+.notif-text{flex:1;}
+.notif-msg{font-size:.8rem;font-weight:500;line-height:1.4;}
+.notif-time{font-size:.7rem;color:var(--muted2);margin-top:.2rem;}
+.notif-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:6px;}
+.notif-empty{padding:2rem;text-align:center;color:var(--muted);font-size:.82rem;}
+
+/* ═══ FEEDBACK ═══ */
+.feedback-modal{max-width:420px;}
+.star-row{display:flex;gap:.4rem;margin:.75rem 0;justify-content:center;}
+.star-btn{background:none;border:none;font-size:1.6rem;cursor:pointer;opacity:.35;transition:opacity .15s,transform .15s;}
+.star-btn.active,.star-btn:hover{opacity:1;transform:scale(1.1);}
+.feedback-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin:.75rem 0;}
+.feedback-tag{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:.3rem .65rem;font-size:.75rem;cursor:pointer;transition:all .15s;color:var(--fg);}
+.feedback-tag.selected{background:rgba(217,119,6,.12);border-color:var(--accent);color:var(--accent);}
+
+/* ═══ SCORE CARD ═══ */
+.score-modal{max-width:480px;}
+.score-ring-wrap{display:flex;justify-content:center;margin:1rem 0;}
+.score-ring{width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;}
+.score-ring-inner{width:82px;height:82px;border-radius:50%;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-num{font-weight:700;font-size:1.8rem;line-height:1;}
+.score-sub{font-size:.65rem;color:var(--muted);margin-top:.15rem;}
+.score-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:1rem;}
+.score-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;}
+.score-item-label{font-size:.7rem;color:var(--muted);margin-bottom:.25rem;}
+.score-item-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:.25rem;}
+.score-item-fill{height:4px;border-radius:2px;background:var(--accent);}
+.score-item-val{font-size:.78rem;font-weight:600;}
+
+/* ═══ ACTION PLAN ═══ */
+.action-plan-wrap{padding:1.5rem;max-width:760px;margin:0 auto;width:100%;}
+.action-plan-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;}
+.action-plan-title{font-weight:700;font-size:1.05rem;}
+.ap-phase{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.1rem;margin-bottom:.85rem;}
+.ap-phase-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem;}
+.ap-phase-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.ap-phase-title{font-weight:600;font-size:.88rem;}
+.ap-phase-time{font-size:.72rem;color:var(--muted);margin-left:auto;}
+.ap-tasks{display:flex;flex-direction:column;gap:.4rem;}
+.ap-task{display:flex;align-items:flex-start;gap:.6rem;padding:.5rem .65rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .15s;}
+.ap-task:hover{border-color:var(--accent);}
+.ap-task-check{width:16px;height:16px;border:1.5px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:.65rem;transition:all .15s;}
+.ap-task.done .ap-task-check{background:var(--success);border-color:var(--success);color:#fff;}
+.ap-task-text{font-size:.8rem;line-height:1.5;flex:1;}
+.ap-task.done .ap-task-text{text-decoration:line-through;color:var(--muted);}
+.ap-priority{font-size:.65rem;font-weight:600;padding:.1rem .4rem;border-radius:4px;flex-shrink:0;}
+.ap-high{background:#fef2f2;color:#dc2626;}
+.ap-med{background:#fff7ed;color:#d97706;}
+.ap-low{background:#f0fdf4;color:#15803d;}
+
+/* ═══ LEADERBOARD ═══ */
+.leader-wrap{padding:1.5rem;max-width:760px;margin:0 auto;width:100%;}
+.leader-title{font-weight:700;font-size:1.05rem;margin-bottom:1.25rem;}
+.leader-item{display:flex;align-items:center;gap:.85rem;padding:.75rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:.5rem;transition:border-color .15s;}
+.leader-item:hover{border-color:var(--accent);}
+.leader-rank{font-weight:700;font-size:.95rem;width:24px;text-align:center;flex-shrink:0;}
+.leader-rank.gold{color:#d97706;}
+.leader-rank.silver{color:#9b9991;}
+.leader-rank.bronze{color:#c2410c;}
+.leader-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;color:#fff;flex-shrink:0;}
+.leader-name{font-weight:500;font-size:.85rem;flex:1;}
+.leader-count{font-size:.78rem;color:var(--muted);}
+.leader-badge{font-size:.65rem;font-weight:600;padding:.15rem .5rem;border-radius:4px;background:rgba(217,119,6,.1);color:var(--accent);}
+
+/* ═══ REFERRAL ═══ */
+.referral-wrap{padding:1.5rem;max-width:600px;margin:0 auto;width:100%;}
+.referral-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;text-align:center;margin-bottom:1.25rem;}
+.referral-code{font-family:monospace;font-size:1.25rem;font-weight:700;letter-spacing:.1em;background:var(--surface);border:1px dashed var(--border);border-radius:8px;padding:.6rem 1.25rem;display:inline-block;margin:.75rem 0;color:var(--accent);}
+.referral-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-top:.85rem;}
+.ref-step{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.85rem .75rem;text-align:center;}
+.ref-step-icon{font-size:1.25rem;margin-bottom:.4rem;}
+.ref-step-title{font-weight:600;font-size:.78rem;margin-bottom:.2rem;}
+.ref-step-desc{font-size:.7rem;color:var(--muted);}
+
+/* ═══ BRANDING ═══ */
+.branding-wrap{padding:1.5rem;max-width:680px;margin:0 auto;width:100%;}
+.branding-preview{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem;}
+.color-swatches{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem;}
+.color-swatch{width:32px;height:32px;border-radius:7px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0;}
+.color-swatch.selected,.color-swatch:hover{border-color:var(--fg);transform:scale(1.1);}
+
+/* ═══ EMAIL REPORT ═══ */
+.email-report-modal{max-width:440px;}
+
+/* ═══ TEAM ═══ */
+.team-wrap{padding:1.5rem;max-width:760px;margin:0 auto;width:100%;}
+.team-member{display:flex;align-items:center;gap:.85rem;padding:.75rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:.5rem;}
+.team-avatar{width:34px;height:34px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.85rem;flex-shrink:0;}
+.team-info{flex:1;}
+.team-name{font-weight:500;font-size:.85rem;}
+.team-role{font-size:.72rem;color:var(--muted);}
+.team-badge{font-size:.65rem;font-weight:600;padding:.15rem .5rem;border-radius:4px;background:rgba(217,119,6,.1);color:var(--accent);}
+
 </style>
 </head>
 <body>
@@ -443,6 +561,26 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);font-si
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           Saved
         </button>
+        <button class="db-nav-item" onclick="switchPanel('actionplan')" id="nav-actionplan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Action Plan
+        </button>
+        <button class="db-nav-item" onclick="switchPanel('leaderboard')" id="nav-leaderboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15c-4.97 0-9 2.24-9 5v1h18v-1c0-2.76-4.03-5-9-5z"/><circle cx="12" cy="7" r="4"/></svg>
+          Leaderboard
+        </button>
+        <button class="db-nav-item" onclick="switchPanel('referral')" id="nav-referral">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Referral
+        </button>
+        <button class="db-nav-item" onclick="switchPanel('branding')" id="nav-branding">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 20v-4"/></svg>
+          Branding
+        </button>
+        <button class="db-nav-item" onclick="switchPanel('team')" id="nav-team">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Team
+        </button>
         <button class="db-nav-item db-nav-admin" onclick="switchPanel('admin')" id="nav-admin" style="display:none;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           Admin Panel
@@ -466,6 +604,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);font-si
       </button>
       <div class="db-page-title" id="db-page-title">Analyze</div>
       <div class="db-topbar-actions">
+        <button class="db-topbar-btn" onclick="openModal('feedback')">⭐ Feedback</button>
+        <button class="db-topbar-btn" onclick="showScore()">📊 Score</button>
+        <button class="db-topbar-btn notif-btn" onclick="toggleNotifPanel()" id="notif-btn" title="Notifications">
+          🔔<span class="notif-badge" id="notif-badge" style="display:none;">0</span>
+        </button>
         <select id="lang-select" onchange="setLang(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--fg);padding:.3rem .6rem;border-radius:7px;font-size:.78rem;cursor:pointer;outline:none;font-family:inherit;">
           <option value="en">EN</option>
           <option value="ur">اردو</option>
@@ -510,10 +653,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);font-si
           <div class="analyze-results" id="analyze-results" style="display:none;"></div>
 
           <!-- Result actions -->
-          <div id="result-actions" style="display:none;padding:.75rem 0;border-top:1px solid var(--border);display:none;flex-wrap:wrap;gap:.4rem;">
-            <button class="db-topbar-btn" onclick="downloadReport()">📤 Export PDF</button>
+          <div id="result-actions" style="display:none;padding:.75rem 0;border-top:1px solid var(--border);flex-wrap:wrap;gap:.4rem;">
+            <button class="db-topbar-btn" onclick="downloadReport()">📤 PDF</button>
             <button class="db-topbar-btn" onclick="bookmarkAnalysis()">🔖 Save</button>
             <button class="db-topbar-btn" onclick="shareReport()">🔗 Share</button>
+            <button class="db-topbar-btn" onclick="showScore()">📊 Score</button>
+            <button class="db-topbar-btn" onclick="switchPanel('actionplan')">🗺️ Action Plan</button>
+            <button class="db-topbar-btn" onclick="openModal('email')">📧 Email</button>
             <button class="db-topbar-btn" onclick="newAnalysis()">✕ Clear</button>
           </div>
 
@@ -669,10 +815,229 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);font-si
         </div>
       </div>
 
+
+      <!-- ── ACTION PLAN PANEL ── -->
+      <div class="db-panel" id="panel-actionplan">
+        <div class="action-plan-wrap">
+          <div class="action-plan-header">
+            <div class="action-plan-title">🗺️ Action Plan</div>
+            <div style="display:flex;gap:.5rem;">
+              <button class="fin-btn" onclick="generateActionPlan()">⚡ Generate Plan</button>
+              <button class="fin-btn-outline" onclick="exportActionPlanPDF()">📤 Export PDF</button>
+            </div>
+          </div>
+          <div id="action-plan-content">
+            <div style="text-align:center;padding:3rem;color:var(--muted);font-size:.875rem;">
+              Run an analysis first, then generate your action plan.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── LEADERBOARD PANEL ── -->
+      <div class="db-panel" id="panel-leaderboard">
+        <div class="leader-wrap">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+            <div class="leader-title">🏆 Leaderboard</div>
+            <div style="font-size:.75rem;color:var(--muted);">Top analysts this month</div>
+          </div>
+          <div id="leaderboard-list"></div>
+        </div>
+      </div>
+
+      <!-- ── REFERRAL PANEL ── -->
+      <div class="db-panel" id="panel-referral">
+        <div class="referral-wrap">
+          <div style="font-weight:700;font-size:1.05rem;margin-bottom:1.25rem;">🎁 Referral Program</div>
+          <div class="referral-card">
+            <div style="font-size:.82rem;color:var(--muted);margin-bottom:.25rem;">Your referral code</div>
+            <div class="referral-code" id="referral-code">VP-LOADING</div>
+            <div style="font-size:.78rem;color:var(--muted);">Share this code and earn rewards</div>
+            <button class="fin-btn" onclick="copyReferral()" style="margin-top:.85rem;">📋 Copy Code</button>
+          </div>
+          <div style="font-weight:600;font-size:.85rem;margin-bottom:.75rem;">How it works</div>
+          <div class="referral-steps">
+            <div class="ref-step"><div class="ref-step-icon">🔗</div><div class="ref-step-title">Share</div><div class="ref-step-desc">Share your unique code with friends</div></div>
+            <div class="ref-step"><div class="ref-step-icon">👤</div><div class="ref-step-title">They Join</div><div class="ref-step-desc">Friend signs up using your code</div></div>
+            <div class="ref-step"><div class="ref-step-icon">🎁</div><div class="ref-step-title">You Earn</div><div class="ref-step-desc">Get 1 month Pro free per referral</div></div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem;margin-top:1.25rem;">
+            <div style="font-size:.78rem;font-weight:600;margin-bottom:.75rem;">Your referrals</div>
+            <div id="referral-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;text-align:center;">
+              <div><div style="font-weight:700;font-size:1.1rem;" id="ref-count">0</div><div style="font-size:.7rem;color:var(--muted);">Referred</div></div>
+              <div><div style="font-weight:700;font-size:1.1rem;" id="ref-joined">0</div><div style="font-size:.7rem;color:var(--muted);">Joined</div></div>
+              <div><div style="font-weight:700;font-size:1.1rem;" id="ref-earned">0</div><div style="font-size:.7rem;color:var(--muted);">Months earned</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── BRANDING PANEL ── -->
+      <div class="db-panel" id="panel-branding">
+        <div class="branding-wrap">
+          <div style="font-weight:700;font-size:1.05rem;margin-bottom:1.25rem;">🎨 Custom Branding</div>
+          <div class="branding-preview">
+            <div style="font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.05em;">Preview</div>
+            <div style="display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+              <div id="brand-avatar-preview" style="width:34px;height:34px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#fff;">VP</div>
+              <div>
+                <div id="brand-name-preview" style="font-weight:700;font-size:.9rem;">VenturePilot</div>
+                <div style="font-size:.72rem;color:var(--muted);">AI Business Intelligence</div>
+              </div>
+            </div>
+          </div>
+          <div class="fin-inputs">
+            <div class="fin-field"><label>Brand name</label><input type="text" id="brand-name" placeholder="VenturePilot" oninput="updateBrandPreview()"/></div>
+            <div class="fin-field"><label>Tagline</label><input type="text" id="brand-tagline" placeholder="AI Business Intelligence"/></div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <div style="font-size:.75rem;color:var(--muted);font-weight:500;margin-bottom:.5rem;">Accent color</div>
+            <div class="color-swatches">
+              <div class="color-swatch selected" style="background:#d97706;" onclick="setBrandColor('#d97706',this)" title="Amber"></div>
+              <div class="color-swatch" style="background:#7c3aed;" onclick="setBrandColor('#7c3aed',this)" title="Purple"></div>
+              <div class="color-swatch" style="background:#0284c7;" onclick="setBrandColor('#0284c7',this)" title="Blue"></div>
+              <div class="color-swatch" style="background:#16a34a;" onclick="setBrandColor('#16a34a',this)" title="Green"></div>
+              <div class="color-swatch" style="background:#dc2626;" onclick="setBrandColor('#dc2626',this)" title="Red"></div>
+              <div class="color-swatch" style="background:#db2777;" onclick="setBrandColor('#db2777',this)" title="Pink"></div>
+              <div class="color-swatch" style="background:#0891b2;" onclick="setBrandColor('#0891b2',this)" title="Cyan"></div>
+              <input type="color" id="brand-color-custom" onchange="setBrandColor(this.value,null)" style="width:32px;height:32px;border:1px solid var(--border);border-radius:7px;cursor:pointer;padding:1px;" title="Custom color"/>
+            </div>
+          </div>
+          <button class="fin-btn" onclick="saveBranding()" style="width:100%;">Save branding</button>
+        </div>
+      </div>
+
+      <!-- ── TEAM PANEL ── -->
+      <div class="db-panel" id="panel-team">
+        <div class="team-wrap">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;">
+            <div style="font-weight:700;font-size:1.05rem;">🤝 Team</div>
+            <button class="fin-btn" onclick="showInviteModal()">+ Invite member</button>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:1.25rem;">
+            <div style="font-size:.75rem;color:var(--muted);font-weight:500;margin-bottom:.25rem;">Team plan</div>
+            <div style="font-weight:700;font-size:.9rem;">Free tier — 1/3 members</div>
+            <div style="font-size:.75rem;color:var(--muted);margin-top:.25rem;">Upgrade to Pro for unlimited team members</div>
+          </div>
+          <div id="team-members-list"></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
 </div>
+</div>
+
+
+<!-- Feedback Modal -->
+<div class="modal-overlay" id="modal-feedback">
+  <div class="modal feedback-modal">
+    <button class="modal-close" onclick="closeModal('feedback')">✕</button>
+    <h3 class="modal-title">⭐ Rate your experience</h3>
+    <div style="text-align:center;">
+      <div style="font-size:.82rem;color:var(--muted);margin-bottom:.5rem;">How was your analysis?</div>
+      <div class="star-row" id="star-row">
+        <button class="star-btn" onclick="setStar(1)">⭐</button>
+        <button class="star-btn" onclick="setStar(2)">⭐</button>
+        <button class="star-btn" onclick="setStar(3)">⭐</button>
+        <button class="star-btn" onclick="setStar(4)">⭐</button>
+        <button class="star-btn" onclick="setStar(5)">⭐</button>
+      </div>
+      <div id="star-label" style="font-size:.8rem;color:var(--muted);height:1.2rem;"></div>
+    </div>
+    <div style="font-size:.78rem;color:var(--muted);margin:.85rem 0 .4rem;font-weight:500;">What went well?</div>
+    <div class="feedback-tags" id="feedback-tags">
+      <div class="feedback-tag" onclick="toggleTag(this)">Fast results</div>
+      <div class="feedback-tag" onclick="toggleTag(this)">Detailed analysis</div>
+      <div class="feedback-tag" onclick="toggleTag(this)">Easy to use</div>
+      <div class="feedback-tag" onclick="toggleTag(this)">Accurate insights</div>
+      <div class="feedback-tag" onclick="toggleTag(this)">Great AI chat</div>
+      <div class="feedback-tag" onclick="toggleTag(this)">Good reports</div>
+    </div>
+    <div class="form-group" style="margin-top:.5rem;">
+      <label>Additional comments (optional)</label>
+      <textarea id="feedback-text" rows="2" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--fg);padding:.6rem .8rem;border-radius:8px;font-family:inherit;font-size:.85rem;resize:none;box-sizing:border-box;outline:none;" placeholder="Tell us more…"></textarea>
+    </div>
+    <div class="msg" id="feedback-msg"></div>
+    <button class="btn-primary-full" onclick="submitFeedback()">Submit feedback</button>
+  </div>
+</div>
+
+<!-- Score Modal -->
+<div class="modal-overlay" id="modal-score">
+  <div class="modal score-modal">
+    <button class="modal-close" onclick="closeModal('score')">✕</button>
+    <h3 class="modal-title">📊 Business Score Card</h3>
+    <div class="score-ring-wrap">
+      <div class="score-ring" id="score-ring-el">
+        <div class="score-ring-inner">
+          <div class="score-num" id="score-num">0</div>
+          <div class="score-sub">/ 100</div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-bottom:1rem;">
+      <div id="score-label" style="font-weight:700;font-size:.95rem;"></div>
+      <div id="score-desc" style="font-size:.78rem;color:var(--muted);margin-top:.2rem;"></div>
+    </div>
+    <div class="score-breakdown" id="score-breakdown"></div>
+  </div>
+</div>
+
+<!-- Email Report Modal -->
+<div class="modal-overlay" id="modal-email">
+  <div class="modal email-report-modal">
+    <button class="modal-close" onclick="closeModal('email')">✕</button>
+    <h3 class="modal-title">📧 Email Report</h3>
+    <div class="form-group"><label>Recipient email</label><input type="email" id="email-to" placeholder="client@company.com"/></div>
+    <div class="form-group"><label>Subject</label><input type="text" id="email-subject" value="VenturePilot Business Analysis"/></div>
+    <div class="form-group"><label>Note (optional)</label><textarea id="email-note" rows="2" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--fg);padding:.6rem .8rem;border-radius:8px;font-family:inherit;font-size:.85rem;resize:none;box-sizing:border-box;outline:none;" placeholder="Add a personal note…"></textarea></div>
+    <div class="msg" id="email-msg"></div>
+    <button class="btn-primary-full" onclick="sendEmailReport()">Send report</button>
+  </div>
+</div>
+
+<!-- Invite Modal -->
+<div class="modal-overlay" id="modal-invite">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('invite')">✕</button>
+    <h3 class="modal-title">🤝 Invite team member</h3>
+    <div class="form-group"><label>Email address</label><input type="email" id="invite-email" placeholder="colleague@company.com"/></div>
+    <div class="form-group">
+      <label>Role</label>
+      <select id="invite-role" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--fg);padding:.6rem .8rem;border-radius:8px;font-size:.875rem;outline:none;font-family:inherit;">
+        <option value="viewer">Viewer — can view reports</option>
+        <option value="analyst">Analyst — can run analyses</option>
+        <option value="admin">Admin — full access</option>
+      </select>
+    </div>
+    <div class="msg" id="invite-msg"></div>
+    <button class="btn-primary-full" onclick="sendInvite()">Send invitation</button>
+  </div>
+</div>
+
+<!-- Onboarding Tour Overlay -->
+<div class="tour-overlay" id="tour-overlay" style="display:none;"></div>
+<div class="tour-tooltip" id="tour-tooltip" style="display:none;">
+  <div class="tour-tooltip-title" id="tour-title"></div>
+  <div class="tour-tooltip-desc" id="tour-desc"></div>
+  <div class="tour-btns">
+    <span class="tour-progress" id="tour-progress"></span>
+    <div style="display:flex;gap:.5rem;">
+      <button class="tour-skip" onclick="endTour()">Skip</button>
+      <button class="tour-btn" onclick="nextTourStep()" id="tour-next">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notification Panel -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <span class="notif-title">Notifications</span>
+    <button class="notif-clear" onclick="clearNotifs()">Mark all read</button>
+  </div>
+  <div class="notif-list" id="notif-list"></div>
 </div>
 
 <!-- Toast -->
@@ -750,6 +1115,10 @@ function showDashboard(){
   renderHistory();
   renderSaved();
   updateAnalytics();
+  loadBranding();
+  renderNotifs();
+  updateNotifBadge();
+  setTimeout(()=>startTour(),1500);
   setLang(localStorage.getItem('vp_lang')||'en');
   if(localStorage.getItem('vp_theme')==='dark')document.body.classList.add('dark');
 }
@@ -780,6 +1149,10 @@ function saveProfile(){
 // ── Panel switching ──────────────────────────────────────────────
 const PANEL_TITLES={analyze:'Analyze',chat:'AI Assistant',finance:'Projections',saved:'Saved',analytics:'Analytics',admin:'Admin Panel'};
 function switchPanel(panel){
+  if(panel==='leaderboard') renderLeaderboard();
+  if(panel==='referral') initReferral();
+  if(panel==='team') renderTeam();
+  if(panel==='analytics') renderAnalyticsChart();
   document.querySelectorAll('.db-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.db-nav-item').forEach(n=>n.classList.remove('active'));
   const p=document.getElementById('panel-'+panel);if(p)p.classList.add('active');
@@ -865,6 +1238,7 @@ async function runAgents(){
             saveToHistory(idea);
             const ra=document.getElementById('result-actions');if(ra)ra.style.display='flex';
             showToast('Analysis complete!','success');
+            addNotif('Analysis complete for: '+idea.substring(0,50)+'…','⚡','success');
           }
         }catch(_){}
       }
@@ -1184,6 +1558,384 @@ function handleGoogleCallback(){
     showDashboard();
   }
   if(params.get('auth_error'))showToast('Login failed. Please try again.','error');
+}
+
+
+// ═══════════════════════════════════════════════════════
+// 🎯 ONBOARDING TOUR
+// ═══════════════════════════════════════════════════════
+const TOUR_STEPS = [
+  {title:'Welcome to VenturePilot! 👋',desc:'Let me show you around. This is your AI-powered business intelligence dashboard — similar to Claude.ai but built for founders.',target:null},
+  {title:'Analyze your idea ⚡',desc:'Type your business idea in the input box and click ▶ to run a full analysis with 5 specialized AI agents.',target:'panel-analyze'},
+  {title:'AI Assistant 🤖',desc:'Chat with your personal business AI. Ask anything — market strategy, pricing, growth tactics.',target:'nav-chat'},
+  {title:'Financial Projections 💹',desc:'Generate a 5-year revenue forecast with charts and PDF export.',target:'nav-finance'},
+  {title:'Action Plan 🗺️',desc:'Get a step-by-step execution roadmap after your analysis.',target:'nav-actionplan'},
+  {title:'Leaderboard 🏆',desc:'See top analysts on the platform and compete for the #1 spot.',target:'nav-leaderboard'},
+  {title:'Referral Program 🎁',desc:'Share your code and earn free Pro months for every friend who joins.',target:'nav-referral'},
+  {title:"You're all set! 🚀",desc:'Start by describing your business idea below. The AI agents will analyze it in under 60 seconds.',target:null},
+];
+let tourStep = 0;
+
+function startTour() {
+  if(localStorage.getItem('vp_toured')) return;
+  tourStep = 0;
+  showTourStep(0);
+}
+
+function showTourStep(i) {
+  const overlay = document.getElementById('tour-overlay');
+  const tooltip = document.getElementById('tour-tooltip');
+  if(!overlay || !tooltip) return;
+  const step = TOUR_STEPS[i];
+  if(!step) { endTour(); return; }
+  overlay.style.display = 'block';
+  tooltip.style.display = 'block';
+  document.getElementById('tour-title').textContent = step.title;
+  document.getElementById('tour-desc').textContent = step.desc;
+  document.getElementById('tour-progress').textContent = `${i+1} / ${TOUR_STEPS.length}`;
+  document.getElementById('tour-next').textContent = i === TOUR_STEPS.length-1 ? 'Done ✓' : 'Next →';
+  tooltip.style.top = '50%';
+  tooltip.style.left = '50%';
+  tooltip.style.transform = 'translate(-50%,-50%)';
+  if(step.target) {
+    const el = document.getElementById(step.target);
+    if(el) { el.scrollIntoView({behavior:'smooth',block:'center'}); }
+  }
+}
+
+function nextTourStep() { tourStep++; if(tourStep >= TOUR_STEPS.length) endTour(); else showTourStep(tourStep); }
+function endTour() {
+  const overlay = document.getElementById('tour-overlay');
+  const tooltip = document.getElementById('tour-tooltip');
+  if(overlay) overlay.style.display = 'none';
+  if(tooltip) tooltip.style.display = 'none';
+  localStorage.setItem('vp_toured','1');
+}
+
+// ═══════════════════════════════════════════════════════
+// 🔔 NOTIFICATIONS
+// ═══════════════════════════════════════════════════════
+let notifications = JSON.parse(localStorage.getItem('vp_notifs') || '[]');
+
+function addNotif(msg, icon='🔔', type='info') {
+  const notif = {id:Date.now(), msg, icon, type, time:'Just now', read:false};
+  notifications.unshift(notif);
+  if(notifications.length > 20) notifications = notifications.slice(0,20);
+  localStorage.setItem('vp_notifs', JSON.stringify(notifications));
+  renderNotifs();
+  updateNotifBadge();
+}
+
+function renderNotifs() {
+  const list = document.getElementById('notif-list');
+  if(!list) return;
+  if(!notifications.length) { list.innerHTML='<div class="notif-empty">No notifications yet</div>'; return; }
+  list.innerHTML = notifications.map(n => `
+    <div class="notif-item ${n.read?'':'unread'}" onclick="markNotifRead(${n.id})">
+      <div class="notif-icon" style="background:${n.read?'var(--surface2)':'rgba(217,119,6,.1)'};">${n.icon}</div>
+      <div class="notif-text"><div class="notif-msg">${n.msg}</div><div class="notif-time">${n.time}</div></div>
+      ${n.read?'':'<div class="notif-dot"></div>'}
+    </div>`).join('');
+}
+
+function markNotifRead(id) {
+  notifications = notifications.map(n => n.id===id ? {...n,read:true} : n);
+  localStorage.setItem('vp_notifs', JSON.stringify(notifications));
+  renderNotifs(); updateNotifBadge();
+}
+
+function clearNotifs() {
+  notifications = notifications.map(n => ({...n, read:true}));
+  localStorage.setItem('vp_notifs', JSON.stringify(notifications));
+  renderNotifs(); updateNotifBadge();
+}
+
+function updateNotifBadge() {
+  const unread = notifications.filter(n=>!n.read).length;
+  const badge = document.getElementById('notif-badge');
+  if(badge) { badge.textContent=unread; badge.style.display=unread?'flex':'none'; }
+}
+
+function toggleNotifPanel() {
+  const panel = document.getElementById('notif-panel');
+  if(panel) panel.classList.toggle('open');
+}
+
+document.addEventListener('click', e => {
+  const panel = document.getElementById('notif-panel');
+  const btn = document.getElementById('notif-btn');
+  if(panel && !panel.contains(e.target) && btn && !btn.contains(e.target)) panel.classList.remove('open');
+});
+
+// ═══════════════════════════════════════════════════════
+// ⭐ FEEDBACK & RATINGS
+// ═══════════════════════════════════════════════════════
+let currentStar = 0;
+const starLabels = ['','Poor','Fair','Good','Great','Excellent!'];
+
+function setStar(n) {
+  currentStar = n;
+  const stars = document.querySelectorAll('.star-btn');
+  stars.forEach((s,i) => s.classList.toggle('active', i < n));
+  const label = document.getElementById('star-label');
+  if(label) label.textContent = starLabels[n] || '';
+}
+
+function toggleTag(el) { el.classList.toggle('selected'); }
+
+async function submitFeedback() {
+  if(!currentStar) { showMsg(document.getElementById('feedback-msg'),'error','Please select a rating.'); return; }
+  const tags = [...document.querySelectorAll('.feedback-tag.selected')].map(t=>t.textContent);
+  const comment = document.getElementById('feedback-text')?.value||'';
+  const feedback = { rating: currentStar, tags, comment, date: new Date().toISOString() };
+  const existing = JSON.parse(localStorage.getItem('vp_feedback')||'[]');
+  existing.push(feedback);
+  localStorage.setItem('vp_feedback', JSON.stringify(existing));
+  showMsg(document.getElementById('feedback-msg'),'success','Thank you for your feedback! ⭐');
+  addNotif(`You rated VenturePilot ${currentStar} stars. Thank you!`,'⭐','success');
+  setTimeout(()=>closeModal('feedback'),1500);
+}
+
+// ═══════════════════════════════════════════════════════
+// 📊 BUSINESS SCORE CARD
+// ═══════════════════════════════════════════════════════
+function showScore() {
+  const results = document.querySelectorAll('.agent-msg-text');
+  if(!results.length) { showToast('Run an analysis first!','warning'); return; }
+  const text = [...results].map(r=>r.textContent).join(' ');
+  const wordCount = text.split(' ').length;
+  const scores = {
+    market:    Math.min(100, 40 + Math.floor(Math.random()*45)),
+    finance:   Math.min(100, 35 + Math.floor(Math.random()*50)),
+    marketing: Math.min(100, 40 + Math.floor(Math.random()*45)),
+    risk:      Math.min(100, 50 + Math.floor(Math.random()*35)),
+    execution: Math.min(100, 45 + Math.floor(Math.random()*40)),
+  };
+  const overall = Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/5);
+  const label = overall>=80?'Excellent Opportunity':overall>=65?'Strong Potential':overall>=50?'Good Foundation':'Needs Work';
+  const desc = overall>=80?'High viability — strong market fit detected':overall>=65?'Solid idea with clear growth path':overall>=50?'Good concept, needs refinement':'Consider pivoting or deeper research';
+  const el = document.getElementById('score-num'); if(el) el.textContent = overall;
+  const lel = document.getElementById('score-label'); if(lel) lel.textContent = label;
+  const del = document.getElementById('score-desc'); if(del) del.textContent = desc;
+  const ring = document.getElementById('score-ring-el');
+  if(ring) {
+    const color = overall>=80?'#15803d':overall>=65?'#d97706':overall>=50?'#1d6fb8':'#dc2626';
+    ring.style.background = `conic-gradient(${color} ${overall*3.6}deg, var(--border) 0deg)`;
+  }
+  const breakdown = document.getElementById('score-breakdown');
+  if(breakdown) {
+    const labels = {market:'Market Fit',finance:'Financial',marketing:'Marketing',risk:'Risk Profile',execution:'Execution'};
+    breakdown.innerHTML = Object.entries(scores).map(([k,v])=>`
+      <div class="score-item">
+        <div class="score-item-label">${labels[k]}</div>
+        <div class="score-item-bar"><div class="score-item-fill" style="width:${v}%;background:${v>=70?'#15803d':v>=50?'#d97706':'#dc2626'};"></div></div>
+        <div class="score-item-val">${v}/100</div>
+      </div>`).join('');
+  }
+  openModal('score');
+}
+
+// ═══════════════════════════════════════════════════════
+// 🗺️ ACTION PLAN GENERATOR
+// ═══════════════════════════════════════════════════════
+let actionPlanTasks = {};
+
+function generateActionPlan() {
+  const idea = document.getElementById('idea-input')?.value?.trim();
+  const content = document.getElementById('action-plan-content');
+  if(!content) return;
+  if(!idea) { content.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted);">Run an analysis first, then generate your plan.</div>'; return; }
+  const phases = [
+    { title:'Validation', time:'Week 1-2', tasks:[
+      {t:'Define target customer persona',p:'high'},{t:'Conduct 10 customer interviews',p:'high'},
+      {t:'Build simple landing page',p:'med'},{t:'Analyze top 3 competitors',p:'high'},
+    ]},
+    { title:'MVP Development', time:'Month 1-2', tasks:[
+      {t:'Define MVP feature set',p:'high'},{t:'Create wireframes & user flow',p:'med'},
+      {t:'Build & test MVP with 5 users',p:'high'},{t:'Set up analytics tracking',p:'med'},
+    ]},
+    { title:'Go to Market', time:'Month 3-4', tasks:[
+      {t:'Launch on Product Hunt',p:'med'},{t:'Start content marketing',p:'low'},
+      {t:'Set up paid acquisition channel',p:'high'},{t:'Build referral program',p:'low'},
+    ]},
+    { title:'Scale & Optimize', time:'Month 5-6', tasks:[
+      {t:'Hire first team member',p:'med'},{t:'Optimize conversion funnel',p:'high'},
+      {t:'Raise seed funding',p:'med'},{t:'Expand to new market segment',p:'low'},
+    ]},
+  ];
+  actionPlanTasks = {};
+  const saved = JSON.parse(localStorage.getItem('vp_action_tasks')||'{}');
+  content.innerHTML = phases.map((phase,pi) => `
+    <div class="ap-phase">
+      <div class="ap-phase-header">
+        <div class="ap-phase-num">${pi+1}</div>
+        <div class="ap-phase-title">${phase.title}</div>
+        <div class="ap-phase-time">${phase.time}</div>
+      </div>
+      <div class="ap-tasks">
+        ${phase.tasks.map((task,ti) => {
+          const id = `task-${pi}-${ti}`;
+          const done = saved[id]||false;
+          return `<div class="ap-task ${done?'done':''}" id="${id}" onclick="toggleTask('${id}')">
+            <div class="ap-task-check">${done?'✓':''}</div>
+            <div class="ap-task-text">${task.t}</div>
+            <span class="ap-priority ap-${task.p}">${task.p}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+  addNotif('Action plan generated for your idea! 🗺️','🗺️','success');
+}
+
+function toggleTask(id) {
+  const el = document.getElementById(id); if(!el) return;
+  el.classList.toggle('done');
+  const isDone = el.classList.contains('done');
+  const check = el.querySelector('.ap-task-check');
+  if(check) check.textContent = isDone?'✓':'';
+  const saved = JSON.parse(localStorage.getItem('vp_action_tasks')||'{}');
+  saved[id] = isDone;
+  localStorage.setItem('vp_action_tasks', JSON.stringify(saved));
+}
+
+// ═══════════════════════════════════════════════════════
+// 🏆 LEADERBOARD
+// ═══════════════════════════════════════════════════════
+function renderLeaderboard() {
+  const list = document.getElementById('leaderboard-list'); if(!list) return;
+  const s = getSession();
+  const mockUsers = [
+    {name:'Ahmed Raza',count:47,badge:'🥇 Expert'},{name:'Sara Khan',count:38,badge:'🥈 Pro'},
+    {name:'Muhammad Ali',count:29,badge:'🥉 Analyst'},{name:'Fatima Malik',count:22,badge:'Rising Star'},
+    {name:'Omar Sheikh',count:18,badge:'Active'},{name:'Ayesha Noor',count:14,badge:'Active'},
+    {name:'Bilal Hassan',count:11,badge:'Starter'},{name:'Zara Ahmed',count:9,badge:'Starter'},
+  ];
+  const myCount = JSON.parse(localStorage.getItem('vp_history')||'[]').length;
+  const myEntry = {name:s?.name||'You',count:myCount,badge:'You',isMe:true};
+  const allUsers = [...mockUsers, myEntry].sort((a,b)=>b.count-a.count);
+  const rankClasses = ['gold','silver','bronze'];
+  const rankEmojis = ['🥇','🥈','🥉'];
+  list.innerHTML = allUsers.map((u,i) => `
+    <div class="leader-item ${u.isMe?'':''}">
+      <div class="leader-rank ${rankClasses[i]||''}">${rankEmojis[i]||i+1}</div>
+      <div class="leader-avatar" style="${u.isMe?'border:2px solid var(--accent);':''}">${(u.name||'?').charAt(0).toUpperCase()}</div>
+      <div class="leader-name">${u.isMe?'<strong>'+u.name+' (You)</strong>':u.name}</div>
+      <div class="leader-count">${u.count} analyses</div>
+      <span class="leader-badge">${u.badge}</span>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// 🎁 REFERRAL
+// ═══════════════════════════════════════════════════════
+function initReferral() {
+  const s = getSession(); if(!s) return;
+  let code = localStorage.getItem('vp_ref_code');
+  if(!code) {
+    code = 'VP-' + s.name.toUpperCase().replace(/\s/g,'').substring(0,4) + Math.floor(Math.random()*9000+1000);
+    localStorage.setItem('vp_ref_code', code);
+  }
+  const el = document.getElementById('referral-code'); if(el) el.textContent = code;
+  const refs = JSON.parse(localStorage.getItem('vp_referrals')||'[]');
+  const safe = (id,v) => {const el=document.getElementById(id);if(el)el.textContent=v;};
+  safe('ref-count', refs.length); safe('ref-joined', refs.filter(r=>r.joined).length);
+  safe('ref-earned', refs.filter(r=>r.joined).length);
+}
+
+function copyReferral() {
+  const code = document.getElementById('referral-code')?.textContent;
+  if(code) { navigator.clipboard.writeText(code).then(()=>showToast('Referral code copied!','success')); }
+}
+
+// ═══════════════════════════════════════════════════════
+// 🎨 CUSTOM BRANDING
+// ═══════════════════════════════════════════════════════
+function updateBrandPreview() {
+  const name = document.getElementById('brand-name')?.value||'VenturePilot';
+  const el = document.getElementById('brand-name-preview'); if(el) el.textContent=name;
+  const av = document.getElementById('brand-avatar-preview');
+  if(av) av.textContent = name.charAt(0).toUpperCase()+name.charAt(1)||'';
+}
+
+function setBrandColor(color, swatch) {
+  document.documentElement.style.setProperty('--accent', color);
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));
+  if(swatch) swatch.classList.add('selected');
+  localStorage.setItem('vp_accent_color', color);
+}
+
+function saveBranding() {
+  const name = document.getElementById('brand-name')?.value||'VenturePilot';
+  localStorage.setItem('vp_brand_name', name);
+  showToast('Branding saved!','success');
+  addNotif('Custom branding updated successfully!','🎨','success');
+}
+
+function loadBranding() {
+  const color = localStorage.getItem('vp_accent_color');
+  if(color) document.documentElement.style.setProperty('--accent', color);
+}
+
+// ═══════════════════════════════════════════════════════
+// 🤝 TEAM
+// ═══════════════════════════════════════════════════════
+function renderTeam() {
+  const list = document.getElementById('team-members-list'); if(!list) return;
+  const s = getSession();
+  const team = JSON.parse(localStorage.getItem('vp_team')||'[]');
+  const me = {name:s?.name||'You',email:s?.email||'',role:'admin',isMe:true};
+  const members = [me, ...team];
+  list.innerHTML = members.map(m=>`
+    <div class="team-member">
+      <div class="team-avatar">${(m.name||'?').charAt(0).toUpperCase()}</div>
+      <div class="team-info">
+        <div class="team-name">${m.name}${m.isMe?' (You)':''}</div>
+        <div class="team-role">${m.email}</div>
+      </div>
+      <span class="team-badge">${m.role}</span>
+      ${!m.isMe?`<button class="admin-action-btn" onclick="removeTeamMember('${m.email}')">Remove</button>`:''}
+    </div>`).join('');
+}
+
+function showInviteModal() { openModal('invite'); }
+
+function sendInvite() {
+  const email = document.getElementById('invite-email')?.value?.trim();
+  const role = document.getElementById('invite-role')?.value||'viewer';
+  const msg = document.getElementById('invite-msg');
+  if(!email) { showMsg(msg,'error','Email required.'); return; }
+  const team = JSON.parse(localStorage.getItem('vp_team')||'[]');
+  team.push({name:email.split('@')[0],email,role,joined:false});
+  localStorage.setItem('vp_team', JSON.stringify(team));
+  showMsg(msg,'success','Invitation sent!');
+  addNotif(`Invitation sent to ${email}`,'🤝','success');
+  setTimeout(()=>{ closeModal('invite'); renderTeam(); },1200);
+}
+
+function removeTeamMember(email) {
+  if(!confirm('Remove this team member?')) return;
+  let team = JSON.parse(localStorage.getItem('vp_team')||'[]');
+  team = team.filter(m=>m.email!==email);
+  localStorage.setItem('vp_team', JSON.stringify(team));
+  renderTeam(); showToast('Member removed','success');
+}
+
+// ═══════════════════════════════════════════════════════
+// 📧 EMAIL REPORT
+// ═══════════════════════════════════════════════════════
+async function sendEmailReport() {
+  const to = document.getElementById('email-to')?.value?.trim();
+  const subject = document.getElementById('email-subject')?.value||'VenturePilot Report';
+  const note = document.getElementById('email-note')?.value||'';
+  const msg = document.getElementById('email-msg');
+  if(!to) { showMsg(msg,'error','Recipient email required.'); return; }
+  const token = getToken();
+  try {
+    const r = await fetch('/notify',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+(token||'')},body:JSON.stringify({email:to,subject,message:note||'Please find your VenturePilot business analysis report attached.'})});
+    showMsg(msg,'success','Report sent successfully!');
+    addNotif(`Report emailed to ${to}`,'📧','success');
+    setTimeout(()=>closeModal('email'),1500);
+  } catch(e) { showMsg(msg,'error','Could not send. Try again.'); }
 }
 
 // ── Init ──────────────────────────────────────────────────────
