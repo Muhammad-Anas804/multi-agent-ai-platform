@@ -229,26 +229,35 @@ Always encourage users to use the Analyze feature for deep multi-agent reports."
 
 @app.post("/chat")
 async def chat(req: ChatRequest):
+    if not GROQ_API_KEY:
+        raise HTTPException(500, "GROQ_API_KEY not configured.")
     idea_context = f"\n\nThe user is currently working on this business idea: {req.idea}" if req.idea else ""
     system = SYSTEM_PROMPT + idea_context
-    
-    async with httpx.AsyncClient(timeout=30) as client:
-        r = await client.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers={"Authorization": f"Bearer {GROQ_API_KEY}"},
-            json={
-                "model": "llama3-8b-8192",
-                "messages": [
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": req.message}
-                ],
-                "max_tokens": 400,
-                "temperature": 0.7
-            }
-        )
-        data = r.json()
-        reply = data["choices"][0]["message"]["content"]
-    return {"reply": reply}
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {GROQ_API_KEY}"},
+                json={
+                    "model": "llama-3.1-8b-instant",
+                    "messages": [
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": req.message}
+                    ],
+                    "max_tokens": 500,
+                    "temperature": 0.7
+                }
+            )
+            data = r.json()
+            if "choices" not in data:
+                error_msg = data.get("error", {}).get("message", str(data))
+                raise HTTPException(500, f"Groq API error: {error_msg}")
+            reply = data["choices"][0]["message"]["content"]
+        return {"reply": reply}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"Chat error: {str(e)}")
 
 @app.get("/auth/logout")
 async def logout():
