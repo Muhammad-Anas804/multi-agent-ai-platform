@@ -692,7 +692,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);font-si
             <button class="db-topbar-btn" onclick="bookmarkAnalysis()">🔖 Save</button>
             <button class="db-topbar-btn" onclick="shareReport()">🔗 Share</button>
             <button class="db-topbar-btn" onclick="showScore()">📊 Score</button>
-            <button class="db-topbar-btn" onclick="switchPanel('actionplan')">🗺️ Action Plan</button>
+            <button class="db-topbar-btn" onclick="switchPanel('actionplan');setTimeout(generateActionPlan,100);">🗺️ Action Plan</button>
             <button class="db-topbar-btn" onclick="openModal('email')">📧 Email</button>
             <button class="db-topbar-btn" onclick="newAnalysis()">✕ Clear</button>
           </div>
@@ -1808,10 +1808,16 @@ function showScore() {
 let actionPlanTasks = {};
 
 function generateActionPlan() {
-  const idea = document.getElementById('idea-input')?.value?.trim();
+  let idea = document.getElementById('idea-input')?.value?.trim();
   const content = document.getElementById('action-plan-content');
   if(!content) return;
-  if(!idea) { content.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted);">Run an analysis first, then generate your plan.</div>'; return; }
+  // Use history if idea-input is empty
+  if(!idea) {
+    const h = getHistory();
+    if(h.length) { idea = h[0].idea; }
+  }
+  // Still generate even without idea
+  if(!idea) idea = 'Your Business';
   const phases = [
     { title:'Validation', time:'Week 1-2', tasks:[
       {t:'Define target customer persona',p:'high'},{t:'Conduct 10 customer interviews',p:'high'},
