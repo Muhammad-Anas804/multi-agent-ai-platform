@@ -441,6 +441,40 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);font-si
 .team-role{font-size:.72rem;color:var(--muted);}
 .team-badge{font-size:.65rem;font-weight:600;padding:.15rem .5rem;border-radius:4px;background:rgba(217,119,6,.1);color:var(--accent);}
 
+
+/* ═══ VOICE INPUT ═══ */
+.voice-btn{background:none;border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.95rem;transition:all .2s;flex-shrink:0;}
+.voice-btn:hover{border-color:var(--accent);color:var(--accent);}
+.voice-btn.listening{border-color:#dc2626;color:#dc2626;background:rgba(220,38,38,.08);animation:voicePulse 1s infinite;}
+@keyframes voicePulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.3);}50%{box-shadow:0 0 0 6px rgba(220,38,38,0);}}
+.voice-indicator{display:none;align-items:center;gap:.5rem;padding:.4rem .75rem;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:8px;font-size:.75rem;color:#dc2626;margin-bottom:.5rem;}
+.voice-indicator.active{display:flex;}
+.voice-waves{display:flex;gap:2px;align-items:center;}
+.voice-wave{width:3px;border-radius:2px;background:#dc2626;animation:waveAnim .6s infinite ease-in-out;}
+.voice-wave:nth-child(1){height:8px;animation-delay:0s;}
+.voice-wave:nth-child(2){height:14px;animation-delay:.1s;}
+.voice-wave:nth-child(3){height:20px;animation-delay:.2s;}
+.voice-wave:nth-child(4){height:14px;animation-delay:.3s;}
+.voice-wave:nth-child(5){height:8px;animation-delay:.4s;}
+@keyframes waveAnim{0%,100%{transform:scaleY(.5);opacity:.5;}50%{transform:scaleY(1);opacity:1;}}
+
+/* ═══ PDF UPLOAD ═══ */
+.upload-btn{background:none;border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:all .2s;flex-shrink:0;}
+.upload-btn:hover{border-color:var(--accent);color:var(--accent);}
+.pdf-preview{display:none;align-items:center;gap:.65rem;padding:.5rem .75rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:.5rem;font-size:.8rem;}
+.pdf-preview.visible{display:flex;}
+.pdf-icon{width:28px;height:28px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;}
+.pdf-name{flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pdf-size{font-size:.7rem;color:var(--muted2);flex-shrink:0;}
+.pdf-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:.1rem .25rem;border-radius:4px;flex-shrink:0;}
+.pdf-remove:hover{color:#dc2626;}
+.pdf-processing{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:var(--accent);}
+.pdf-drop-zone{border:2px dashed var(--border);border-radius:12px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:.75rem;display:none;}
+.pdf-drop-zone.active,.pdf-drop-zone:hover{border-color:var(--accent);background:rgba(217,119,6,.03);}
+.pdf-drop-icon{font-size:1.75rem;margin-bottom:.4rem;}
+.pdf-drop-text{font-size:.82rem;color:var(--muted);}
+.pdf-drop-hint{font-size:.72rem;color:var(--muted2);margin-top:.2rem;}
+
 </style>
 </head>
 <body>
@@ -665,18 +699,49 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);font-si
 
           <!-- Input -->
           <div class="analyze-input-wrap">
-            <div class="analyze-input-box">
-              <textarea class="analyze-textarea" id="idea-input" placeholder="Describe your business idea…" rows="1" oninput="autoResize(this)" onkeydown="handleAnalyzeKey(event)"></textarea>
+            <!-- Voice indicator -->
+            <div class="voice-indicator" id="voice-indicator">
+              <div class="voice-waves"><span class="voice-wave"></span><span class="voice-wave"></span><span class="voice-wave"></span><span class="voice-wave"></span><span class="voice-wave"></span></div>
+              <span>Listening… speak your business idea</span>
+              <button onclick="stopVoice()" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:.8rem;font-weight:600;font-family:inherit;">Stop</button>
+            </div>
+
+            <!-- PDF preview -->
+            <div class="pdf-preview" id="pdf-preview">
+              <div class="pdf-icon">📄</div>
+              <div class="pdf-name" id="pdf-name">document.pdf</div>
+              <div class="pdf-size" id="pdf-size"></div>
+              <button class="pdf-remove" onclick="removePDF()" title="Remove PDF">✕</button>
+            </div>
+
+            <!-- Drop zone (shown on drag) -->
+            <div class="pdf-drop-zone" id="pdf-drop-zone" onclick="document.getElementById('pdf-file-input').click()">
+              <div class="pdf-drop-icon">📎</div>
+              <div class="pdf-drop-text">Drop PDF here or click to upload</div>
+              <div class="pdf-drop-hint">Business plans, pitch decks, market reports</div>
+            </div>
+
+            <!-- Hidden file input -->
+            <input type="file" id="pdf-file-input" accept=".pdf,.doc,.docx,.txt" style="display:none;" onchange="handleFileUpload(this)"/>
+
+            <div class="analyze-input-box" id="analyze-input-box"
+              ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+              <textarea class="analyze-textarea" id="idea-input" placeholder="Describe your business idea… or upload a PDF 📎" rows="1" oninput="autoResize(this)" onkeydown="handleAnalyzeKey(event)"></textarea>
               <div class="analyze-input-footer">
                 <div class="analyze-input-chips">
-                  <button class="analyze-input-chip" onclick="setContext('Pakistan market, early-stage, $10K budget')">🇵🇰 Pakistan</button>
-                  <button class="analyze-input-chip" onclick="setContext('Global market, Series A ready, $500K budget')">🌍 Global</button>
+                  <button class="analyze-input-chip" onclick="setContext('Pakistan market, early-stage, \$10K budget')">🇵🇰 Pakistan</button>
+                  <button class="analyze-input-chip" onclick="setContext('Global market, Series A ready, \$500K budget')">🌍 Global</button>
                   <button class="analyze-input-chip" onclick="setContext('B2B SaaS, enterprise customers, recurring revenue')">💼 B2B</button>
+                  <button class="analyze-input-chip" onclick="document.getElementById('pdf-drop-zone').style.display=document.getElementById('pdf-drop-zone').style.display==='block'?'none':'block'">📎 Upload PDF</button>
                 </div>
-                <button class="analyze-send-btn" id="run-btn" onclick="runAgents()" title="Run analysis">▶</button>
+                <div style="display:flex;gap:.4rem;align-items:center;">
+                  <button class="upload-btn" onclick="document.getElementById('pdf-file-input').click()" title="Upload PDF / Document">📎</button>
+                  <button class="voice-btn" id="voice-btn" onclick="toggleVoice()" title="Voice input">🎤</button>
+                  <button class="analyze-send-btn" id="run-btn" onclick="runAgents()" title="Run analysis">▶</button>
+                </div>
               </div>
             </div>
-            <div style="font-size:.7rem;color:var(--muted2);text-align:center;margin-top:.5rem;">Press Enter or click ▶ to analyze · Shift+Enter for new line</div>
+            <div style="font-size:.7rem;color:var(--muted2);text-align:center;margin-top:.5rem;">Press Enter or ▶ to analyze · 🎤 Voice · 📎 Upload PDF · Shift+Enter for new line</div>
           </div>
         </div>
       </div>
@@ -1187,6 +1252,8 @@ function newAnalysis(){
 async function runAgents(){
   const idea=document.getElementById('idea-input').value.trim();
   if(!idea){showToast('Please describe your business idea first.','warning');return;}
+  // Stop voice if running
+  if(isListening) stopVoice();
   const btn=document.getElementById('run-btn');
   if(btn)btn.disabled=true;
   document.getElementById('analyze-welcome').style.display='none';
@@ -1936,6 +2003,189 @@ async function sendEmailReport() {
     addNotif(`Report emailed to ${to}`,'📧','success');
     setTimeout(()=>closeModal('email'),1500);
   } catch(e) { showMsg(msg,'error','Could not send. Try again.'); }
+}
+
+
+// ═══════════════════════════════════════════════════════
+// 🎤 VOICE INPUT
+// ═══════════════════════════════════════════════════════
+let recognition = null;
+let isListening = false;
+
+function initVoice() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) return null;
+  const r = new SpeechRecognition();
+  r.continuous = true;
+  r.interimResults = true;
+  r.lang = 'en-US';
+  r.onstart = () => {
+    isListening = true;
+    const btn = document.getElementById('voice-btn');
+    const indicator = document.getElementById('voice-indicator');
+    if (btn) btn.classList.add('listening');
+    if (indicator) indicator.classList.add('active');
+    showToast('Listening… speak your idea', 'info', 5000);
+  };
+  r.onresult = (e) => {
+    let transcript = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      transcript += e.results[i][0].transcript;
+    }
+    const ta = document.getElementById('idea-input');
+    if (ta) { ta.value = transcript; autoResize(ta); }
+  };
+  r.onerror = (e) => {
+    stopVoice();
+    if (e.error === 'not-allowed') showToast('Microphone access denied. Please allow microphone.', 'error');
+    else if (e.error === 'no-speech') showToast('No speech detected. Try again.', 'warning');
+    else showToast('Voice error: ' + e.error, 'error');
+  };
+  r.onend = () => { if (isListening) stopVoice(); };
+  return r;
+}
+
+function toggleVoice() {
+  if (isListening) { stopVoice(); return; }
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    showToast('Voice not supported in this browser. Try Chrome.', 'error');
+    return;
+  }
+  recognition = initVoice();
+  if (recognition) {
+    try { recognition.start(); }
+    catch(e) { showToast('Could not start voice. Try again.', 'error'); }
+  }
+}
+
+function stopVoice() {
+  isListening = false;
+  if (recognition) { try { recognition.stop(); } catch(e){} }
+  const btn = document.getElementById('voice-btn');
+  const indicator = document.getElementById('voice-indicator');
+  if (btn) btn.classList.remove('listening');
+  if (indicator) indicator.classList.remove('active');
+}
+
+// ═══════════════════════════════════════════════════════
+// 📎 PDF / DOCUMENT UPLOAD
+// ═══════════════════════════════════════════════════════
+let uploadedFileContent = '';
+let uploadedFileName = '';
+
+async function handleFileUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  // Reset
+  input.value = '';
+  const preview = document.getElementById('pdf-preview');
+  const nameEl = document.getElementById('pdf-name');
+  const sizeEl = document.getElementById('pdf-size');
+  const dropZone = document.getElementById('pdf-drop-zone');
+  const ta = document.getElementById('idea-input');
+  uploadedFileName = file.name;
+  const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+  if (file.size > 10 * 1024 * 1024) { showToast('File too large. Max 10MB.', 'error'); return; }
+  if (nameEl) nameEl.textContent = file.name;
+  if (sizeEl) sizeEl.textContent = sizeMB + ' MB';
+  if (preview) preview.classList.add('visible');
+  if (dropZone) dropZone.style.display = 'none';
+  showToast('Reading document…', 'info', 2000);
+  try {
+    if (file.type === 'application/pdf') {
+      await extractPDFText(file);
+    } else {
+      // Plain text / doc
+      const text = await file.text();
+      uploadedFileContent = text.substring(0, 3000);
+      applyFileContent();
+    }
+  } catch(e) {
+    showToast('Could not read file. Try a .txt file.', 'error');
+    removePDF();
+  }
+}
+
+async function extractPDFText(file) {
+  // Use FileReader to read as text for simple PDFs
+  // For complex PDFs, extract what we can
+  try {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const binary = e.target.result;
+      // Extract readable text from PDF binary
+      let text = '';
+      const matches = binary.match(/\(([^)]{3,})\)/g);
+      if (matches && matches.length > 5) {
+        text = matches
+          .map(m => m.slice(1,-1))
+          .filter(t => /[a-zA-Z]{2,}/.test(t))
+          .join(' ')
+          .substring(0, 3000);
+      }
+      if (text.length > 50) {
+        uploadedFileContent = text;
+        applyFileContent();
+        showToast('PDF content extracted! Review and run analysis.', 'success');
+      } else {
+        // Fallback — ask user to describe
+        uploadedFileContent = `[PDF uploaded: ${uploadedFileName}] Please analyze the business document attached.`;
+        applyFileContent();
+        showToast('PDF uploaded. Add details for better analysis.', 'info');
+      }
+    };
+    reader.readAsBinaryString(file);
+  } catch(e) {
+    uploadedFileContent = `Business document: ${uploadedFileName}`;
+    applyFileContent();
+  }
+}
+
+function applyFileContent() {
+  const ta = document.getElementById('idea-input');
+  if (!ta) return;
+  if (uploadedFileContent && uploadedFileContent.length > 20) {
+    // Prepend file context to idea input
+    const existing = ta.value.trim();
+    const sep = '\n\n';
+    ta.value = existing ? (existing + sep + 'Document content:' + sep + uploadedFileContent) : ('Analyze this business document:' + sep + uploadedFileContent);
+    autoResize(ta);
+    showToast('Document loaded! Click ▶ to analyze.', 'success');
+    addNotif(`Document "${uploadedFileName}" uploaded and ready for analysis.`, '📄', 'info');
+  }
+}
+
+function removePDF() {
+  uploadedFileContent = '';
+  uploadedFileName = '';
+  const preview = document.getElementById('pdf-preview');
+  if (preview) preview.classList.remove('visible');
+  const ta = document.getElementById('idea-input');
+  if (ta) { ta.value = ''; autoResize(ta); }
+}
+
+// Drag & drop support
+function handleDragOver(e) {
+  e.preventDefault();
+  const box = document.getElementById('analyze-input-box');
+  const drop = document.getElementById('pdf-drop-zone');
+  if (box) box.style.borderColor = 'var(--accent)';
+  if (drop) drop.style.display = 'block';
+}
+
+function handleDragLeave(e) {
+  const box = document.getElementById('analyze-input-box');
+  if (box) box.style.borderColor = '';
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  handleDragLeave(e);
+  const file = e.dataTransfer?.files?.[0];
+  if (!file) return;
+  const fakeInput = { files: [file], value: '' };
+  handleFileUpload(fakeInput);
 }
 
 // ── Init ──────────────────────────────────────────────────────
