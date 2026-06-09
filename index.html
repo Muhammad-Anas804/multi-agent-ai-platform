@@ -41,10 +41,10 @@ body.dark{
   --shadow:0 1px 3px rgba(0,0,0,.3);
   --shadow-md:0 4px 6px rgba(0,0,0,.3);
 }
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);font-size:14px;line-height:1.6;overflow:hidden;height:100vh;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);font-size:14px;line-height:1.6;overflow-y:auto;}
 
 /* ── LANDING ── */
-#landing{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;background:var(--bg);}
+#landing{display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:3rem 2rem;background:var(--bg);overflow-y:auto;}
 .lp-logo{font-size:1.5rem;font-weight:700;letter-spacing:-.5px;margin-bottom:2.5rem;color:var(--fg);}
 .lp-logo span{color:var(--accent);}
 .lp-title{font-size:2.5rem;font-weight:700;text-align:center;letter-spacing:-.5px;max-width:560px;line-height:1.25;margin-bottom:1rem;}
@@ -88,7 +88,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);font-si
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
 
 /* ── DASHBOARD LAYOUT (Claude.ai style) ── */
-#dashboard{display:none;height:100vh;overflow:hidden;}
+#dashboard{display:none;height:100vh;overflow:hidden;}body.dashboard-open{overflow:hidden;}
 .db-layout{display:flex;height:100vh;}
 
 /* Sidebar */
@@ -497,6 +497,122 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);font-si
     <div class="lp-feature"><div class="lp-feature-icon">💰</div><div class="lp-feature-title">Financial Model</div><div class="lp-feature-desc">Revenue projections & break-even analysis</div></div>
     <div class="lp-feature"><div class="lp-feature-icon">🎯</div><div class="lp-feature-title">Go-to-Market</div><div class="lp-feature-desc">Marketing strategy & growth channels</div></div>
     <div class="lp-feature"><div class="lp-feature-icon">⚠️</div><div class="lp-feature-title">Risk Analysis</div><div class="lp-feature-desc">Identify & mitigate business risks early</div></div>
+    <div class="lp-feature"><div class="lp-feature-icon">🎤</div><div class="lp-feature-title">Voice Input</div><div class="lp-feature-desc">Speak your idea — AI transcribes instantly</div></div>
+    <div class="lp-feature"><div class="lp-feature-icon">📎</div><div class="lp-feature-title">PDF Upload</div><div class="lp-feature-desc">Upload business plans for AI analysis</div></div>
+    <div class="lp-feature"><div class="lp-feature-icon">🗺️</div><div class="lp-feature-title">Action Plan</div><div class="lp-feature-desc">Step-by-step execution roadmap</div></div>
+    <div class="lp-feature"><div class="lp-feature-icon">🏆</div><div class="lp-feature-title">Leaderboard</div><div class="lp-feature-desc">Compete with top analysts globally</div></div>
+  </div>
+
+  <!-- How it works section -->
+  <div style="width:100%;max-width:680px;margin-top:3.5rem;text-align:center;">
+    <div style="font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);margin-bottom:.75rem;">How it works</div>
+    <div style="font-weight:700;font-size:1.3rem;letter-spacing:-.3px;margin-bottom:2rem;">Analyze any business idea in 60 seconds</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1.25rem;">
+      <div style="text-align:center;padding:1.25rem 1rem;">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin:0 auto .75rem;">💡</div>
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:.3rem;">1. Describe idea</div>
+        <div style="font-size:.78rem;color:var(--muted);">Type, speak, or upload your business concept</div>
+      </div>
+      <div style="text-align:center;padding:1.25rem 1rem;">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin:0 auto .75rem;">🤖</div>
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:.3rem;">2. AI analyzes</div>
+        <div style="font-size:.78rem;color:var(--muted);">5 specialized agents run simultaneously</div>
+      </div>
+      <div style="text-align:center;padding:1.25rem 1rem;">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin:0 auto .75rem;">📊</div>
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:.3rem;">3. Get report</div>
+        <div style="font-size:.78rem;color:var(--muted);">Full report with score, plan & projections</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Pricing Section -->
+  <div style="width:100%;max-width:720px;margin-top:4rem;text-align:center;" id="pricing">
+    <div style="font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);margin-bottom:.75rem;">Pricing</div>
+    <div style="font-weight:700;font-size:1.3rem;letter-spacing:-.3px;margin-bottom:.5rem;">Simple, transparent pricing</div>
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:2rem;">Start free. Upgrade when you need more.</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;text-align:left;">
+
+      <!-- Free -->
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.75rem;">Free</div>
+        <div style="font-weight:700;font-size:2rem;letter-spacing:-.5px;margin-bottom:.25rem;">$0</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:1.25rem;">per month, forever</div>
+        <button class="lp-btn-ghost" style="width:100%;margin-bottom:1.25rem;" onclick="openModal('signup')">Get started free</button>
+        <div style="font-size:.8rem;line-height:2;color:var(--fg);">
+          <div>✓ 5 analyses per month</div>
+          <div>✓ AI chat assistant</div>
+          <div>✓ Financial projections</div>
+          <div>✓ Action plan generator</div>
+          <div style="color:var(--muted2);">✗ PDF export</div>
+          <div style="color:var(--muted2);">✗ Priority support</div>
+          <div style="color:var(--muted2);">✗ Team collaboration</div>
+        </div>
+      </div>
+
+      <!-- Pro -->
+      <div style="background:var(--surface);border:2px solid var(--accent);border-radius:14px;padding:1.5rem;position:relative;">
+        <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .75rem;border-radius:99px;white-space:nowrap;">Most Popular</div>
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:.75rem;">Pro</div>
+        <div style="font-weight:700;font-size:2rem;letter-spacing:-.5px;margin-bottom:.25rem;">$29</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:1.25rem;">per month</div>
+        <button class="lp-btn-primary" style="width:100%;margin-bottom:1.25rem;" onclick="openModal('signup')">Start Pro free</button>
+        <div style="font-size:.8rem;line-height:2;color:var(--fg);">
+          <div>✓ Unlimited analyses</div>
+          <div>✓ Advanced AI chat</div>
+          <div>✓ Financial projections</div>
+          <div>✓ Action plan generator</div>
+          <div>✓ PDF export</div>
+          <div>✓ Voice input</div>
+          <div>✓ Priority support</div>
+        </div>
+      </div>
+
+      <!-- Enterprise -->
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.75rem;">Enterprise</div>
+        <div style="font-weight:700;font-size:2rem;letter-spacing:-.5px;margin-bottom:.25rem;">$99</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:1.25rem;">per month</div>
+        <button class="lp-btn-ghost" style="width:100%;margin-bottom:1.25rem;" onclick="openModal('signup')">Contact us</button>
+        <div style="font-size:.8rem;line-height:2;color:var(--fg);">
+          <div>✓ Everything in Pro</div>
+          <div>✓ Team collaboration</div>
+          <div>✓ Custom AI agents</div>
+          <div>✓ API access</div>
+          <div>✓ Custom branding</div>
+          <div>✓ Dedicated support</div>
+          <div>✓ SLA guarantee</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FAQ mini -->
+    <div style="margin-top:2rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;text-align:left;">
+      <div style="padding:.85rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+        <div style="font-weight:600;font-size:.82rem;margin-bottom:.3rem;">Can I cancel anytime?</div>
+        <div style="font-size:.75rem;color:var(--muted);">Yes, cancel anytime. No questions asked.</div>
+      </div>
+      <div style="padding:.85rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+        <div style="font-weight:600;font-size:.82rem;margin-bottom:.3rem;">Is there a free trial?</div>
+        <div style="font-size:.75rem;color:var(--muted);">Free plan available forever — no credit card needed.</div>
+      </div>
+      <div style="padding:.85rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+        <div style="font-weight:600;font-size:.82rem;margin-bottom:.3rem;">What payment methods?</div>
+        <div style="font-size:.75rem;color:var(--muted);">All major cards via Stripe & Paddle.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="width:100%;max-width:680px;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;">
+    <div style="font-weight:600;font-size:.82rem;">Venture<span style="color:var(--accent);">Pilot</span></div>
+    <div style="font-size:.75rem;color:var(--muted);">© 2026 VenturePilot · <a href="mailto:muhammadanas.ragdev@gmail.com" style="color:var(--muted);text-decoration:none;">muhammadanas.ragdev@gmail.com</a></div>
+    <div style="display:flex;gap:.75rem;">
+      <span style="font-size:.75rem;color:var(--muted);cursor:pointer;" onclick="toggleTheme()">🌙 Dark mode</span>
+    </div>
   </div>
 </div>
 
@@ -1160,12 +1276,13 @@ async function doLogin(){
   }catch(e){showMsg(msg,'error','Connection error. Try again.');}
 }
 
-function doLogout(){clearSession();closeModal('profile');document.getElementById('dashboard').style.display='none';document.getElementById('landing').style.display='flex';}
+function doLogout(){clearSession();closeModal('profile');document.getElementById('dashboard').style.display='none';document.getElementById('landing').style.display='flex';document.body.classList.remove('dashboard-open');}
 
 // ── Dashboard ──────────────────────────────────────────────────
 function showDashboard(){
   document.getElementById('landing').style.display='none';
   document.getElementById('dashboard').style.display='block';
+  document.body.classList.add('dashboard-open');
   const s=getSession();
   if(!s)return;
   const initials=s.name.charAt(0).toUpperCase();
@@ -1878,10 +1995,20 @@ function renderLeaderboard() {
   const list = document.getElementById('leaderboard-list'); if(!list) return;
   const s = getSession();
   const mockUsers = [
-    {name:'Ahmed Raza',count:47,badge:'🥇 Expert'},{name:'Sara Khan',count:38,badge:'🥈 Pro'},
-    {name:'Muhammad Ali',count:29,badge:'🥉 Analyst'},{name:'Fatima Malik',count:22,badge:'Rising Star'},
-    {name:'Omar Sheikh',count:18,badge:'Active'},{name:'Ayesha Noor',count:14,badge:'Active'},
-    {name:'Bilal Hassan',count:11,badge:'Starter'},{name:'Zara Ahmed',count:9,badge:'Starter'},
+    {name:'Tanveer Anwar',count:52,badge:'🥇 Expert'},
+    {name:'Usman Anwar',count:44,badge:'🥈 Pro'},
+    {name:'Saad Anwar',count:38,badge:'🥉 Analyst'},
+    {name:'Malik Usama',count:31,badge:'Rising Star'},
+    {name:'Ayesha Tariq',count:27,badge:'Active'},
+    {name:'Junaid Tariq',count:24,badge:'Active'},
+    {name:'Saqib Mayo',count:20,badge:'Active'},
+    {name:'Mirza Mohsin',count:17,badge:'Starter'},
+    {name:'Fatima Noor',count:14,badge:'Starter'},
+    {name:'Rizi',count:12,badge:'Starter'},
+    {name:'Huzaifa',count:9,badge:'Starter'},
+    {name:'Mahnoor Sheikh',count:8,badge:'Starter'},
+    {name:'Haris',count:6,badge:'Starter'},
+    {name:'Zara Malik',count:4,badge:'Starter'},
   ];
   const myCount = JSON.parse(localStorage.getItem('vp_history')||'[]').length;
   const myEntry = {name:s?.name||'You',count:myCount,badge:'You',isMe:true};
